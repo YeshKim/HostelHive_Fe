@@ -171,7 +171,7 @@ function showLoading(show) {
   }
 }
 
-// REMOVED the problematic register link handler that was preventing navigation
+
 // The href attribute set in the user type selection will now work properly
 
 // Forgot password handler
@@ -183,7 +183,7 @@ document
     // In real app: window.location.href = '/forgot-password';
   });
 
-// Demo credentials info (remove in production)
+// Demo credentials info 
 console.log("🔐 Demo Credentials for Testing:");
 console.log("👨‍🎓 Student: student@strathmore.edu / student123");
 console.log("🏢 Manager: manager@hostelhive.com / manager123");
