@@ -1,4 +1,5 @@
-// User type selection
+const BASE_URL = "http://localhost:8099"; // Configurable backend URL
+
 document.querySelectorAll(".user-type-btn").forEach((btn) => {
   btn.addEventListener("click", function () {
     document
@@ -8,13 +9,11 @@ document.querySelectorAll(".user-type-btn").forEach((btn) => {
 
     const userType = this.dataset.type;
 
-    // Toggle field visibility
     document
       .querySelectorAll(".student-fields, .manager-fields")
       .forEach((el) => el.classList.remove("active"));
     document.querySelector(`.${userType}-fields`).classList.add("active");
 
-    // Update form placeholders and requirements
     updateFormForUserType(userType);
   });
 });
@@ -24,30 +23,27 @@ function updateFormForUserType(userType) {
 
   if (userType === "student") {
     emailInput.placeholder = "Enter your student email";
-    // Make student-specific fields required
-    ["university", "yearOfStudy"].forEach((id) => {
-      document.getElementById(id).required = true;
+    ["university"].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) element.required = true;
     });
-    // Make manager fields optional
     ["businessName", "businessRegistration", "kraPin"].forEach((id) => {
       const element = document.getElementById(id);
       if (element) element.required = false;
     });
   } else if (userType === "manager") {
     emailInput.placeholder = "Enter your business email";
-    // Make manager-specific fields required
     ["businessName", "businessRegistration"].forEach((id) => {
-      document.getElementById(id).required = true;
+      const element = document.getElementById(id);
+      if (element) element.required = true;
     });
-    // Make student fields optional
-    ["university", "yearOfStudy"].forEach((id) => {
+    ["university"].forEach((id) => {
       const element = document.getElementById(id);
       if (element) element.required = false;
     });
   }
 }
 
-// Password toggle functionality
 function setupPasswordToggle(inputId, toggleId) {
   const toggleElement = document.getElementById(toggleId);
   if (toggleElement) {
@@ -69,7 +65,6 @@ function setupPasswordToggle(inputId, toggleId) {
 setupPasswordToggle("password", "passwordToggle");
 setupPasswordToggle("confirmPassword", "confirmPasswordToggle");
 
-// Password strength checker
 const passwordInput = document.getElementById("password");
 if (passwordInput) {
   passwordInput.addEventListener("input", function () {
@@ -116,7 +111,6 @@ function calculatePasswordStrength(password) {
   return strength;
 }
 
-// Enhanced function to show account exists message with login redirect option
 function showAccountExistsMessage(email, userType) {
   const errorAlert = document.getElementById("errorAlert");
   const errorMessage = document.getElementById("errorMessage");
@@ -140,17 +134,13 @@ function showAccountExistsMessage(email, userType) {
     `;
     errorAlert.classList.remove("d-none");
 
-    // Scroll to top of form section
     const formSection = document.querySelector(".form-section");
     if (formSection) {
       formSection.scrollTop = 0;
     } else {
       window.scrollTo(0, 0);
     }
-
-    // Don't auto-hide this message since it has interactive buttons
   } else {
-    // Fallback to confirm dialog
     const shouldRedirect = confirm(
       `An account with the email ${email} already exists. Would you like to go to the login page?`
     );
@@ -160,7 +150,6 @@ function showAccountExistsMessage(email, userType) {
   }
 }
 
-// Function to redirect to login page with pre-filled email
 function redirectToLogin(email, userType) {
   const loginUrl = `login.html?email=${encodeURIComponent(
     email
@@ -168,7 +157,6 @@ function redirectToLogin(email, userType) {
   window.location.href = loginUrl;
 }
 
-// Function to clear email field and focus on it
 function clearEmailField() {
   const emailInput = document.getElementById("email");
   if (emailInput) {
@@ -176,7 +164,6 @@ function clearEmailField() {
     emailInput.focus();
     emailInput.classList.add("is-invalid");
 
-    // Remove invalid class after user starts typing
     emailInput.addEventListener(
       "input",
       function () {
@@ -188,7 +175,6 @@ function clearEmailField() {
   hideMessages();
 }
 
-// Form validation and submission
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async function (e) {
@@ -205,33 +191,25 @@ if (registerForm) {
     const userType = userTypeBtn.dataset.type;
     const email = formData.get("email");
 
-    // Clear previous messages
     hideMessages();
 
-    // Validate form
     if (!validateForm(formData, userType)) {
       return;
     }
 
-    // Show loading state
     showLoading(true);
 
     try {
-      // Prepare data for API - matching backend DTO structure
       const registrationData = {
         fullName: `${formData.get("firstName")} ${formData.get("lastName")}`,
         email: email,
-        phoneNumber: formData.get("phone").replace(/\D/g, ""), // Clean phone number
+        phoneNumber: formData.get("phone").replace(/\D/g, ""),
         password: formData.get("password"),
         userType: userType,
       };
 
-      // Add user-type specific fields
       if (userType === "student") {
         registrationData.university = formData.get("university");
-        registrationData.yearOfStudy = formData.get("yearOfStudy");
-        registrationData.studentId = formData.get("studentId") || "";
-        registrationData.budget = formData.get("budget") || "";
       } else if (userType === "manager") {
         registrationData.businessName = formData.get("businessName");
         registrationData.businessRegistration = formData.get(
@@ -244,9 +222,8 @@ if (registerForm) {
 
       console.log("Sending registration data:", registrationData);
 
-      // Make API call to the correct endpoint
       const response = await fetch(
-        `http://localhost:8099/api/auth/register-${userType}`,
+        `${BASE_URL}/api/auth/register-${userType}`,
         {
           method: "POST",
           headers: {
@@ -265,7 +242,6 @@ if (registerForm) {
           "Account created successfully! Please check your email to verify your account."
         );
 
-        // Store pending user data for demo purposes (remove localStorage usage in production)
         const userData = {
           email: formData.get("email"),
           fullName: registrationData.fullName,
@@ -274,31 +250,24 @@ if (registerForm) {
           verified: false,
         };
 
-        // For production, remove this localStorage usage
         try {
           localStorage.setItem("pendingUser", JSON.stringify(userData));
         } catch (e) {
           console.warn("LocalStorage not available:", e);
         }
 
-        // Reset form
         registerForm.reset();
-
-        // Reset user type selection
         document
           .querySelectorAll(".user-type-btn")
           .forEach((btn) => btn.classList.remove("active"));
         document.querySelector('[data-type="student"]').classList.add("active");
         updateFormForUserType("student");
 
-        // Redirect to login after successful registration
         setTimeout(() => {
           window.location.href = `login.html?registered=true&type=${userType}`;
         }, 2000);
       } else {
-        // Handle different HTTP status codes
         if (response.status === 409) {
-          // Enhanced handling for account already exists
           showAccountExistsMessage(email, userType);
         } else if (response.status === 400) {
           showError(
@@ -310,15 +279,12 @@ if (registerForm) {
           let errorMsg =
             responseText || "Registration failed. Please try again.";
 
-          // Try to parse error response for more specific messages
           try {
             const errorData = JSON.parse(responseText);
             if (errorData.message) {
               errorMsg = errorData.message;
             }
-          } catch (e) {
-            // Use default message if parsing fails
-          }
+          } catch (e) {}
 
           showError(errorMsg);
         }
@@ -338,7 +304,6 @@ if (registerForm) {
   });
 }
 
-// Enhanced form validation function
 function validateForm(formData, userType) {
   const email = formData.get("email");
   const password = formData.get("password");
@@ -348,43 +313,58 @@ function validateForm(formData, userType) {
   const lastName = formData.get("lastName");
   const agreeTerms = formData.get("agreeTerms");
 
-  // Basic validation
   if (!firstName || firstName.trim().length < 2) {
+    const firstNameInput = document.getElementById("firstName");
+    if (firstNameInput) firstNameInput.classList.add("is-invalid");
     showError("First name must be at least 2 characters long");
     return false;
   }
 
   if (!lastName || lastName.trim().length < 2) {
+    const lastNameInput = document.getElementById("lastName");
+    if (lastNameInput) lastNameInput.classList.add("is-invalid");
     showError("Last name must be at least 2 characters long");
     return false;
   }
 
   if (!email) {
+    const emailInput = document.getElementById("email");
+    if (emailInput) emailInput.classList.add("is-invalid");
     showError("Email is required");
     return false;
   }
 
   if (!phone) {
+    const phoneInput = document.getElementById("phone");
+    if (phoneInput) phoneInput.classList.add("is-invalid");
     showError("Phone number is required");
     return false;
   }
 
   if (!password) {
+    const passwordInput = document.getElementById("password");
+    if (passwordInput) passwordInput.classList.add("is-invalid");
     showError("Password is required");
     return false;
   }
 
   if (!confirmPassword) {
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    if (confirmPasswordInput) confirmPasswordInput.classList.add("is-invalid");
     showError("Please confirm your password");
     return false;
   }
 
   if (!isValidEmail(email)) {
+    const emailInput = document.getElementById("email");
+    if (emailInput) emailInput.classList.add("is-invalid");
     showError("Please enter a valid email address");
     return false;
   }
 
   if (!isValidPhone(phone)) {
+    const phoneInput = document.getElementById("phone");
+    if (phoneInput) phoneInput.classList.add("is-invalid");
     showError(
       "Please enter a valid Kenyan phone number (e.g., 0712345678 or +254712345678)"
     );
@@ -392,97 +372,119 @@ function validateForm(formData, userType) {
   }
 
   if (password.length < 8) {
+    const passwordInput = document.getElementById("password");
+    if (passwordInput) passwordInput.classList.add("is-invalid");
     showError("Password must be at least 8 characters long");
     return false;
   }
 
   if (password !== confirmPassword) {
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    if (confirmPasswordInput) confirmPasswordInput.classList.add("is-invalid");
     showError("Passwords do not match");
     return false;
   }
 
   if (calculatePasswordStrength(password) < 2) {
+    const passwordInput = document.getElementById("password");
+    if (passwordInput) passwordInput.classList.add("is-invalid");
     showError(
       "Password is too weak. Please include uppercase, lowercase, numbers, and special characters."
     );
-    return false;
+    return invalido;
   }
 
   if (!agreeTerms) {
+    const agreeTermsCheckbox = document.getElementById("agreeTerms");
+    if (agreeTermsCheckbox) agreeTermsCheckbox.classList.add("is-invalid");
     showError("You must accept the Terms of Service and Privacy Policy");
     return false;
   }
 
-  // User type specific validation
   if (userType === "student") {
     const university = formData.get("university");
-    const yearOfStudy = formData.get("yearOfStudy");
 
-    if (!university || university.trim().length === 0) {
+    if (!university || university === "") {
+      const universitySelect = document.getElementById("university");
+      if (universitySelect) universitySelect.classList.add("is-invalid");
       showError("Please select your university");
       return false;
     }
 
-    if (!yearOfStudy || yearOfStudy.trim().length === 0) {
-      showError("Please select your year of study");
-      return false;
-    }
-
-    // Special validation for Strathmore University
     if (
       university === "Strathmore University" &&
       !email.toLowerCase().includes("@strathmore.edu")
     ) {
+      const emailInput = document.getElementById("email");
+      if (emailInput) emailInput.classList.add("is-invalid");
       showError(
         "Please use your official Strathmore University email address (@strathmore.edu)"
       );
       return false;
     }
+
+    const universitySelect = document.getElementById("university");
+    if (universitySelect) universitySelect.classList.remove("is-invalid");
   } else if (userType === "manager") {
     const businessName = formData.get("businessName");
     const businessRegistration = formData.get("businessRegistration");
 
     if (!businessName || businessName.trim().length < 3) {
+      const businessNameInput = document.getElementById("businessName");
+      if (businessNameInput) businessNameInput.classList.add("is-invalid");
       showError("Business name must be at least 3 characters long");
       return false;
     }
 
     if (!businessRegistration || businessRegistration.trim().length === 0) {
+      const businessRegInput = document.getElementById("businessRegistration");
+      if (businessRegInput) businessRegInput.classList.add("is-invalid");
       showError("Business registration number is required");
       return false;
     }
 
     const kraPin = formData.get("kraPin");
     if (kraPin && kraPin.trim().length > 0 && !isValidKRAPin(kraPin.trim())) {
+      const kraPinInput = document.getElementById("kraPin");
+      if (kraPinInput) kraPinInput.classList.add("is-invalid");
       showError("Please enter a valid KRA PIN (e.g., P051234567M)");
       return false;
     }
+
+    ["businessName", "businessRegistration", "kraPin"].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) element.classList.remove("is-invalid");
+    });
   }
+
+  [
+    "firstName",
+    "lastName",
+    "email",
+    "phone",
+    "password",
+    "confirmPassword",
+    "agreeTerms",
+  ].forEach((id) => {
+    const element = document.getElementById(id);
+    if (element) element.classList.remove("is-invalid");
+  });
 
   return true;
 }
 
-// Enhanced helper functions
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email.trim());
 }
 
 function isValidPhone(phone) {
-  // Remove all spaces and non-digit characters except +
   const cleanPhone = phone.replace(/[\s-()]/g, "");
-
-  // Check for Kenyan phone number formats
-  const kenyanPatterns = [
-    /^(\+254|254)[17]\d{8}$/, // +254 or 254 format
-    /^0[17]\d{8}$/, // Local format starting with 0
-  ];
-
+  const kenyanPatterns = [/^(\+254|254)[17]\d{8}$/, /^0[17]\d{8}$/];
   return kenyanPatterns.some((pattern) => pattern.test(cleanPhone));
 }
 
 function isValidKRAPin(pin) {
-  // KRA PIN format: P + 9 digits + 1 letter
   const kraRegex = /^P\d{9}[A-Z]$/;
   return kraRegex.test(pin.toUpperCase());
 }
@@ -495,7 +497,6 @@ function showError(message) {
     errorMessage.innerHTML = message;
     errorAlert.classList.remove("d-none");
 
-    // Scroll to top of form section
     const formSection = document.querySelector(".form-section");
     if (formSection) {
       formSection.scrollTop = 0;
@@ -503,14 +504,12 @@ function showError(message) {
       window.scrollTo(0, 0);
     }
 
-    // Auto-hide after 8 seconds (unless it contains buttons)
     if (!message.includes("<button")) {
       setTimeout(() => {
         errorAlert.classList.add("d-none");
       }, 8000);
     }
   } else {
-    // Fallback to alert if elements not found
     alert("Error: " + message);
   }
 }
@@ -523,7 +522,6 @@ function showSuccess(message) {
     successMessage.textContent = message;
     successAlert.classList.remove("d-none");
 
-    // Scroll to top of form section
     const formSection = document.querySelector(".form-section");
     if (formSection) {
       formSection.scrollTop = 0;
@@ -531,12 +529,10 @@ function showSuccess(message) {
       window.scrollTo(0, 0);
     }
 
-    // Auto-hide after 10 seconds
     setTimeout(() => {
       successAlert.classList.add("d-none");
     }, 10000);
   } else {
-    // Fallback to alert if elements not found
     alert("Success: " + message);
   }
 }
@@ -573,44 +569,37 @@ function showLoading(show) {
   }
 }
 
-// Enhanced phone number formatting
 const phoneInput = document.getElementById("phone");
 if (phoneInput) {
   phoneInput.addEventListener("input", function () {
-    let value = this.value.replace(/[^\d+]/g, ""); // Keep only digits and +
+    let value = this.value.replace(/[^\d+]/g, "");
 
-    // Handle different input formats
     if (value.startsWith("254") && !value.startsWith("+254")) {
       value = "+" + value;
     } else if (value.startsWith("07") || value.startsWith("01")) {
-      // Keep local format as is
     } else if (
       value.length > 0 &&
       !value.startsWith("0") &&
       !value.startsWith("+254") &&
       !value.startsWith("254")
     ) {
-      // If user starts typing without 0 or +254, assume they want local format
       if (value.charAt(0) === "7" || value.charAt(0) === "1") {
         value = "0" + value;
       }
     }
 
-    // Limit length based on format
     if (value.startsWith("+254")) {
-      value = value.substring(0, 13); // +254XXXXXXXXX
+      value = value.substring(0, 13);
     } else if (value.startsWith("0")) {
-      value = value.substring(0, 10); // 0XXXXXXXXX
+      value = value.substring(0, 10);
     }
 
     this.value = value;
   });
 
-  // Add placeholder
   phoneInput.placeholder = "0712345678 or +254712345678";
 }
 
-// Initialize form based on URL parameters
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const userType = urlParams.get("type");
@@ -621,7 +610,6 @@ document.addEventListener("DOMContentLoaded", function () {
       userTypeBtn.click();
     }
   } else {
-    // Default to student
     const studentBtn = document.querySelector('[data-type="student"]');
     if (studentBtn) {
       studentBtn.click();
@@ -631,7 +619,6 @@ document.addEventListener("DOMContentLoaded", function () {
   updateFormForUserType(userType || "student");
 });
 
-// Enhanced demo data population (for testing - remove in production)
 function populateDemoData() {
   const userTypeBtn = document.querySelector(".user-type-btn.active");
   const userType = userTypeBtn ? userTypeBtn.dataset.type : "student";
@@ -643,16 +630,7 @@ function populateDemoData() {
     document.getElementById("phone").value = "0712345678";
 
     const universitySelect = document.getElementById("university");
-    const yearSelect = document.getElementById("yearOfStudy");
-
     if (universitySelect) universitySelect.value = "Strathmore University";
-    if (yearSelect) yearSelect.value = "2";
-
-    const studentIdInput = document.getElementById("studentId");
-    const budgetSelect = document.getElementById("budget");
-
-    if (studentIdInput) studentIdInput.value = "ST123456";
-    if (budgetSelect) budgetSelect.value = "15000-20000";
   } else if (userType === "manager") {
     document.getElementById("firstName").value = "Jane";
     document.getElementById("lastName").value = "Smith";
@@ -671,21 +649,19 @@ function populateDemoData() {
       businessDescInput.value = "Premium accommodation for students";
   }
 
-  // Common fields
   const passwordInput = document.getElementById("password");
   const confirmPasswordInput = document.getElementById("confirmPassword");
   const agreeTermsCheckbox = document.getElementById("agreeTerms");
 
   if (passwordInput) {
     passwordInput.value = "SecurePass123!";
-    passwordInput.dispatchEvent(new Event("input")); // Trigger password strength check
+    passwordInput.dispatchEvent(new Event("input"));
   }
 
   if (confirmPasswordInput) confirmPasswordInput.value = "SecurePass123!";
   if (agreeTermsCheckbox) agreeTermsCheckbox.checked = true;
 }
 
-// Add demo button for testing (remove in production)
 if (
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1"
@@ -699,7 +675,6 @@ if (
   document.body.appendChild(demoBtn);
 }
 
-// Enhanced error handling for network issues
 window.addEventListener("online", function () {
   console.log("Connection restored");
 });
@@ -713,4 +688,4 @@ console.log(
   "📝 Features: Student/Manager registration, password strength, enhanced field validation, login redirect"
 );
 console.log("🔧 Demo data available for testing");
-console.log("🌐 Backend URL: http://localhost:8099/api/auth/");
+console.log(`🌐 Backend URL: ${BASE_URL}/api/auth/`);
