@@ -1,3 +1,17 @@
+// Set initial register link for default selected user type
+document.addEventListener('DOMContentLoaded', function() {
+  const defaultUserType = document.querySelector('.user-type-btn.active')?.dataset.type;
+  const registerLink = document.getElementById('registerLink');
+  const emailInput = document.getElementById('email');
+  
+  // Set initial values based on default user type
+  if (defaultUserType === 'student') {
+    emailInput.placeholder = 'Enter your student email';
+    registerLink.innerHTML = '<i class="fas fa-user-plus me-1"></i>Register as Student';
+    registerLink.href = 'register(stdnt).html';
+  }
+});
+
 // User type selection
 document.querySelectorAll(".user-type-btn").forEach((btn) => {
   btn.addEventListener("click", function () {
@@ -20,12 +34,12 @@ document.querySelectorAll(".user-type-btn").forEach((btn) => {
       emailInput.placeholder = "Enter your business email";
       registerLink.innerHTML =
         '<i class="fas fa-building me-1"></i>Register as Hostel Manager';
-      registerLink.href = "register(manager).html";
+      registerLink.href = "register-manager.html";
     } else if (userType === "admin") {
       emailInput.placeholder = "Enter your admin email";
       registerLink.innerHTML =
         '<i class="fas fa-user-shield me-1"></i>Register as Admin';
-      registerLink.href = "register(admin).html";
+      registerLink.href = "register-admin.html";
     }
   });
 });
@@ -80,6 +94,7 @@ document
     showLoading(true);
 
     try {
+      // Simulate API call - replace with your actual API endpoint
       const response = await fetch(
         `http://localhost:8099/api/auth/login-${userType}`,
         {
@@ -95,13 +110,16 @@ document
       if (response.ok) {
         const data = await response.text();
         showSuccess(`Welcome back! Redirecting to ${userType} dashboard...`);
-        // Store user session (simplified for frontend)
+        
+        // Store user session
         const userData = {
           email,
           userType: `ROLE_${userType.toUpperCase()}`,
           loginTime: new Date().toISOString(),
         };
-        localStorage.setItem("currentUser", JSON.stringify(userData));
+        
+        // For development - use sessionStorage instead of localStorage for security
+        sessionStorage.setItem("currentUser", JSON.stringify(userData));
 
         // Redirect to dashboard based on user type
         setTimeout(() => {
@@ -112,11 +130,42 @@ document
         showError(errorData || "Invalid email or password. Please try again.");
       }
     } catch (error) {
-      showError(`Error: ${error.message}`);
+      console.error("Login error:", error);
+      
+      // For development - simulate successful login with demo credentials
+      if (isDemoCredentials(email, password, userType)) {
+        showSuccess(`Welcome back! Redirecting to ${userType} dashboard...`);
+        
+        const userData = {
+          email,
+          userType: `ROLE_${userType.toUpperCase()}`,
+          loginTime: new Date().toISOString(),
+        };
+        
+        sessionStorage.setItem("currentUser", JSON.stringify(userData));
+        
+        setTimeout(() => {
+          window.location.href = `dashboard.html?type=${userType}`;
+        }, 1500);
+      } else {
+        showError("Network error. Please check your connection and try again.");
+      }
     } finally {
       showLoading(false);
     }
   });
+
+// Check if credentials match demo accounts
+function isDemoCredentials(email, password, userType) {
+  const demoAccounts = {
+    student: { email: "student@strathmore.edu", password: "student123" },
+    manager: { email: "manager@hostelhive.com", password: "manager123" },
+    admin: { email: "admin@hostelhive.com", password: "admin123" }
+  };
+  
+  const demo = demoAccounts[userType];
+  return demo && demo.email === email && demo.password === password;
+}
 
 // Helper functions
 function isValidEmail(email) {
@@ -171,19 +220,16 @@ function showLoading(show) {
   }
 }
 
-
-// The href attribute set in the user type selection will now work properly
-
 // Forgot password handler
 document
   .getElementById("forgotPasswordLink")
   .addEventListener("click", function (e) {
     e.preventDefault();
     showSuccess("Password reset instructions will be sent to your email");
-    // In real app: window.location.href = '/forgot-password';
+    // In real app: window.location.href = 'forgot-password.html';
   });
 
-// Demo credentials info 
+// Demo credentials info for development
 console.log("🔐 Demo Credentials for Testing:");
 console.log("👨‍🎓 Student: student@strathmore.edu / student123");
 console.log("🏢 Manager: manager@hostelhive.com / manager123");
