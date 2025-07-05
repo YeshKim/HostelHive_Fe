@@ -83,6 +83,10 @@
 
       .btn-solid {
         background: white;
+        color: #8b5cf6;
+      }
+
+      .btn-solid:hover {
         background: #f0f0f0;
       }
 
@@ -113,8 +117,6 @@
       }
 
       .search-container {
-        /* background: rgba(255, 255, 255, 0.1);
-        padding: 2rem; */
         border-radius: 10px;
         max-width: 600px;
         margin: 0 auto;
@@ -323,8 +325,9 @@
           <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="auth-buttons">
-          <a href="#signin" class="btn btn-outline">Sign In</a>
-          <a href="#register" class="btn btn-solid">Register</a>
+          <a href="login.html" class="btn btn-outline sign-in-btn">Sign In</a>
+          <a href="register-student.html" class="btn btn-solid register-btn">Register</a>
+          <a href="#" class="btn btn-outline logout-btn" style="display: none;">Logout</a>
         </div>
       </nav>
     </header>
@@ -466,6 +469,45 @@
     </footer>
 
     <script>
+      // Check login status and handle user type selection on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        const authButtons = document.querySelector('.auth-buttons');
+        const signInBtn = document.querySelector('.sign-in-btn');
+        const registerBtn = document.querySelector('.register-btn');
+        const logoutBtn = document.querySelector('.logout-btn');
+
+        // Check if user is logged in by looking for currentUser in sessionStorage
+        const currentUser = sessionStorage.getItem('currentUser');
+        let userType = 'student'; // Default user type
+
+        if (currentUser) {
+          // User is logged in - hide sign-in/register, show logout
+          signInBtn.style.display = 'none';
+          registerBtn.style.display = 'none';
+          logoutBtn.style.display = 'inline-block';
+          // Get user type from sessionStorage
+          const userData = JSON.parse(currentUser);
+          userType = userData.userType.replace('ROLE_', '').toLowerCase();
+        } else {
+          // User is not logged in - show sign-in/register, hide logout
+          signInBtn.style.display = 'inline-block';
+          registerBtn.style.display = 'inline-block';
+          logoutBtn.style.display = 'none';
+        }
+
+        // Set register link based on user type
+        registerBtn.href = `register-${userType}.html`;
+      });
+
+      // Logout handler
+      document.querySelector('.logout-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        // Clear session storage
+        sessionStorage.removeItem('currentUser');
+        // Redirect to home page
+        window.location.href = 'login.html';
+      });
+
       // Search functionality with budget range
       document
         .querySelector(".search-btn")
