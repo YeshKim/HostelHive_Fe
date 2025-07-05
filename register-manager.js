@@ -1,49 +1,5 @@
 const BASE_URL = "http://localhost:8099"; // Configurable backend URL
 
-document.querySelectorAll(".user-type-btn").forEach((btn) => {
-  btn.addEventListener("click", function () {
-    document
-      .querySelectorAll(".user-type-btn")
-      .forEach((b) => b.classList.remove("active"));
-    this.classList.add("active");
-
-    const userType = this.dataset.type;
-
-    document
-      .querySelectorAll(".student-fields, .manager-fields")
-      .forEach((el) => el.classList.remove("active"));
-    document.querySelector(`.${userType}-fields`).classList.add("active");
-
-    updateFormForUserType(userType);
-  });
-});
-
-function updateFormForUserType(userType) {
-  const emailInput = document.getElementById("email");
-
-  if (userType === "student") {
-    emailInput.placeholder = "Enter your student email";
-    ["university"].forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) element.required = true;
-    });
-    ["businessName", "businessRegistration", "kraPin"].forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) element.required = false;
-    });
-  } else if (userType === "manager") {
-    emailInput.placeholder = "Enter your business email";
-    ["businessName", "businessRegistration"].forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) element.required = true;
-    });
-    ["university"].forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) element.required = false;
-    });
-  }
-}
-
 function setupPasswordToggle(inputId, toggleId) {
   const toggleElement = document.getElementById(toggleId);
   if (toggleElement) {
@@ -111,27 +67,27 @@ function calculatePasswordStrength(password) {
   return strength;
 }
 
-function showAccountExistsMessage(email, userType) {
+function showAccountExistsMessage(email) {
   const errorAlert = document.getElementById("errorAlert");
   const errorMessage = document.getElementById("errorMessage");
 
   if (errorAlert && errorMessage) {
     errorMessage.innerHTML = `
-      <div class="d-flex flex-column">
-        <div class="mb-3">
-          <strong>Account Already Exists!</strong><br>
-          An account with the email <strong>${email}</strong> already exists in our system.
-        </div>
-        <div class="d-flex gap-2 flex-wrap">
-          <button class="btn btn-primary btn-sm" onclick="redirectToLogin('${email}', '${userType}')">
-            <i class="fas fa-sign-in-alt me-1"></i>Go to Login
-          </button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="clearEmailField()">
-            <i class="fas fa-edit me-1"></i>Use Different Email
-          </button>
-        </div>
-      </div>
-    `;
+            <div class="d-flex flex-column">
+              <div class="mb-3">
+                <strong>Account Already Exists!</strong><br>
+                An account with the email <strong>${email}</strong> already exists in our system.
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-primary btn-sm" onclick="redirectToLogin('${email}')">
+                  <i class="fas fa-sign-in-alt me-1"></i>Go to Login
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="clearEmailField()">
+                  <i class="fas fa-edit me-1"></i>Use Different Email
+                </button>
+              </div>
+            </div>
+          `;
     errorAlert.classList.remove("d-none");
 
     const formSection = document.querySelector(".form-section");
@@ -145,15 +101,15 @@ function showAccountExistsMessage(email, userType) {
       `An account with the email ${email} already exists. Would you like to go to the login page?`
     );
     if (shouldRedirect) {
-      redirectToLogin(email, userType);
+      redirectToLogin(email);
     }
   }
 }
 
-function redirectToLogin(email, userType) {
+function redirectToLogin(email) {
   const loginUrl = `login.html?email=${encodeURIComponent(
     email
-  )}&type=${userType}&from=register`;
+  )}&type=manager&from=register`;
   window.location.href = loginUrl;
 }
 
@@ -181,19 +137,9 @@ if (registerForm) {
     e.preventDefault();
 
     const formData = new FormData(this);
-    const userTypeBtn = document.querySelector(".user-type-btn.active");
-
-    if (!userTypeBtn) {
-      showError("Please select a user type (Student or Manager)");
-      return;
-    }
-
-    const userType = userTypeBtn.dataset.type;
-    const email = formData.get("email");
-
     hideMessages();
 
-    if (!validateForm(formData, userType)) {
+    if (!validateForm(formData)) {
       return;
     }
 
@@ -202,37 +148,26 @@ if (registerForm) {
     try {
       const registrationData = {
         fullName: `${formData.get("firstName")} ${formData.get("lastName")}`,
-        email: email,
+        email: formData.get("email"),
         phoneNumber: formData.get("phone").replace(/\D/g, ""),
         password: formData.get("password"),
-        userType: userType,
+        userType: "manager",
+        businessName: formData.get("businessName"),
+        businessRegistration: formData.get("businessRegistration"),
+        kraPin: formData.get("kraPin") || "",
+        businessDescription: formData.get("businessDescription") || "",
       };
-
-      if (userType === "student") {
-        registrationData.university = formData.get("university");
-      } else if (userType === "manager") {
-        registrationData.businessName = formData.get("businessName");
-        registrationData.businessRegistration = formData.get(
-          "businessRegistration"
-        );
-        registrationData.kraPin = formData.get("kraPin") || "";
-        registrationData.businessDescription =
-          formData.get("businessDescription") || "";
-      }
 
       console.log("Sending registration data:", registrationData);
 
-      const response = await fetch(
-        `${BASE_URL}/api/auth/register-${userType}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(registrationData),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/auth/register-manager`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(registrationData),
+      });
 
       const responseText = await response.text();
       console.log("Server response:", responseText);
@@ -245,7 +180,7 @@ if (registerForm) {
         const userData = {
           email: formData.get("email"),
           fullName: registrationData.fullName,
-          userType: `ROLE_${userType.toUpperCase()}`,
+          userType: "ROLE_MANAGER",
           registrationTime: new Date().toISOString(),
           verified: false,
         };
@@ -257,18 +192,12 @@ if (registerForm) {
         }
 
         registerForm.reset();
-        document
-          .querySelectorAll(".user-type-btn")
-          .forEach((btn) => btn.classList.remove("active"));
-        document.querySelector('[data-type="student"]').classList.add("active");
-        updateFormForUserType("student");
-
         setTimeout(() => {
-          window.location.href = `login.html?registered=true&type=${userType}`;
+          window.location.href = `login.html?registered=true&type=manager`;
         }, 2000);
       } else {
         if (response.status === 409) {
-          showAccountExistsMessage(email, userType);
+          showAccountExistsMessage(formData.get("email"));
         } else if (response.status === 400) {
           showError(
             "Invalid registration data. Please check all fields and try again."
@@ -304,7 +233,7 @@ if (registerForm) {
   });
 }
 
-function validateForm(formData, userType) {
+function validateForm(formData) {
   const email = formData.get("email");
   const password = formData.get("password");
   const confirmPassword = formData.get("confirmPassword");
@@ -312,6 +241,9 @@ function validateForm(formData, userType) {
   const firstName = formData.get("firstName");
   const lastName = formData.get("lastName");
   const agreeTerms = formData.get("agreeTerms");
+  const businessName = formData.get("businessName");
+  const businessRegistration = formData.get("businessRegistration");
+  const kraPin = formData.get("kraPin");
 
   if (!firstName || firstName.trim().length < 2) {
     const firstNameInput = document.getElementById("firstName");
@@ -355,6 +287,27 @@ function validateForm(formData, userType) {
     return false;
   }
 
+  if (!businessName || businessName.trim().length < 3) {
+    const businessNameInput = document.getElementById("businessName");
+    if (businessNameInput) businessNameInput.classList.add("is-invalid");
+    showError("Business name must be at least 3 characters long");
+    return false;
+  }
+
+  if (!businessRegistration || businessRegistration.trim().length === 0) {
+    const businessRegInput = document.getElementById("businessRegistration");
+    if (businessRegInput) businessRegInput.classList.add("is-invalid");
+    showError("Business registration number is required");
+    return false;
+  }
+
+  if (kraPin && kraPin.trim().length > 0 && !isValidKRAPin(kraPin.trim())) {
+    const kraPinInput = document.getElementById("kraPin");
+    if (kraPinInput) kraPinInput.classList.add("is-invalid");
+    showError("Please enter a valid KRA PIN (e.g., P051234567M)");
+    return false;
+  }
+
   if (!isValidEmail(email)) {
     const emailInput = document.getElementById("email");
     if (emailInput) emailInput.classList.add("is-invalid");
@@ -391,7 +344,7 @@ function validateForm(formData, userType) {
     showError(
       "Password is too weak. Please include uppercase, lowercase, numbers, and special characters."
     );
-    return invalido;
+    return false;
   }
 
   if (!agreeTerms) {
@@ -399,62 +352,6 @@ function validateForm(formData, userType) {
     if (agreeTermsCheckbox) agreeTermsCheckbox.classList.add("is-invalid");
     showError("You must accept the Terms of Service and Privacy Policy");
     return false;
-  }
-
-  if (userType === "student") {
-    const university = formData.get("university");
-
-    if (!university || university === "") {
-      const universitySelect = document.getElementById("university");
-      if (universitySelect) universitySelect.classList.add("is-invalid");
-      showError("Please select your university");
-      return false;
-    }
-
-    if (
-      university === "Strathmore University" &&
-      !email.toLowerCase().includes("@strathmore.edu")
-    ) {
-      const emailInput = document.getElementById("email");
-      if (emailInput) emailInput.classList.add("is-invalid");
-      showError(
-        "Please use your official Strathmore University email address (@strathmore.edu)"
-      );
-      return false;
-    }
-
-    const universitySelect = document.getElementById("university");
-    if (universitySelect) universitySelect.classList.remove("is-invalid");
-  } else if (userType === "manager") {
-    const businessName = formData.get("businessName");
-    const businessRegistration = formData.get("businessRegistration");
-
-    if (!businessName || businessName.trim().length < 3) {
-      const businessNameInput = document.getElementById("businessName");
-      if (businessNameInput) businessNameInput.classList.add("is-invalid");
-      showError("Business name must be at least 3 characters long");
-      return false;
-    }
-
-    if (!businessRegistration || businessRegistration.trim().length === 0) {
-      const businessRegInput = document.getElementById("businessRegistration");
-      if (businessRegInput) businessRegInput.classList.add("is-invalid");
-      showError("Business registration number is required");
-      return false;
-    }
-
-    const kraPin = formData.get("kraPin");
-    if (kraPin && kraPin.trim().length > 0 && !isValidKRAPin(kraPin.trim())) {
-      const kraPinInput = document.getElementById("kraPin");
-      if (kraPinInput) kraPinInput.classList.add("is-invalid");
-      showError("Please enter a valid KRA PIN (e.g., P051234567M)");
-      return false;
-    }
-
-    ["businessName", "businessRegistration", "kraPin"].forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) element.classList.remove("is-invalid");
-    });
   }
 
   [
@@ -465,6 +362,9 @@ function validateForm(formData, userType) {
     "password",
     "confirmPassword",
     "agreeTerms",
+    "businessName",
+    "businessRegistration",
+    "kraPin",
   ].forEach((id) => {
     const element = document.getElementById(id);
     if (element) element.classList.remove("is-invalid");
@@ -600,66 +500,20 @@ if (phoneInput) {
   phoneInput.placeholder = "0712345678 or +254712345678";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const userType = urlParams.get("type");
-
-  if (userType && (userType === "student" || userType === "manager")) {
-    const userTypeBtn = document.querySelector(`[data-type="${userType}"]`);
-    if (userTypeBtn) {
-      userTypeBtn.click();
-    }
-  } else {
-    const studentBtn = document.querySelector('[data-type="student"]');
-    if (studentBtn) {
-      studentBtn.click();
-    }
-  }
-
-  updateFormForUserType(userType || "student");
-});
-
 function populateDemoData() {
-  const userTypeBtn = document.querySelector(".user-type-btn.active");
-  const userType = userTypeBtn ? userTypeBtn.dataset.type : "student";
-
-  if (userType === "student") {
-    document.getElementById("firstName").value = "John";
-    document.getElementById("lastName").value = "Doe";
-    document.getElementById("email").value = "john.doe@strathmore.edu";
-    document.getElementById("phone").value = "0712345678";
-
-    const universitySelect = document.getElementById("university");
-    if (universitySelect) universitySelect.value = "Strathmore University";
-  } else if (userType === "manager") {
-    document.getElementById("firstName").value = "Jane";
-    document.getElementById("lastName").value = "Smith";
-    document.getElementById("email").value = "jane.smith@hostelbusiness.com";
-    document.getElementById("phone").value = "0723456789";
-
-    const businessNameInput = document.getElementById("businessName");
-    const businessRegInput = document.getElementById("businessRegistration");
-    const kraPinInput = document.getElementById("kraPin");
-    const businessDescInput = document.getElementById("businessDescription");
-
-    if (businessNameInput) businessNameInput.value = "Premium Student Hostels";
-    if (businessRegInput) businessRegInput.value = "BUS123456789";
-    if (kraPinInput) kraPinInput.value = "P123456789K";
-    if (businessDescInput)
-      businessDescInput.value = "Premium accommodation for students";
-  }
-
-  const passwordInput = document.getElementById("password");
-  const confirmPasswordInput = document.getElementById("confirmPassword");
-  const agreeTermsCheckbox = document.getElementById("agreeTerms");
-
-  if (passwordInput) {
-    passwordInput.value = "SecurePass123!";
-    passwordInput.dispatchEvent(new Event("input"));
-  }
-
-  if (confirmPasswordInput) confirmPasswordInput.value = "SecurePass123!";
-  if (agreeTermsCheckbox) agreeTermsCheckbox.checked = true;
+  document.getElementById("firstName").value = "Jane";
+  document.getElementById("lastName").value = "Smith";
+  document.getElementById("email").value = "jane.smith@hostelbusiness.com";
+  document.getElementById("phone").value = "0723456789";
+  document.getElementById("businessName").value = "Premium Student Hostels";
+  document.getElementById("businessRegistration").value = "BUS123456789";
+  document.getElementById("kraPin").value = "P123456789K";
+  document.getElementById("businessDescription").value =
+    "Premium accommodation for students";
+  document.getElementById("password").value = "SecurePass123!";
+  document.getElementById("password").dispatchEvent(new Event("input"));
+  document.getElementById("confirmPassword").value = "SecurePass123!";
+  document.getElementById("agreeTerms").checked = true;
 }
 
 if (
@@ -683,9 +537,9 @@ window.addEventListener("offline", function () {
   showError("No internet connection. Please check your network and try again.");
 });
 
-console.log("🎯 Registration Page Loaded");
+console.log("🎯 Manager Registration Page Loaded");
 console.log(
-  "📝 Features: Student/Manager registration, password strength, enhanced field validation, login redirect"
+  "📝 Features: Manager registration, password strength, enhanced field validation, login redirect"
 );
 console.log("🔧 Demo data available for testing");
 console.log(`🌐 Backend URL: ${BASE_URL}/api/auth/`);

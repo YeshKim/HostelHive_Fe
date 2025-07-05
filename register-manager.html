@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hostel Hive - Create Account</title>
+    <title>Hostel Hive - Create Manager Account</title>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
@@ -197,30 +197,6 @@
         font-size: 1rem;
       }
 
-      .user-type-tabs {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 4px;
-        margin-bottom: 2rem;
-      }
-
-      .user-type-btn {
-        border-radius: 8px;
-        border: none;
-        background: transparent;
-        color: #6b7280;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        padding: 0.75rem 1.5rem;
-      }
-
-      .user-type-btn.active {
-        background: white;
-        color: #4f46e5;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transform: translateY(-1px);
-      }
-
       .form-floating {
         margin-bottom: 1.5rem;
       }
@@ -290,10 +266,22 @@
         border-radius: 2px;
       }
 
-      .strength-weak { background: #ef4444; width: 25%; }
-      .strength-fair { background: #f59e0b; width: 50%; }
-      .strength-good { background: #10b981; width: 75%; }
-      .strength-strong { background: #059669; width: 100%; }
+      .strength-weak {
+        background: #ef4444;
+        width: 25%;
+      }
+      .strength-fair {
+        background: #f59e0b;
+        width: 50%;
+      }
+      .strength-good {
+        background: #10b981;
+        width: 75%;
+      }
+      .strength-strong {
+        background: #059669;
+        width: 100%;
+      }
 
       .form-check {
         margin-bottom: 1.5rem;
@@ -380,13 +368,17 @@
         border: 2px solid #ffffff40;
         border-top: 2px solid #ffffff;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        animation: spin planting 1s linear infinite;
         margin-right: 0.5rem;
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
 
       .divider {
@@ -447,14 +439,6 @@
         border-left: 4px solid #16a34a;
       }
 
-      .student-fields, .manager-fields {
-        display: none;
-      }
-
-      .student-fields.active, .manager-fields.active {
-        display: block;
-      }
-
       @media (max-width: 768px) {
         .brand-section {
           padding: 3rem 2rem;
@@ -495,7 +479,8 @@
                   <i class="fas fa-home me-2"></i>Hostel Hive
                 </div>
                 <div class="brand-tagline">
-                  Join Kenya's leading student accommodation platform and discover your perfect hostel today
+                  Join Kenya's leading student accommodation platform to manage
+                  and list your hostels
                 </div>
                 <ul class="feature-list">
                   <li class="feature-item">
@@ -506,27 +491,27 @@
                   </li>
                   <li class="feature-item">
                     <span class="feature-icon">
-                      <i class="fas fa-search"></i>
+                      <i class="fas fa-building"></i>
                     </span>
-                    Advanced search filters
+                    Easy hostel management
                   </li>
                   <li class="feature-item">
                     <span class="feature-icon">
-                      <i class="fas fa-bookmark"></i>
+                      <i class="fas fa-users"></i>
                     </span>
-                    Save favorite hostels
+                    Reach thousands of students
                   </li>
                   <li class="feature-item">
                     <span class="feature-icon">
-                      <i class="fas fa-comments"></i>
+                      <i class="fas fa-chart-line"></i>
                     </span>
-                    Direct hostel communication
+                    Analytics dashboard
                   </li>
                   <li class="feature-item">
                     <span class="feature-icon">
                       <i class="fas fa-shield-alt"></i>
                     </span>
-                    Verified listings only
+                    Secure payment processing
                   </li>
                 </ul>
               </div>
@@ -537,109 +522,174 @@
           <div class="col-lg-7">
             <div class="form-section">
               <div class="form-header">
-                <h1 class="form-title">Create Account</h1>
-                <p class="form-subtitle">Join thousands of students finding their perfect accommodation</p>
+                <h1 class="form-title">Create Manager Account</h1>
+                <p class="form-subtitle">
+                  Register to manage your hostel listings
+                </p>
               </div>
 
               <!-- Error/Success Messages -->
-              <div class="alert alert-danger d-none" id="errorAlert" role="alert">
+              <div
+                class="alert alert-danger d-none"
+                id="errorAlert"
+                role="alert"
+              >
                 <i class="fas fa-exclamation-circle me-2"></i>
                 <span id="errorMessage"></span>
               </div>
 
-              <div class="alert alert-success d-none" id="successAlert" role="alert">
+              <div
+                class="alert alert-success d-none"
+                id="successAlert"
+                role="alert"
+              >
                 <i class="fas fa-check-circle me-2"></i>
                 <span id="successMessage"></span>
               </div>
 
               <form id="registerForm">
-                <!-- User Type Selection -->
-                <div class="user-type-tabs d-flex mb-4">
-                  <button type="button" class="btn user-type-btn active flex-fill" data-type="student">
-                    <i class="fas fa-graduation-cap me-2"></i>Student
-                  </button>
-                  <button type="button" class="btn user-type-btn flex-fill" data-type="manager">
-                    <i class="fas fa-building me-2"></i>Hostel Manager
-                  </button>
-                </div>
-
                 <!-- Common Fields -->
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name" required />
-                      <label for="firstName"><i class="fas fa-user me-2"></i>First Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="firstName"
+                        name="firstName"
+                        placeholder="Enter your first name"
+                        required
+                      />
+                      <label for="firstName"
+                        ><i class="fas fa-user me-2"></i>First Name</label
+                      >
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name" required />
-                      <label for="lastName"><i class="fas fa-user me-2"></i>Last Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="lastName"
+                        name="lastName"
+                        placeholder="Enter your last name"
+                        required
+                      />
+                      <label for="lastName"
+                        ><i class="fas fa-user me-2"></i>Last Name</label
+                      >
                     </div>
                   </div>
                 </div>
 
                 <div class="form-floating">
-                  <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required />
-                  <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your business email"
+                    required
+                  />
+                  <label for="email"
+                    ><i class="fas fa-envelope me-2"></i>Email Address</label
+                  >
                 </div>
 
                 <div class="form-floating">
-                  <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required />
-                  <label for="phone"><i class="fas fa-phone me-2"></i>Phone Number</label>
-                </div>
-
-                <!-- Student-specific Fields -->
-                <div class="student-fields active">
-                  <div class="form-floating">
-                    <select class="form-control" id="university" name="university" required>
-                      <option value="">Select your university</option>
-                      <option value="University of Nairobi">University of Nairobi</option>
-                      <option value="Kenyatta University">Kenyatta University</option>
-                      <option value="Strathmore University">Strathmore University</option>
-                      <option value="USIU">USIU</option>
-                      <option value="Jomo Kenyatta University">Jomo Kenyatta University</option>
-                      <option value="Kenya Methodist University">Kenya Methodist University</option>
-                      <option value="Catholic University">Catholic University</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    <label for="university"><i class="fas fa-graduation-cap me-2"></i>University</label>
-                  </div>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    required
+                  />
+                  <label for="phone"
+                    ><i class="fas fa-phone me-2"></i>Phone Number</label
+                  >
                 </div>
 
                 <!-- Manager-specific Fields -->
-                <div class="manager-fields">
-                  <div class="form-floating">
-                    <input type="text" class="form-control" id="businessName" name="businessName" placeholder="Enter your business name" />
-                    <label for="businessName"><i class="fas fa-building me-2"></i>Business Name</label>
-                  </div>
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="businessName"
+                    name="businessName"
+                    placeholder="Enter your business name"
+                    required
+                  />
+                  <label for="businessName"
+                    ><i class="fas fa-building me-2"></i>Business Name</label
+                  >
+                </div>
 
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="businessRegistration" name="businessRegistration" placeholder="Enter registration number" />
-                        <label for="businessRegistration"><i class="fas fa-certificate me-2"></i>Business Registration</label>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="kraPin" name="kraPin" placeholder="Enter KRA PIN" />
-                        <label for="kraPin"><i class="fas fa-file-invoice me-2"></i>KRA PIN</label>
-                      </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="businessRegistration"
+                        name="businessRegistration"
+                        placeholder="Enter registration number"
+                        required
+                      />
+                      <label for="businessRegistration"
+                        ><i class="fas fa-certificate me-2"></i>Business
+                        Registration</label
+                      >
                     </div>
                   </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="kraPin"
+                        name="kraPin"
+                        placeholder="Enter KRA PIN"
+                      />
+                      <label for="kraPin"
+                        ><i class="fas fa-file-invoice me-2"></i>KRA PIN</label
+                      >
+                    </div>
+                  </div>
+                </div>
 
-                  <div class="form-floating">
-                    <textarea class="form-control" id="businessDescription" name="businessDescription" placeholder="Describe your hostel business" style="height: 100px;"></textarea>
-                    <label for="businessDescription"><i class="fas fa-info-circle me-2"></i>Business Description</label>
-                  </div>
+                <div class="form-floating">
+                  <textarea
+                    class="form-control"
+                    id="businessDescription"
+                    name="businessDescription"
+                    placeholder="Describe your hostel business"
+                    style="height: 100px"
+                  ></textarea>
+                  <label for="businessDescription"
+                    ><i class="fas fa-info-circle me-2"></i>Business
+                    Description</label
+                  >
                 </div>
 
                 <!-- Password Fields -->
                 <div class="form-floating password-field">
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required />
-                  <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
-                  <button type="button" class="password-toggle" id="passwordToggle">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Create a password"
+                    required
+                  />
+                  <label for="password"
+                    ><i class="fas fa-lock me-2"></i>Password</label
+                  >
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    id="passwordToggle"
+                  >
                     <i class="fas fa-eye"></i>
                   </button>
                 </div>
@@ -648,29 +698,58 @@
                   <div class="strength-meter">
                     <div class="strength-fill" id="strengthFill"></div>
                   </div>
-                  <div class="strength-text" id="strengthText">Password strength: <span>Not set</span></div>
+                  <div class="strength-text" id="strengthText">
+                    Password strength: <span>Not set</span>
+                  </div>
                 </div>
 
                 <div class="form-floating password-field">
-                  <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required />
-                  <label for="confirmPassword"><i class="fas fa-lock me-2"></i>Confirm Password</label>
-                  <button type="button" class="password-toggle" id="confirmPasswordToggle">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                  <label for="confirmPassword"
+                    ><i class="fas fa-lock me-2"></i>Confirm Password</label
+                  >
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    id="confirmPasswordToggle"
+                  >
                     <i class="fas fa-eye"></i>
                   </button>
                 </div>
 
                 <!-- Terms and Conditions -->
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="agreeTerms" name="agreeTerms" required />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="agreeTerms"
+                    name="agreeTerms"
+                    required
+                  />
                   <label class="form-check-label" for="agreeTerms">
-                    I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                    I agree to the
+                    <a href="#" target="_blank">Terms of Service</a> and
+                    <a href="#" target="_blank">Privacy Policy</a>
                   </label>
                 </div>
 
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="agreeMarketing" name="agreeMarketing" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="agreeMarketing"
+                    name="agreeMarketing"
+                  />
                   <label class="form-check-label" for="agreeMarketing">
-                    I would like to receive updates about new hostels and special offers via email
+                    I would like to receive updates about platform features and
+                    special offers via email
                   </label>
                 </div>
 
@@ -694,6 +773,14 @@
                   <i class="fas fa-sign-in-alt me-1"></i>Sign in to your account
                 </a>
               </div>
+
+              <!-- Student Registration Link -->
+              <div class="login-link">
+                <a href="register-student.html" id="studentRegisterLink">
+                  <i class="fas fa-graduation-cap me-1"></i>Register as a
+                  Student
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -702,6 +789,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="register(stdnt).js"></script>
+
+ 
+
   </body>
 </html>

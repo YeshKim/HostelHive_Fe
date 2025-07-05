@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Hostel Management</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --sidebar-bg: #34495e;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .sidebar {
+        background: linear-gradient(
+          135deg,
+          var(--sidebar-bg),
+          var(--primary-color)
+        );
+        min-height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar.collapsed {
+        width: 70px;
+      }
+
+      .sidebar .nav-link {
+        color: #ecf0f1;
+        padding: 15px 20px;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        margin: 2px 10px;
+        border-radius: 8px;
+      }
+
+      .sidebar .nav-link:hover {
+        background-color: rgba(52, 152, 219, 0.2);
+        color: #ffffff;
+        transform: translateX(5px);
+      }
+
+      .sidebar .nav-link.active {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+
+      .sidebar .nav-link i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .main-content {
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+        padding: 20px;
+      }
+
+      .main-content.expanded {
+        margin-left: 70px;
+      }
+
+      .top-navbar {
+        background: white;
+        box-shadow: var(--card-shadow);
+        border-radius: 10px;
+        margin-bottom: 20px;
+        padding: 15px 20px;
+      }
+
+      .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s ease;
+        border-left: 4px solid var(--secondary-color);
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stats-card.danger {
+        border-left-color: var(--accent-color);
+      }
+
+      .stats-card.success {
+        border-left-color: var(--success-color);
+      }
+
+      .stats-card.warning {
+        border-left-color: var(--warning-color);
+      }
+
+      .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      .stats-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+      }
+
+      .btn-primary {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+      }
+
+      .table th {
+        background-color: #f8f9fa;
+        border: none;
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+      }
+
+      .sidebar-brand {
+        padding: 20px;
+        text-align: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-toggle {
+        position: absolute;
+        top: 15px;
+        right: -15px;
+        background: var(--secondary-color);
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .sidebar-toggle:hover {
+        background: #2980b9;
+        transform: scale(1.1);
+      }
+
+      .notification-bell {
+        position: relative;
+        font-size: 1.2rem;
+        color: var(--primary-color);
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--accent-color);
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 50%;
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .quick-action-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .quick-action-btn:hover {
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .quick-action-btn.btn-add {
+        background: var(--success-color);
+      }
+
+      .quick-action-btn.btn-verify {
+        background: var(--warning-color);
+      }
+
+      .quick-action-btn.btn-report {
+        background: var(--secondary-color);
+      }
+
+      .quick-action-btn.btn-settings {
+        background: var(--primary-color);
+      }
+
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin-bottom: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+
+        .quick-actions {
+          flex-direction: column;
+        }
+
+        .quick-action-btn {
+          min-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i class="fas fa-building"></i> Hostel Admin
+      </div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-chevron-left" id="toggle-icon"></i>
+      </button>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            href="#dashboard"
+            onclick="showSection('dashboard')"
+          >
+            <i class="fas fa-tachometer-alt"></i>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#hostels" onclick="showSection('hostels')">
+            <i class="fas fa-building"></i>
+            <span class="nav-text">Hostels</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="#students"
+            onclick="showSection('students')"
+          >
+            <i class="fas fa-users"></i>
+            <span class="nav-text">Students</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="#bookings"
+            onclick="showSection('bookings')"
+          >
+            <i class="fas fa-calendar-check"></i>
+            <span class="nav-text">Bookings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="#payments"
+            onclick="showSection('payments')"
+          >
+            <i class="fas fa-credit-card"></i>
+            <span class="nav-text">Payments</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#reports" onclick="showSection('reports')">
+            <i class="fas fa-chart-bar"></i>
+            <span class="nav-text">Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="#verification"
+            onclick="showSection('verification')"
+          >
+            <i class="fas fa-shield-alt"></i>
+            <span class="nav-text">Verification</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="#settings"
+            onclick="showSection('settings')"
+          >
+            <i class="fas fa-cog"></i>
+            <span class="nav-text">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+      <!-- Top Navigation -->
+      <div class="top-navbar d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-0">Welcome back, Admin</h4>
+          <small class="text-muted"
+            >Manage your hostel accommodation platform</small
+          >
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </div>
+          <div class="dropdown">
+            <button
+              class="btn btn-light dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+            >
+              <i class="fas fa-user-circle"></i> Admin
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#"
+                  ><i class="fas fa-user"></i> Profile</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#"
+                  ><i class="fas fa-cog"></i> Settings</a
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="#"
+                  ><i class="fas fa-sign-out-alt"></i> Logout</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Section -->
+      <div id="dashboard" class="content-section">
+        <!-- Statistics Cards -->
+        <div class="row">
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="stats-number">24</div>
+                  <div class="stats-label">Total Hostels</div>
+                </div>
+                <div class="text-primary">
+                  <i class="fas fa-building fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card success">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="stats-number">156</div>
+                  <div class="stats-label">Active Students</div>
+                </div>
+                <div class="text-success">
+                  <i class="fas fa-users fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card warning">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="stats-number">89</div>
+                  <div class="stats-label">Pending Bookings</div>
+                </div>
+                <div class="text-warning">
+                  <i class="fas fa-clock fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card danger">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="stats-number">7</div>
+                  <div class="stats-label">Pending Verifications</div>
+                </div>
+                <div class="text-danger">
+                  <i class="fas fa-exclamation-triangle fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="content-card">
+          <h5 class="mb-3">Quick Actions</h5>
+          <div class="quick-actions">
+            <a
+              href="#"
+              class="quick-action-btn btn-add"
+              onclick="showAddHostelModal()"
+            >
+              <i class="fas fa-plus"></i> Add Hostel
+            </a>
+            <a
+              href="#"
+              class="quick-action-btn btn-verify"
+              onclick="showSection('verification')"
+            >
+              <i class="fas fa-check-circle"></i> Verify Hostels
+            </a>
+            <a
+              href="#"
+              class="quick-action-btn btn-report"
+              onclick="showSection('reports')"
+            >
+              <i class="fas fa-chart-line"></i> Generate Report
+            </a>
+            <a
+              href="#"
+              class="quick-action-btn btn-settings"
+              onclick="showSection('settings')"
+            >
+              <i class="fas fa-cog"></i> System Settings
+            </a>
+          </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="content-card">
+          <h5 class="mb-3">Recent Activities</h5>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                  <th>User</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2 mins ago</td>
+                  <td>New hostel registration</td>
+                  <td>Kileleshwa Heights</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                </tr>
+                <tr>
+                  <td>15 mins ago</td>
+                  <td>Student booking confirmed</td>
+                  <td>John Doe</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>1 hour ago</td>
+                  <td>Payment received</td>
+                  <td>Jane Smith</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>3 hours ago</td>
+                  <td>Hostel verification</td>
+                  <td>Madaraka View</td>
+                  <td><span class="badge bg-primary">Verified</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hostels Section -->
+      <div id="hostels" class="content-section" style="display: none">
+        <div class="content-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>Hostel Management</h5>
+            <button class="btn btn-primary" onclick="showAddHostelModal()">
+              <i class="fas fa-plus"></i> Add New Hostel
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Hostel Name</th>
+                  <th>Location</th>
+                  <th>Rooms</th>
+                  <th>Occupancy</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Kileleshwa Heights</td>
+                  <td>Kileleshwa, Nairobi</td>
+                  <td>40</td>
+                  <td>35/40</td>
+                  <td><span class="badge bg-success">Active</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Madaraka View</td>
+                  <td>Madaraka, Nairobi</td>
+                  <td>25</td>
+                  <td>20/25</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Students Section -->
+      <div id="students" class="content-section" style="display: none">
+        <div class="content-card">
+          <h5 class="mb-3">Student Management</h5>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Email</th>
+                  <th>University</th>
+                  <th>Current Hostel</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>John Doe</td>
+                  <td>john.doe@student.strathmore.edu</td>
+                  <td>Strathmore University</td>
+                  <td>Kileleshwa Heights</td>
+                  <td><span class="badge bg-success">Active</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Jane Smith</td>
+                  <td>jane.smith@student.strathmore.edu</td>
+                  <td>Strathmore University</td>
+                  <td>Madaraka View</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bookings Section -->
+      <div id="bookings" class="content-section" style="display: none">
+        <div class="content-card">
+          <h5 class="mb-3">Booking Management</h5>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Student</th>
+                  <th>Hostel</th>
+                  <th>Room</th>
+                  <th>Check-in</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#BK001</td>
+                  <td>John Doe</td>
+                  <td>Kileleshwa Heights</td>
+                  <td>Room 201</td>
+                  <td>2025-01-15</td>
+                  <td>KES 15,000</td>
+                  <td><span class="badge bg-success">Confirmed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#BK002</td>
+                  <td>Jane Smith</td>
+                  <td>Madaraka View</td>
+                  <td>Room 105</td>
+                  <td>2025-01-20</td>
+                  <td>KES 12,000</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-success">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payments Section -->
+      <div id="payments" class="content-section" style="display: none">
+        <div class="content-card">
+          <h5 class="mb-3">Payment Management</h5>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Payment ID</th>
+                  <th>Student</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#PAY001</td>
+                  <td>John Doe</td>
+                  <td>KES 15,000</td>
+                  <td>M-Pesa</td>
+                  <td>2025-01-10</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-download"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#PAY002</td>
+                  <td>Jane Smith</td>
+                  <td>KES 12,000</td>
+                  <td>Bank Transfer</td>
+                  <td>2025-01-12</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-success">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Section -->
+      <div id="verification" class="content-section" style="display: none">
+        <div class="content-card">
+          <h5 class="mb-3">Hostel Verification</h5>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Hostel Name</th>
+                  <th>Owner</th>
+                  <th>Submitted</th>
+                  <th>Documents</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Langata Residence</td>
+                  <td>Peter Kimani</td>
+                  <td>2025-01-08</td>
+                  <td>
+                    <span class="badge bg-success">Complete</span>
+                  </td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-success">
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-times"></i> Reject
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Westlands View</td>
+                  <td>Mary Wanjiku</td>
+                  <td>2025-01-09</td>
+                  <td>
+                    <span class="badge bg-warning">Incomplete</span>
+                  </td>
+                  <td><span class="badge bg-danger">Action Required</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-envelope"></i> Request Docs
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports Section -->
+      <div id="reports" class="content-section" style="display: none">
+        <div class="content-card">
+          <h5 class="mb-3">System Reports</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h6>Monthly Occupancy Report</h6>
+                  <p class="text-muted">
+                    Generate detailed occupancy statistics
+                  </p>
+                  <button class="btn btn-primary">Generate Report</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h6>Payment Analytics</h6>
+                  <p class="text-muted">Revenue and payment method analysis</p>
+                  <button class="btn btn-primary">Generate Report</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div id="settings" class="content-section" style="display: none">
+        <div class="content-card">
+          <h5 class="mb-3">System Settings</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h6>Platform Configuration</h6>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="autoVerify"
+                      checked
+                    />
+                    <label class="form-check-label" for="autoVerify">
+                      Auto-verify payments
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailNotifications"
+                      checked
+                    />
+                    <label class="form-check-label" for="emailNotifications">
+                      Email notifications
+                    </label>
+                  </div>
+                  <button class="btn btn-primary mt-3">Save Settings</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h6>User Management</h6>
+                  <p class="text-muted">Manage admin users and permissions</p>
+                  <button class="btn btn-primary">Manage Users</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Add Hostel Modal -->
+    <div class="modal fade" id="addHostelModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Hostel</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addHostelForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="hostelName" class="form-label"
+                      >Hostel Name</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="hostelName"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="ownerName" class="form-label">Owner Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="ownerName"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="location"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="totalRooms" class="form-label"
+                      >Total Rooms</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="totalRooms"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="priceRange" class="form-label"
+                      >Price Range (KES)</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="priceRange"
+                      placeholder="e.g., 10,000 - 15,000"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="contactPhone" class="form-label"
+                      >Contact Phone</label
+                    >
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="contactPhone"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="amenities" class="form-label">Amenities</label>
+                <textarea
+                  class="form-control"
+                  id="amenities"
+                  rows="3"
+                  placeholder="List amenities separated by commas"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="hostelImages" class="form-label"
+                  >Hostel Images</label
+                >
+                <input
+                  type="file"
+                  class="form-control"
+                  id="hostelImages"
+                  multiple
+                  accept="image/*"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" form="addHostelForm">
+              Add Hostel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Global variables
+      let currentSection = "dashboard";
+      let sidebarCollapsed = false;
+
+      // Initialize dashboard
+      document.addEventListener("DOMContentLoaded", function () {
+        showSection("dashboard");
+      });
+
+      // Toggle sidebar
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.getElementById("main-content");
+        const toggleIcon = document.getElementById("toggle-icon");
+
+        sidebarCollapsed = !sidebarCollapsed;
+
+        if (sidebarCollapsed) {
+          sidebar.classList.add("collapsed");
+          mainContent.classList.add("expanded");
+          toggleIcon.classList.remove("fa-chevron-left");
+          toggleIcon.classList.add("fa-chevron-right");
+
+          // Hide nav text
+          document.querySelectorAll(".nav-text").forEach((text) => {
+            text.style.display = "none";
+          });
+        } else {
+          sidebar.classList.remove("collapsed");
+          mainContent.classList.remove("expanded");
+          toggleIcon.classList.remove("fa-chevron-right");
+          toggleIcon.classList.add("fa-chevron-left");
+
+          // Show nav text
+          document.querySelectorAll(".nav-text").forEach((text) => {
+            text.style.display = "inline";
+          });
+        }
+      }
+
+      // Show section
+      function showSection(sectionId) {
+        // Hide all sections
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.style.display = "none";
+        });
+
+        // Show selected section
+        document.getElementById(sectionId).style.display = "block";
+
+        // Update active nav link
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.classList.remove("active");
+        });
+
+        document
+          .querySelector(`[href="#${sectionId}"]`)
+          .classList.add("active");
+
+        currentSection = sectionId;
+      }
+
+      // Show add hostel modal
+      function showAddHostelModal() {
+        const modal = new bootstrap.Modal(
+          document.getElementById("addHostelModal")
+        );
+        modal.show();
+      }
+
+      // Handle form submissions
+      document
+        .getElementById("addHostelForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Get form data
+          const formData = new FormData(this);
+          const hostelData = {
+            name: document.getElementById("hostelName").value,
+            owner: document.getElementById("ownerName").value,
+            location: document.getElementById("location").value,
+            totalRooms: document.getElementById("totalRooms").value,
+            priceRange: document.getElementById("priceRange").value,
+            contactPhone: document.getElementById("contactPhone").value,
+            amenities: document.getElementById("amenities").value,
+            description: document.getElementById("description").value,
+          };
+
+          // Simulate API call
+          console.log("Adding hostel:", hostelData);
+
+          // Show success message
+          alert(
+            "Hostel added successfully! It will be reviewed before being published."
+          );
+
+          // Close modal and reset form
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("addHostelModal")
+          );
+          modal.hide();
+          this.reset();
+
+          // Refresh hostels section if currently viewing
+          if (currentSection === "hostels") {
+            // In a real app, you would refresh the hostels table here
+            console.log("Refreshing hostels table...");
+          }
+        });
+
+      // Simulate real-time updates
+      function updateStats() {
+        // In a real application, this would fetch data from the server
+        const stats = {
+          totalHostels: Math.floor(Math.random() * 50) + 20,
+          activeStudents: Math.floor(Math.random() * 200) + 100,
+          pendingBookings: Math.floor(Math.random() * 100) + 50,
+          pendingVerifications: Math.floor(Math.random() * 15) + 5,
+        };
+
+        // Update notification badge
+        const notificationBadge = document.querySelector(".notification-badge");
+        notificationBadge.textContent = stats.pendingVerifications;
+      }
+
+      // Update stats every 30 seconds
+      setInterval(updateStats, 30000);
+
+      // Handle table actions
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".btn-outline-primary")) {
+          const row = e.target.closest("tr");
+          const name = row.cells[0].textContent;
+          alert(`Viewing details for: ${name}`);
+        }
+
+        if (e.target.closest(".btn-outline-warning")) {
+          const row = e.target.closest("tr");
+          const name = row.cells[0].textContent;
+          alert(`Editing: ${name}`);
+        }
+
+        if (e.target.closest(".btn-outline-danger")) {
+          const row = e.target.closest("tr");
+          const name = row.cells[0].textContent;
+          if (confirm(`Are you sure you want to delete ${name}?`)) {
+            alert(`Deleted: ${name}`);
+          }
+        }
+
+        if (e.target.closest(".btn-outline-success")) {
+          const row = e.target.closest("tr");
+          const name = row.cells[0].textContent;
+          alert(`Approved: ${name}`);
+        }
+      });
+
+      // Handle responsive design
+      window.addEventListener("resize", function () {
+        if (window.innerWidth <= 768) {
+          if (!sidebarCollapsed) {
+            toggleSidebar();
+          }
+        }
+      });
+
+      // Initialize tooltips
+      const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      );
+      const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Search functionality
+      function searchTable(inputId, tableId) {
+        const input = document.getElementById(inputId);
+        const table = document.getElementById(tableId);
+        const rows = table.getElementsByTagName("tr");
+
+        input.addEventListener("keyup", function () {
+          const filter = input.value.toLowerCase();
+
+          for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName("td");
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+              if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                found = true;
+                break;
+              }
+            }
+
+            rows[i].style.display = found ? "" : "none";
+          }
+        });
+      }
+
+      // Export functionality
+      function exportData(format) {
+        alert(`Exporting data in ${format} format...`);
+        // In a real application, this would trigger a download
+      }
+
+      // Theme toggle
+      function toggleTheme() {
+        document.body.classList.toggle("dark-theme");
+        localStorage.setItem(
+          "theme",
+          document.body.classList.contains("dark-theme") ? "dark" : "light"
+        );
+      }
+
+      // Load saved theme
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-theme");
+      }
+
+      // Auto-save form data
+      function autoSave() {
+        const forms = document.querySelectorAll("form");
+        forms.forEach((form) => {
+          form.addEventListener("input", function () {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            localStorage.setItem(`autosave_${form.id}`, JSON.stringify(data));
+          });
+        });
+      }
+
+      // Load auto-saved data
+      function loadAutoSaved() {
+        const forms = document.querySelectorAll("form");
+        forms.forEach((form) => {
+          const saved = localStorage.getItem(`autosave_${form.id}`);
+          if (saved) {
+            const data = JSON.parse(saved);
+            Object.keys(data).forEach((key) => {
+              const input = form.querySelector(`[name="${key}"]`);
+              if (input) {
+                input.value = data[key];
+              }
+            });
+          }
+        });
+      }
+
+      // Initialize auto-save
+      autoSave();
+      loadAutoSaved();
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key) {
+            case "d":
+              e.preventDefault();
+              showSection("dashboard");
+              break;
+            case "h":
+              e.preventDefault();
+              showSection("hostels");
+              break;
+            case "s":
+              e.preventDefault();
+              showSection("students");
+              break;
+            case "b":
+              e.preventDefault();
+              showSection("bookings");
+              break;
+            case "p":
+              e.preventDefault();
+              showSection("payments");
+              break;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

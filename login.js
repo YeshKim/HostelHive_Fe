@@ -94,7 +94,7 @@ document
     showLoading(true);
 
     try {
-      // Simulate API call - replace with your actual API endpoint
+      // Simulate API call 
       const response = await fetch(
         `http://localhost:8099/api/auth/login-${userType}`,
         {

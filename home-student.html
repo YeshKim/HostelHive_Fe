@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hostel Hive - Find Your Perfect Student Home in Nairobi</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      /* Header Styles */
+      header {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.3s;
+      }
+
+      .nav-links a:hover {
+        opacity: 0.8;
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-outline:hover {
+        background: white;
+        color: #8b5cf6;
+      }
+
+      .btn-solid {
+        background: white;
+        background: #f0f0f0;
+      }
+
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+      }
+
+      .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      .search-container {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: 0 auto;
+        backdrop-filter: blur(10px);
+      }
+
+      .search-form {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .search-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+      }
+
+      .search-btn {
+        background: #7c3aed;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+      }
+
+      .search-btn:hover {
+        background: #6d28d9;
+      }
+
+      /* Features Section */
+      .features {
+        padding: 4rem 0;
+        background: #f8f9fa;
+      }
+
+      .features-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .features h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        color: #333;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: #8b5cf6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+        color: white;
+      }
+
+      .feature-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: #333;
+      }
+
+      .feature-card p {
+        color: #666;
+        line-height: 1.6;
+      }
+
+      /* Footer */
+      footer {
+        background: #1a202c;
+        color: white;
+        padding: 3rem 0 1rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+
+      .footer-section h3 {
+        color: #8b5cf6;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      .footer-section p {
+        line-height: 1.6;
+        opacity: 0.8;
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-links a {
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: #8b5cf6;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid #2d3748;
+        opacity: 0.7;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .search-form {
+          flex-direction: column;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <nav>
+        <div class="logo">Hostel Hive</div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#housing">Find Housing</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="#signin" class="btn btn-outline">Sign In</a>
+          <a href="#register" class="btn btn-solid">Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Find Your Perfect Student Home</h1>
+        <p>
+          Your trusted platform for finding verified student accommodation . Safe, affordable, and student-friendly housing options.
+        </p>
+
+        <div class="search-container">
+          <div class="search-form">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Enter location or university name"
+            />
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Budget (KSH)"
+            />
+          </div>
+          <button class="search-btn">Search Hostels</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="features-container">
+        <h2>Why Choose Hostel Hive?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">✓</div>
+            <h3>Verified Hostel Listings</h3>
+            <p>
+              All our hostel listings are thoroughly verified to ensure quality
+              and safety for students.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Real-time Availability</h3>
+            <p>
+              Get instant updates on room availability and book your
+              accommodation in real-time.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Secure M-Pesa Payments</h3>
+            <p>
+              Safe and convenient payment processing through M-Pesa for
+              hassle-free transactions.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Transparent Pricing</h3>
+            <p>
+              No hidden fees or surprises. Clear, upfront pricing for all
+              accommodation options.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Student-focused Search</h3>
+            <p>
+              Advanced filters designed specifically for student needs and
+              preferences.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h3>Prime Locations</h3>
+            <p>
+              Hostels near major universities and colleges across Nairobi for
+              easy commuting.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Hostel Hive</h3>
+          <p>
+            Your trusted platform for finding verified student accommodation in
+            Nairobi.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="#housing">Find Housing</a></li>
+            <li><a href="#list">List Your Property</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#help">Help Center</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <ul class="footer-links">
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#faq">FAQs</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="#privacy">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <ul class="footer-links">
+            <li><a href="#facebook">Facebook</a></li>
+            <li><a href="#twitter">Twitter</a></li>
+            <li><a href="#instagram">Instagram</a></li>
+            <li><a href="#whatsapp">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Hostel Hive. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Simple search functionality
+      document
+        .querySelector(".search-btn")
+        .addEventListener("click", function () {
+          const location = document.querySelector(
+            ".search-input:first-child"
+          ).value;
+          const budget = document.querySelector(
+            ".search-input:last-child"
+          ).value;
+
+          if (location.trim() === "") {
+            alert("Please enter a location or university name");
+            return;
+          }
+
+          // In a real application, this would redirect to search results
+          alert(
+            `Searching for hostels in ${location}${
+              budget ? ` with budget ${budget}` : ""
+            }`
+          );
+        });
+
+      // Mobile menu toggle (basic implementation)
+      const navLinks = document.querySelector(".nav-links");
+      const logo = document.querySelector(".logo");
+
+      // Add mobile menu functionality if needed
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 768) {
+          navLinks.style.display = "flex";
+        } else {
+          navLinks.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>
