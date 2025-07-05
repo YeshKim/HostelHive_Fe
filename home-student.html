@@ -113,8 +113,8 @@
       }
 
       .search-container {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2rem;
+        /* background: rgba(255, 255, 255, 0.1);
+        padding: 2rem; */
         border-radius: 10px;
         max-width: 600px;
         margin: 0 auto;
@@ -138,6 +138,22 @@
       .search-input:focus {
         outline: none;
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+      }
+
+      .budget-range {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .budget-range input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .budget-range span {
+        color: white;
+        font-size: 1rem;
       }
 
       .search-btn {
@@ -285,8 +301,12 @@
           flex-direction: column;
         }
 
-        .features-grid {
-          grid-template-columns: 1fr;
+        .budget-range {
+          flex-direction: column;
+        }
+
+        .budget-range span {
+          display: none;
         }
       }
     </style>
@@ -314,7 +334,7 @@
       <div class="hero-content">
         <h1>Find Your Perfect Student Home</h1>
         <p>
-          Your trusted platform for finding verified student accommodation . Safe, affordable, and student-friendly housing options.
+          Your trusted platform for finding verified student accommodation. Safe, affordable, and student-friendly housing options.
         </p>
 
         <div class="search-container">
@@ -324,11 +344,21 @@
               class="search-input"
               placeholder="Enter location or university name"
             />
-            <input
-              type="text"
-              class="search-input"
-              placeholder="Budget (KSH)"
-            />
+            <div class="budget-range">
+              <input
+                type="number"
+                class="search-input"
+                placeholder="Min Budget (KSH)"
+                min="0"
+              />
+              <span>-</span>
+              <input
+                type="number"
+                class="search-input"
+                placeholder="Max Budget (KSH)"
+                min="0"
+              />
+            </div>
           </div>
           <button class="search-btn">Search Hostels</button>
         </div>
@@ -431,20 +461,23 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2025 Hostel Hive. All rights reserved.</p>
+        <p>© 2025 Hostel Hive. All rights reserved.</p>
       </div>
     </footer>
 
     <script>
-      // Simple search functionality
+      // Search functionality with budget range
       document
         .querySelector(".search-btn")
         .addEventListener("click", function () {
           const location = document.querySelector(
             ".search-input:first-child"
           ).value;
-          const budget = document.querySelector(
-            ".search-input:last-child"
+          const minBudget = document.querySelector(
+            ".budget-range input:first-child"
+          ).value;
+          const maxBudget = document.querySelector(
+            ".budget-range input:last-child"
           ).value;
 
           if (location.trim() === "") {
@@ -452,12 +485,17 @@
             return;
           }
 
+          let budgetMessage = "";
+          if (minBudget && maxBudget) {
+            budgetMessage = ` with budget range KSH ${minBudget} - ${maxBudget}`;
+          } else if (minBudget) {
+            budgetMessage = ` with minimum budget KSH ${minBudget}`;
+          } else if (maxBudget) {
+            budgetMessage = ` with maximum budget KSH ${maxBudget}`;
+          }
+
           // In a real application, this would redirect to search results
-          alert(
-            `Searching for hostels in ${location}${
-              budget ? ` with budget ${budget}` : ""
-            }`
-          );
+          alert(`Searching for hostels in ${location}${budgetMessage}`);
         });
 
       // Mobile menu toggle (basic implementation)

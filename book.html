@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hostel Hive - Book Your Stay</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: #f8f9fa;
+      }
+
+      /* Header Styles */
+      header {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.3s;
+      }
+
+      .nav-links a:hover {
+        opacity: 0.8;
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-outline:hover {
+        background: white;
+        color: #8b5cf6;
+      }
+
+      .btn-solid {
+        background: white;
+        color: #8b5cf6;
+        border: 2px solid white;
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        background: white;
+        padding: 1rem 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .breadcrumb-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .breadcrumb-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .breadcrumb-nav a {
+        color: #8b5cf6;
+        text-decoration: none;
+      }
+
+      .breadcrumb-nav a:hover {
+        text-decoration: underline;
+      }
+
+      /* Main Content */
+      .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+      }
+
+      /* Booking Form */
+      .booking-form {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      .form-header h1 {
+        color: #8b5cf6;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-header p {
+        color: #666;
+        font-size: 1rem;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .section-icon {
+        width: 24px;
+        height: 24px;
+        background: #8b5cf6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group.full-width {
+        grid-column: span 2;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #8b5cf6;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .required {
+        color: #ef4444;
+      }
+
+      /* Room Selection */
+      .room-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .room-option {
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+      }
+
+      .room-option:hover {
+        border-color: #8b5cf6;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1);
+      }
+
+      .room-option.selected {
+        border-color: #8b5cf6;
+        background: #f3f4f6;
+      }
+
+      .room-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .room-info h4 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .room-info p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .room-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #10b981;
+      }
+
+      /* Payment Methods */
+      .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .payment-method {
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        position: relative;
+      }
+
+      .payment-method:hover {
+        border-color: #8b5cf6;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1);
+      }
+
+      .payment-method.selected {
+        border-color: #8b5cf6;
+        background: #f3f4f6;
+      }
+
+      .payment-method input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .payment-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .payment-method h4 {
+        color: #333;
+        margin-bottom: 0.3rem;
+      }
+
+      .payment-method p {
+        color: #666;
+        font-size: 0.8rem;
+      }
+
+      /* Terms and Conditions */
+      .terms-checkbox {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 5px;
+      }
+
+      .terms-checkbox input[type="checkbox"] {
+        margin-top: 0.2rem;
+        accent-color: #8b5cf6;
+      }
+
+      .terms-checkbox label {
+        color: #333;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .terms-checkbox a {
+        color: #8b5cf6;
+        text-decoration: none;
+      }
+
+      .terms-checkbox a:hover {
+        text-decoration: underline;
+      }
+
+      /* Submit Button */
+      .submit-section {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e5e7eb;
+      }
+
+      .btn-submit {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        border: none;
+        padding: 1rem 3rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      }
+
+      .btn-submit:hover {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+      }
+
+      .btn-submit:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Booking Summary */
+      .booking-summary {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+      }
+
+      .summary-header {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 1.5rem;
+        margin: -2rem -2rem 2rem -2rem;
+        border-radius: 10px 10px 0 0;
+        text-align: center;
+      }
+
+      .summary-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .hostel-info {
+        margin-bottom: 2rem;
+      }
+
+      .hostel-info h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+      }
+
+      .hostel-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      .detail-label {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .detail-value {
+        color: #333;
+        font-weight: 500;
+      }
+
+      .price-breakdown {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid #e5e7eb;
+      }
+
+      .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .price-row.total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #10b981;
+        border-top: 2px solid #e5e7eb;
+        padding-top: 1rem;
+        margin-top: 1rem;
+      }
+
+      .security-notice {
+        background: #ecfdf5;
+        border: 1px solid #10b981;
+        border-radius: 5px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .security-notice h4 {
+        color: #10b981;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .security-notice p {
+        color: #047857;
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 968px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+        
+        .booking-summary {
+          position: static;
+          order: -1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width {
+          grid-column: span 1;
+        }
+
+        .room-options {
+          grid-template-columns: 1fr;
+        }
+
+        .payment-methods {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Animation for form validation */
+      .form-group.error input,
+      .form-group.error select,
+      .form-group.error textarea {
+        border-color: #ef4444;
+        animation: shake 0.5s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+
+      .error-message {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <nav>
+        <div class="logo">Hostel Hive</div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#housing">Find Housing</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="#signin" class="btn btn-outline">Sign In</a>
+          <a href="#register" class="btn btn-solid">Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+      <div class="breadcrumb-container">
+        <nav class="breadcrumb-nav">
+          <a href="#home">Home</a>
+          <span>›</span>
+          <a href="#search">Search Results</a>
+          <span>›</span>
+          <span>Book Your Stay</span>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Booking Form -->
+      <div class="booking-form">
+        <div class="form-header">
+          <h1>Complete Your Booking</h1>
+          <p>Fill in your details to secure your accommodation</p>
+        </div>
+
+        <form id="bookingForm">
+          <!-- Personal Information -->
+          <div class="form-section">
+            <h3>
+              <div class="section-icon">1</div>
+              Personal Information
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="firstName">First Name <span class="required">*</span></label>
+                <input type="text" id="firstName" name="firstName" required>
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name <span class="required">*</span></label>
+                <input type="text" id="lastName" name="lastName" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="phone" name="phone" required>
+              </div>
+              <div class="form-group">
+                <label for="idNumber">ID/Passport Number <span class="required">*</span></label>
+                <input type="text" id="idNumber" name="idNumber" required>
+              </div>
+              <div class="form-group">
+                <label for="university">University/College</label>
+                <input type="text" id="university" name="university" value="University of Nairobi">
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Selection -->
+          <div class="form-section">
+            <h3>
+              <div class="section-icon">2</div>
+              Select Your Room
+            </h3>
+            <div class="room-options">
+              <div class="room-option selected">
+                <input type="radio" name="roomType" value="single" id="singleRoom" checked>
+                <div class="room-info">
+                  <h4>Single Room</h4>
+                  <p>Private room with shared bathroom</p>
+                  <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+                  <div class="room-price">KSH 8,500/month</div>
+                </div>
+              </div>
+              <div class="room-option">
+                <input type="radio" name="roomType" value="studio" id="studioRoom">
+                <div class="room-info">
+                  <h4>Studio Room</h4>
+                  <p>Private room with private bathroom</p>
+                  <p>Includes: Bed, Desk, Wardrobe, Kitchenette</p>
+                  <div class="room-price">KSH 12,000/month</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stay Duration -->
+          <div class="form-section">
+            <h3>
+              <div class="section-icon">3</div>
+              Stay Duration
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="checkIn">Check-in Date <span class="required">*</span></label>
+                <input type="date" id="checkIn" name="checkIn" required>
+              </div>
+              <div class="form-group">
+                <label for="duration">Duration <span class="required">*</span></label>
+                <select id="duration" name="duration" required>
+                  <option value="">Select duration</option>
+                  <option value="1">1 Month</option>
+                  <option value="3">3 Months</option>
+                  <option value="6">6 Months</option>
+                  <option value="12">1 Year</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="form-section">
+            <h3>
+              <div class="section-icon">4</div>
+              Emergency Contact
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="emergencyName">Contact Name <span class="required">*</span></label>
+                <input type="text" id="emergencyName" name="emergencyName" required>
+              </div>
+              <div class="form-group">
+                <label for="emergencyPhone">Contact Phone <span class="required">*</span></label>
+                <input type="tel" id="emergencyPhone" name="emergencyPhone" required>
+              </div>
+              <div class="form-group">
+                <label for="relationship">Relationship</label>
+                <select id="relationship" name="relationship">
+                  <option value="">Select relationship</option>
+                  <option value="parent">Parent</option>
+                  <option value="guardian">Guardian</option>
+                  <option value="sibling">Sibling</option>
+                  <option value="friend">Friend</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-section">
+            <h3>
+              <div class="section-icon">5</div>
+              Payment Method
+            </h3>
+            <div class="payment-methods">
+              <div class="payment-method selected">
+                <input type="radio" name="paymentMethod" value="mpesa" id="mpesa" checked>
+                <div class="payment-icon">📱</div>
+                <h4>M-Pesa</h4>
+                <p>Pay via mobile money</p>
+              </div>
+              <div class="payment-method">
+                <input type="radio" name="paymentMethod" value="bank" id="bank">
+                <div class="payment-icon">🏦</div>
+                <h4>Bank Transfer</h4>
+                <p>Direct bank payment</p>
+              </div>
+              <div class="payment-method">
+                <input type="radio" name="paymentMethod" value="card" id="card">
+                <div class="payment-icon">💳</div>
+                <h4>Credit/Debit Card</h4>
+                <p>Visa, Mastercard accepted</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Special Requests -->
+          <div class="form-section">
+            <h3>
+              <div class="section-icon">6</div>
+              Special Requests (Optional)
+            </h3>
+            <div class="form-group full-width">
+              <label for="specialRequests">Additional Information</label>
+              <textarea id="specialRequests" name="specialRequests" placeholder="Any special requests or dietary requirements..."></textarea>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div class="terms-checkbox">
+            <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
+            <label for="termsAccepted">
+              I agree to the <a href="#terms" target="_blank">Terms and Conditions</a> and 
+              <a href="#privacy" target="_blank">Privacy Policy</a>. I confirm that all information provided is accurate.
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="submit-section">
+            <button type="submit" class="btn-submit" id="submitBtn">
+              Complete Booking & Pay
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Booking Summary -->
+      <div class="booking-summary">
+        <div class="summary-header">
+          <h2>Booking Summary</h2>
+          <p>Review your selection</p>
+        </div>
+
+        <div class="hostel-info">
+          <h3>UoN Student Lodge</h3>
+          <div class="hostel-details">
+            <div class="detail-row">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">500m from UoN</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Room Type</span>
+              <span class="detail-value" id="selectedRoomType">Single Room</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Check-in</span>
+              <span class="detail-value" id="selectedCheckIn">Not selected</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Duration</span>
+              <span class="detail-value" id="selectedDuration">Not selected</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Payment Method</span>
+              <span class="detail-value" id="selectedPayment">M-Pesa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>Monthly Rent</span>
+            <span id="monthlyRent">KSH 8,500</span>
+          </div>
+          <div class="price-row">
+            <span>Security Deposit</span>
+            <span id="securityDeposit">KSH 8,500</span>
+          </div>
+          <div class="price-row">
+            <span>Registration Fee</span>
+            <span>KSH 500</span>
+          </div>
+          <div class="price-row total">
+            <span>Total Due Today</span>
+            <span id="totalAmount">KSH 17,500</span>
+          </div>
+        </div>
+
+        <div class="security-notice">
+          <h4>🔒 Secure Payment</h4>
+          <p>Your payment is protected by our secure payment system. All transactions are encrypted and your personal information is kept safe.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize form
+      document.addEventListener('DOMContentLoaded', function() {
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkIn').min = today;
+        
+        // Initialize event listeners
+        initializeEventListeners();
+      });
+
+      function initializeEventListeners() {
+        // Room selection
+        document.querySelectorAll('input[name="roomType"]').forEach(radio => {
+          radio.addEventListener('change', updateRoomSelection);
+        });
+
+        // Payment method selection
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+          radio.addEventListener('change', updatePaymentMethod);
+        });
+
+        // Duration selection
+        document.getElementById('duration').addEventListener('change', updateDuration);
+
+        // Check-in date
+        document.getElementById('checkIn').addEventListener('change', updateCheckIn);
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', handleFormSubmission);
+
+        // Real-time validation
+        document.querySelectorAll('input[required], select[required]').forEach(field => {
+          field.addEventListener('blur', validateField);
+        });
+      }
+
+      function updateRoomSelection() {
+        const selectedRoom = document.querySelector('input[name="roomType"]:checked');
+        const roomOptions = document.querySelectorAll('.room-option');
+        
+        // Update visual selection
+        roomOptions.forEach(option => {
+          option.classList.remove('selected');
+        });
+        selectedRoom.closest('.room-option').classList.add('selected');
+
+        // Update summary
+        const roomType = selectedRoom.value === 'single' ? 'Single Room' : 'Studio Room';
+        const price = selectedRoom.value === 'single' ? 8500 : 12000;
+        
+        document.getElementById('selectedRoomType').textContent = roomType;
+        document.getElementById('monthlyRent').textContent = `KSH ${price.toLocaleString()}`;
+        document.getElementById('securityDeposit').textContent = `KSH ${price.toLocaleString()}`;
+        document.getElementById('totalAmount').textContent = `KSH ${(price * 2 + 500).toLocaleString()}`;
+      }
+
+      function updatePaymentMethod() {
+        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        
+        // Update visual selection
+        paymentMethods.forEach(method => {
+          method.classList.remove('selected');
+        });
+        selectedPayment.closest('.payment-method').classList.add('selected');
+
+        // Update summary
+        const paymentText = selectedPayment.value === 'mpesa' ? 'M-Pesa' : 
+                           selectedPayment.value === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card';
+        document.getElementById('selectedPayment').textContent = paymentText;
+      }
+
+      function updateDuration() {
+        const duration = document.getElementById('duration').value;
+        const durationText = duration ? `${duration} Month${duration > 1 ? 's' : ''}` : 'Not selected';
+        document.getElementById('selectedDuration').textContent = durationText;
+      }
+
+      function updateCheckIn() {
+        const checkIn = document.getElementById('checkIn').value;
+        if (checkIn) {
+          const date = new Date(checkIn);
+          const formattedDate = date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          });
+          document.getElementById('selectedCheckIn').textContent = formattedDate;
+        } else {
+          document.getElementById('selectedCheckIn').textContent = 'Not selected';
+        }
+      }
+
+      function validateField(event) {
+        const field = event.target;
+        const formGroup = field.closest('.form-group');
+        
+        // Remove previous error state
+        formGroup.classList.remove('error');
+        const existingError = formGroup.querySelector('.error-message');
+        if (existingError) {
+          existingError.remove();
+        }
+
+        // Validate field
+        if (field.hasAttribute('required') && !field.value.trim()) {
+          showFieldError(formGroup, 'This field is required');
+          return false;
+        }
+
+        // Email validation
+        if (field.type === 'email' && field.value) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(field.value)) {
+            showFieldError(formGroup, 'Please enter a valid email address');
+            return false;
+          }
+        }
+
+        // Phone number validation
+        if (field.type === 'tel' && field.value) {
+          const phoneRegex = /^\+?\d{10,12}$/;
+          if (!phoneRegex.test(field.value)) {
+            showFieldError(formGroup, 'Please enter a valid phone number (10-12 digits)');
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function showFieldError(formGroup, message) {
+        formGroup.classList.add('error');
+        const errorElement = document.createElement('div');
+        errorElement.className = 'error-message';
+        errorElement.textContent = message;
+        formGroup.appendChild(errorElement);
+      }
+
+      function handleFormSubmission(event) {
+        event.preventDefault();
+        const form = event.target;
+        let isValid = true;
+
+        // Validate all required fields
+        form.querySelectorAll('input[required], select[required]').forEach(field => {
+          if (!validateField({ target: field })) {
+            isValid = false;
+          }
+        });
+
+        // Validate terms checkbox
+        const termsCheckbox = document.getElementById('termsAccepted');
+        const termsFormGroup = termsCheckbox.closest('.terms-checkbox');
+        const existingError = termsFormGroup.querySelector('.error-message');
+        if (existingError) {
+          existingError.remove();
+        }
+
+        if (!termsCheckbox.checked) {
+          const errorElement = document.createElement('div');
+          errorElement.className = 'error-message';
+          errorElement.textContent = 'You must agree to the terms and conditions';
+          termsFormGroup.appendChild(errorElement);
+          isValid = false;
+        }
+
+        if (!isValid) {
+          return;
+        }
+
+        // Collect form data
+        const formData = {
+          firstName: document.getElementById('firstName').value,
+          lastName: document.getElementById('lastName').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          idNumber: document.getElementById('idNumber').value,
+          university: document.getElementById('university').value,
+          roomType: document.querySelector('input[name="roomType"]:checked').value,
+          checkIn: document.getElementById('checkIn').value,
+          duration: document.getElementById('duration').value,
+          emergencyName: document.getElementById('emergencyName').value,
+          emergencyPhone: document.getElementById('emergencyPhone').value,
+          relationship: document.getElementById('relationship').value,
+          paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+          specialRequests: document.getElementById('specialRequests').value,
+        };
+
+        // In a real application, this would send data to a server
+        alert('Booking submitted successfully!\n\n' + 
+              `Name: ${formData.firstName} ${formData.lastName}\n` +
+              `Email: ${formData.email}\n` +
+              `Phone: ${formData.phone}\n` +
+              `Room Type: ${formData.roomType === 'single' ? 'Single Room' : 'Studio Room'}\n` +
+              `Check-in: ${new Date(formData.checkIn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n` +
+              `Duration: ${formData.duration} Month${formData.duration > 1 ? 's' : ''}\n` +
+              `Payment Method: ${formData.paymentMethod === 'mpesa' ? 'M-Pesa' : formData.paymentMethod === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card'}\n` +
+              `Total: KSH ${(formData.roomType === 'single' ? 8500 : 12000) * 2 + 500}`);
+
+        // Reset form after submission
+        form.reset();
+        updateRoomSelection();
+        updatePaymentMethod();
+        updateDuration();
+        updateCheckIn();
+      }
+    </script>
+  </body>
+</html>

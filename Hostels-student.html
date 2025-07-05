@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hostel Hive - Search Results</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: #f8f9fa;
+      }
+
+      /* Header Styles */
+      header {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.3s;
+      }
+
+      .nav-links a:hover {
+        opacity: 0.8;
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-outline:hover {
+        background: white;
+        color: #8b5cf6;
+      }
+
+      .btn-solid {
+        background: white;
+        color: #8b5cf6;
+        border: 2px solid white;
+      }
+
+      .btn-primary {
+        background: #7c3aed;
+        color: white;
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: #6d28d9;
+      }
+
+      /* Search Bar */
+      .search-bar {
+        background: white;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid #e5e7eb;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .search-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .search-form {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.8rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #8b5cf6;
+      }
+
+      .budget-inputs {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .budget-inputs input {
+        width: 120px;
+        padding: 0.8rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 5px;
+        font-size: 0.9rem;
+      }
+
+      .budget-inputs span {
+        color: #666;
+        font-weight: 500;
+      }
+
+      .search-btn {
+        background: #8b5cf6;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+      }
+
+      .search-btn:hover {
+        background: #7c3aed;
+      }
+
+      /* Main Content */
+      .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+      }
+
+      /* Filters Sidebar */
+      .filters {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+      }
+
+      .filters h3 {
+        color: #8b5cf6;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      .filter-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .filter-group h4 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .filter-options label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        padding: 0.3rem 0;
+        transition: color 0.3s;
+      }
+
+      .filter-options label:hover {
+        color: #8b5cf6;
+      }
+
+      .filter-options input[type="checkbox"] {
+        accent-color: #8b5cf6;
+      }
+
+      .price-range {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .price-range input {
+        padding: 0.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 5px;
+        font-size: 0.9rem;
+      }
+
+      /* Results Section */
+      .results {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .results-header {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .results-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .results-count {
+        opacity: 0.9;
+        font-size: 1rem;
+      }
+
+      .hostel-list {
+        padding: 1.5rem;
+      }
+
+      .hostel-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hostel-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .hostel-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+      }
+
+      .hostel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .hostel-title {
+        flex: 1;
+      }
+
+      .hostel-title h3 {
+        font-size: 1.4rem;
+        color: #333;
+        margin-bottom: 0.3rem;
+      }
+
+      .hostel-location {
+        color: #666;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .price-tag {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+        text-align: center;
+        min-width: 120px;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+
+      .price-tag .amount {
+        font-size: 1.3rem;
+        font-weight: bold;
+        display: block;
+      }
+
+      .price-tag .period {
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
+
+      .hostel-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 5px;
+      }
+
+      .detail-icon {
+        width: 20px;
+        height: 20px;
+        background: #8b5cf6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+      }
+
+      .amenities {
+        margin-bottom: 1rem;
+      }
+
+      .amenities h4 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .amenities-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .amenity-tag {
+        background: #e0e7ff;
+        color: #5b21b6;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .hostel-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+      }
+
+      .btn-view {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+        padding: 0.6rem 1.2rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+      }
+
+      .btn-view:hover {
+        background: #e5e7eb;
+        color: #111827;
+      }
+
+      .btn-book {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      }
+
+      .btn-book:hover {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+      }
+
+      .availability {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #10b981;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .availability.limited {
+        background: #f59e0b;
+      }
+
+      .availability.full {
+        background: #ef4444;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 968px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+        
+        .filters {
+          position: static;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .search-form {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .budget-inputs {
+          flex-direction: column;
+        }
+
+        .budget-inputs span {
+          display: none;
+        }
+
+        .hostel-header {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .hostel-details {
+          grid-template-columns: 1fr;
+        }
+
+        .hostel-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <nav>
+        <div class="logo">Hostel Hive</div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#housing">Find Housing</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="#signin" class="btn btn-outline">Sign In</a>
+          <a href="#register" class="btn btn-solid">Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Search Bar -->
+    <section class="search-bar">
+      <div class="search-container">
+        <div class="search-form">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Enter location or university name"
+            value="University of Nairobi"
+          />
+          <div class="budget-inputs">
+            <input type="number" placeholder="Min (KSH)" value="5000" />
+            <span>-</span>
+            <input type="number" placeholder="Max (KSH)" value="15000" />
+          </div>
+          <button class="search-btn">Update Search</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Filters Sidebar -->
+      <aside class="filters">
+        <h3>Filter Results</h3>
+        
+        <div class="filter-group">
+          <h4>Room Type</h4>
+          <div class="filter-options">
+            <label><input type="checkbox" checked> Single Room</label>
+            <label><input type="checkbox" checked> Shared Room</label>
+            <label><input type="checkbox"> Studio</label>
+            <label><input type="checkbox"> Bedsitter</label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Amenities</h4>
+          <div class="filter-options">
+            <label><input type="checkbox"> Wi-Fi</label>
+            <label><input type="checkbox"> Laundry</label>
+            <label><input type="checkbox"> Kitchen</label>
+            <label><input type="checkbox"> Parking</label>
+            <label><input type="checkbox"> Security</label>
+            <label><input type="checkbox"> Study Room</label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Distance</h4>
+          <div class="filter-options">
+            <label><input type="checkbox"> Under 1km</label>
+            <label><input type="checkbox"> 1-3km</label>
+            <label><input type="checkbox"> 3-5km</label>
+            <label><input type="checkbox"> 5km+</label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Price Range</h4>
+          <div class="price-range">
+            <input type="range" min="3000" max="25000" value="5000" id="minPrice">
+            <input type="range" min="3000" max="25000" value="15000" id="maxPrice">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666;">
+              <span>KSH 5,000</span>
+              <span>KSH 15,000</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Results Section -->
+      <main class="results">
+        <div class="results-header">
+          <h2>Available Hostels</h2>
+          <p class="results-count">12 hostels found near University of Nairobi</p>
+        </div>
+
+        <div class="hostel-list">
+          <!-- Hostel Card 1 -->
+          <div class="hostel-card">
+            <div class="availability">Available</div>
+            <div class="hostel-header">
+              <div class="hostel-title">
+                <h3>UoN Student Lodge</h3>
+                <div class="hostel-location">📍 500m from University of Nairobi</div>
+              </div>
+              <div class="price-tag">
+                <span class="amount">KSH 8,500</span>
+                <span class="period">per month</span>
+              </div>
+            </div>
+            
+            <div class="hostel-details">
+              <div class="detail-item">
+                <div class="detail-icon">🛏️</div>
+                <span>Single Room</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">👥</div>
+                <span>Mixed Gender</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">🚿</div>
+                <span>Shared Bathroom</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">🔒</div>
+                <span>24/7 Security</span>
+              </div>
+            </div>
+
+            <div class="amenities">
+              <h4>Amenities</h4>
+              <div class="amenities-list">
+                <span class="amenity-tag">Wi-Fi</span>
+                <span class="amenity-tag">Laundry</span>
+                <span class="amenity-tag">Kitchen</span>
+                <span class="amenity-tag">Study Room</span>
+                <span class="amenity-tag">Parking</span>
+              </div>
+            </div>
+
+            <div class="hostel-actions">
+              <a href="#" class="btn-view">View Details</a>
+              <button class="btn-book">Book Now</button>
+            </div>
+          </div>
+
+          <!-- Hostel Card 2 -->
+          <div class="hostel-card">
+            <div class="availability limited">3 rooms left</div>
+            <div class="hostel-header">
+              <div class="hostel-title">
+                <h3>Campus View Hostel</h3>
+                <div class="hostel-location">📍 800m from University of Nairobi</div>
+              </div>
+              <div class="price-tag">
+                <span class="amount">KSH 12,000</span>
+                <span class="period">per month</span>
+              </div>
+            </div>
+            
+            <div class="hostel-details">
+              <div class="detail-item">
+                <div class="detail-icon">🛏️</div>
+                <span>Studio</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">👥</div>
+                <span>Mixed Gender</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">🚿</div>
+                <span>Private Bathroom</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">🍳</div>
+                <span>Kitchenette</span>
+              </div>
+            </div>
+
+            <div class="amenities">
+              <h4>Amenities</h4>
+              <div class="amenities-list">
+                <span class="amenity-tag">Wi-Fi</span>
+                <span class="amenity-tag">Laundry</span>
+                <span class="amenity-tag">Gym</span>
+                <span class="amenity-tag">Balcony</span>
+                <span class="amenity-tag">Generator</span>
+              </div>
+            </div>
+
+            <div class="hostel-actions">
+              <a href="#" class="btn-view">View Details</a>
+              <button class="btn-book">Book Now</button>
+            </div>
+          </div>
+
+          <!-- Hostel Card 3 -->
+          <div class="hostel-card">
+            <div class="availability">Available</div>
+            <div class="hostel-header">
+              <div class="hostel-title">
+                <h3>Scholars Inn</h3>
+                <div class="hostel-location">📍 1.2km from University of Nairobi</div>
+              </div>
+              <div class="price-tag">
+                <span class="amount">KSH 6,500</span>
+                <span class="period">per month</span>
+              </div>
+            </div>
+            
+            <div class="hostel-details">
+              <div class="detail-item">
+                <div class="detail-icon">🛏️</div>
+                <span>Shared Room</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">👥</div>
+                <span>Male Only</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">🚿</div>
+                <span>Shared Bathroom</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">📚</div>
+                <span>Study Areas</span>
+              </div>
+            </div>
+
+            <div class="amenities">
+              <h4>Amenities</h4>
+              <div class="amenities-list">
+                <span class="amenity-tag">Wi-Fi</span>
+                <span class="amenity-tag">Laundry</span>
+                <span class="amenity-tag">Kitchen</span>
+                <span class="amenity-tag">Library</span>
+                <span class="amenity-tag">Cafeteria</span>
+              </div>
+            </div>
+
+            <div class="hostel-actions">
+              <a href="#" class="btn-view">View Details</a>
+              <button class="btn-book">Book Now</button>
+            </div>
+          </div>
+
+          <!-- Hostel Card 4 -->
+          <div class="hostel-card">
+            <div class="availability">Available</div>
+            <div class="hostel-header">
+              <div class="hostel-title">
+                <h3>Elite Student Residence</h3>
+                <div class="hostel-location">📍 1.5km from University of Nairobi</div>
+              </div>
+              <div class="price-tag">
+                <span class="amount">KSH 15,000</span>
+                <span class="period">per month</span>
+              </div>
+            </div>
+            
+            <div class="hostel-details">
+              <div class="detail-item">
+                <div class="detail-icon">🛏️</div>
+                <span>Single Room</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">👥</div>
+                <span>Mixed Gender</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">🚿</div>
+                <span>Private Bathroom</span>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">❄️</div>
+                <span>Air Conditioning</span>
+              </div>
+            </div>
+
+            <div class="amenities">
+              <h4>Amenities</h4>
+              <div class="amenities-list">
+                <span class="amenity-tag">Wi-Fi</span>
+                <span class="amenity-tag">Laundry</span>
+                <span class="amenity-tag">Kitchen</span>
+                <span class="amenity-tag">Swimming Pool</span>
+                <span class="amenity-tag">Gym</span>
+                <span class="amenity-tag">Elevator</span>
+              </div>
+            </div>
+
+            <div class="hostel-actions">
+              <a href="#" class="btn-view">View Details</a>
+              <button class="btn-book">Book Now</button>
+            </div>
+          </div>
+
+          <!-- Load More Button -->
+          <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn btn-primary">Load More Hostels</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Filter functionality
+      const filterCheckboxes = document.querySelectorAll('.filter-options input[type="checkbox"]');
+      const priceSliders = document.querySelectorAll('.price-range input[type="range"]');
+      const hostelCards = document.querySelectorAll('.hostel-card');
+
+      // Update search functionality
+      document.querySelector('.search-btn').addEventListener('click', function() {
+        const location = document.querySelector('.search-input').value;
+        const minBudget = document.querySelectorAll('.budget-inputs input')[0].value;
+        const maxBudget = document.querySelectorAll('.budget-inputs input')[1].value;
+        
+        // Simulate search update
+        document.querySelector('.results-count').textContent = 
+          `${Math.floor(Math.random() * 20) + 5} hostels found near ${location}`;
+      });
+
+      // Book Now button functionality
+      document.querySelectorAll('.btn-book').forEach(button => {
+        button.addEventListener('click', function() {
+          const hostelName = this.closest('.hostel-card').querySelector('h3').textContent;
+          const price = this.closest('.hostel-card').querySelector('.amount').textContent;
+          
+          if (confirm(`Book ${hostelName} for ${price} per month?\n\nThis will redirect you to the booking page.`)) {
+            alert('Redirecting to secure booking page...');
+            // In a real app, this would redirect to the booking page
+          }
+        });
+      });
+
+      // View Details functionality
+      document.querySelectorAll('.btn-view').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const hostelName = this.closest('.hostel-card').querySelector('h3').textContent;
+          alert(`Opening detailed view for ${hostelName}...`);
+          // In a real app, this would open a detailed view page
+        });
+      });
+
+      // Price range slider updates
+      priceSliders.forEach(slider => {
+        slider.addEventListener('input', function() {
+          const minPrice = document.getElementById('minPrice').value;
+          const maxPrice = document.getElementById('maxPrice').value;
+          const priceDisplay = document.querySelector('.price-range div');
+          priceDisplay.innerHTML = `
+            <span>KSH ${parseInt(minPrice).toLocaleString()}</span>
+            <span>KSH ${parseInt(maxPrice).toLocaleString()}</span>
+          `;
+        });
+      });
+
+      // Filter change simulation
+      filterCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          // Simulate filtering - in a real app, this would filter the results
+          const checkedFilters = Array.from(filterCheckboxes).filter(cb => cb.checked).length;
+          const totalHostels = Math.max(5, 20 - checkedFilters);
+          document.querySelector('.results-count').textContent = 
+            `${totalHostels} hostels found near University of Nairobi`;
+        });
+      });
+
+      // Load more functionality
+      document.querySelector('.btn-primary').addEventListener('click', function() {
+        this.textContent = 'Loading...';
+        setTimeout(() => {
+          this.textContent = 'Load More Hostels';
+          alert('More hostels loaded! (In a real app, this would load additional results)');
+        }, 1500);
+      });
+
+      // Mobile responsiveness
+      window.addEventListener('resize', function() {
+        if (window.innerWidth <= 768) {
+          document.querySelector('.nav-links').style.display = 'none';
+        } else {
+          document.querySelector('.nav-links').style.display = 'flex';
+        }
+      });
+    </script>
+  </body>
+</html>
