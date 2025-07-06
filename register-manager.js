@@ -74,20 +74,20 @@ function showAccountExistsMessage(email) {
   if (errorAlert && errorMessage) {
     errorMessage.innerHTML = `
             <div class="d-flex flex-column">
-              <div class="mb-3">
-                <strong>Account Already Exists!</strong><br>
-                An account with the email <strong>${email}</strong> already exists in our system.
-              </div>
-              <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-primary btn-sm" onclick="redirectToLogin('${email}')">
-                  <i class="fas fa-sign-in-alt me-1"></i>Go to Login
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" onclick="clearEmailField()">
-                  <i class="fas fa-edit me-1"></i>Use Different Email
-                </button>
-              </div>
+                <div class="mb-3">
+                    <strong>Account Already Exists!</strong><br>
+                    An account with the email <strong>${email}</strong> already exists in our system.
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-primary btn-sm" onclick="redirectToLogin('${email}')">
+                        <i class="fas fa-sign-in-alt me-1"></i>Go to Login
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="clearEmailField()">
+                        <i class="fas fa-edit me-1"></i>Use Different Email
+                    </button>
+                </div>
             </div>
-          `;
+        `;
     errorAlert.classList.remove("d-none");
 
     const formSection = document.querySelector(".form-section");
@@ -151,16 +151,12 @@ if (registerForm) {
         email: formData.get("email"),
         phoneNumber: formData.get("phone").replace(/\D/g, ""),
         password: formData.get("password"),
-        userType: "manager",
-        businessName: formData.get("businessName"),
-        businessRegistration: formData.get("businessRegistration"),
-        kraPin: formData.get("kraPin") || "",
-        businessDescription: formData.get("businessDescription") || "",
+        role: "ROLE_MANAGER",
       };
 
       console.log("Sending registration data:", registrationData);
 
-      const response = await fetch(`${BASE_URL}/api/auth/register-manager`, {
+      const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +176,7 @@ if (registerForm) {
         const userData = {
           email: formData.get("email"),
           fullName: registrationData.fullName,
-          userType: "ROLE_MANAGER",
+          role: "ROLE_MANAGER",
           registrationTime: new Date().toISOString(),
           verified: false,
         };
@@ -241,9 +237,6 @@ function validateForm(formData) {
   const firstName = formData.get("firstName");
   const lastName = formData.get("lastName");
   const agreeTerms = formData.get("agreeTerms");
-  const businessName = formData.get("businessName");
-  const businessRegistration = formData.get("businessRegistration");
-  const kraPin = formData.get("kraPin");
 
   if (!firstName || firstName.trim().length < 2) {
     const firstNameInput = document.getElementById("firstName");
@@ -284,27 +277,6 @@ function validateForm(formData) {
     const confirmPasswordInput = document.getElementById("confirmPassword");
     if (confirmPasswordInput) confirmPasswordInput.classList.add("is-invalid");
     showError("Please confirm your password");
-    return false;
-  }
-
-  if (!businessName || businessName.trim().length < 3) {
-    const businessNameInput = document.getElementById("businessName");
-    if (businessNameInput) businessNameInput.classList.add("is-invalid");
-    showError("Business name must be at least 3 characters long");
-    return false;
-  }
-
-  if (!businessRegistration || businessRegistration.trim().length === 0) {
-    const businessRegInput = document.getElementById("businessRegistration");
-    if (businessRegInput) businessRegInput.classList.add("is-invalid");
-    showError("Business registration number is required");
-    return false;
-  }
-
-  if (kraPin && kraPin.trim().length > 0 && !isValidKRAPin(kraPin.trim())) {
-    const kraPinInput = document.getElementById("kraPin");
-    if (kraPinInput) kraPinInput.classList.add("is-invalid");
-    showError("Please enter a valid KRA PIN (e.g., P051234567M)");
     return false;
   }
 
@@ -362,9 +334,6 @@ function validateForm(formData) {
     "password",
     "confirmPassword",
     "agreeTerms",
-    "businessName",
-    "businessRegistration",
-    "kraPin",
   ].forEach((id) => {
     const element = document.getElementById(id);
     if (element) element.classList.remove("is-invalid");
@@ -382,11 +351,6 @@ function isValidPhone(phone) {
   const cleanPhone = phone.replace(/[\s-()]/g, "");
   const kenyanPatterns = [/^(\+254|254)[17]\d{8}$/, /^0[17]\d{8}$/];
   return kenyanPatterns.some((pattern) => pattern.test(cleanPhone));
-}
-
-function isValidKRAPin(pin) {
-  const kraRegex = /^P\d{9}[A-Z]$/;
-  return kraRegex.test(pin.toUpperCase());
 }
 
 function showError(message) {
@@ -501,15 +465,10 @@ if (phoneInput) {
 }
 
 function populateDemoData() {
-  document.getElementById("firstName").value = "Jane";
-  document.getElementById("lastName").value = "Smith";
-  document.getElementById("email").value = "jane.smith@hostelbusiness.com";
-  document.getElementById("phone").value = "0723456789";
-  document.getElementById("businessName").value = "Premium Student Hostels";
-  document.getElementById("businessRegistration").value = "BUS123456789";
-  document.getElementById("kraPin").value = "P123456789K";
-  document.getElementById("businessDescription").value =
-    "Premium accommodation for students";
+  document.getElementById("firstName").value = "John";
+  document.getElementById("lastName").value = "Doe";
+  document.getElementById("email").value = "john.doe@example.com";
+  document.getElementById("phone").value = "0712345678";
   document.getElementById("password").value = "SecurePass123!";
   document.getElementById("password").dispatchEvent(new Event("input"));
   document.getElementById("confirmPassword").value = "SecurePass123!";
@@ -531,7 +490,7 @@ if (
 
 window.addEventListener("online", function () {
   console.log("Connection restored");
-});
+})
 
 window.addEventListener("offline", function () {
   showError("No internet connection. Please check your network and try again.");
@@ -542,4 +501,4 @@ console.log(
   "📝 Features: Manager registration, password strength, enhanced field validation, login redirect"
 );
 console.log("🔧 Demo data available for testing");
-console.log(`🌐 Backend URL: ${BASE_URL}/api/auth/`);
+console.log(`🌐 Backend URL: ${BASE_URL}/auth/`);

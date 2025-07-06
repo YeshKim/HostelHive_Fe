@@ -115,37 +115,70 @@ document
 
     try {
       // API call to login endpoint
-      const response = await fetch(`${BASE_URL}/api/auth/login-${userType}`, {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
-          Authorization: "Basic " + btoa(`${email}:${password}`),
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
-        const data = await response.text();
-        showSuccess(`Welcome back! Redirecting to ${userType} dashboard...`);
+        const data = await response.json();
+        const token = data.token;
 
-        // Store user session
-        const userData = {
-          email,
-          userType: `ROLE_${userType.toUpperCase()}`,
-          loginTime: new Date().toISOString(),
-        };
-
-        // Use sessionStorage for security
+        // Store token as a cookie
         try {
-          sessionStorage.setItem("currentUser", JSON.stringify(userData));
+          document.cookie = `jwtToken=${token}; path=/; SameSite=Strict; Secure`;
         } catch (e) {
-          console.warn("sessionStorage not available:", e);
+          console.warn("Cookie storage not available:", e);
         }
 
-        // Redirect to dashboard based on user type
-        setTimeout(() => {
-          window.location.href = `home-${userType}.html`;
-        }, 1500);
+        // Fetch user details from /users/me
+        const userResponse = await fetch(`${BASE_URL}/users/me`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          const role = userData.role;
+
+          // Store user session
+          const sessionData = {
+            email,
+            userType: role,
+            loginTime: new Date().toISOString(),
+          };
+
+          try {
+            sessionStorage.setItem("currentUser", JSON.stringify(sessionData));
+          } catch (e) {
+            console.warn("sessionStorage not available:", e);
+          }
+
+          // Determine redirect based on role
+          let redirectUrl;
+          if (role === "ROLE_STUDENT") {
+            redirectUrl = "home-student.html";
+          } else if (role === "ROLE_MANAGER") {
+            redirectUrl = "home-manager.html";
+          } else if (role === "ROLE_ADMIN") {
+            redirectUrl = "home-admin.html";
+          } else {
+            redirectUrl = "home.html"; // Fallback
+          }
+
+          showSuccess(`Welcome back! Redirecting to ${userType} dashboard...`);
+          setTimeout(() => {
+            window.location.href = redirectUrl;
+          }, 1500);
+        } else {
+          showError("Unable to fetch user details. Please try again.");
+        }
       } else {
         const errorData = await response.text();
         showError(errorData || "Invalid email or password. Please try again.");

@@ -1,10 +1,56 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hostel Hive - Manager Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --primary-50: #f3f0ff;
+        --primary-100: #e9e2ff;
+        --primary-500: #8b5cf6;
+        --primary-600: #7c3aed;
+        --primary-700: #6d28d9;
+        --primary-900: #4c1d95;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --success-50: #ecfdf5;
+        --success-500: #10b981;
+        --success-600: #059669;
+        --warning-50: #fffbeb;
+        --warning-500: #f59e0b;
+        --warning-600: #d97706;
+        --error-50: #fef2f2;
+        --error-500: #ef4444;
+        --error-600: #dc2626;
+        --info-50: #eff6ff;
+        --info-500: #3b82f6;
+        --info-600: #2563eb;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --border-radius: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -12,31 +58,54 @@
       }
 
       body {
-        font-family: "Arial", sans-serif;
-        background-color: #f8f9fa;
-        color: #333;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--gray-50) 0%,
+          var(--primary-50) 100%
+        );
+        color: var(--gray-800);
+        line-height: 1.6;
+        min-height: 100vh;
       }
 
       /* Header */
       header {
-        background: linear-gradient(135deg, #8b5cf6, #a855f7);
-        color: white;
-        padding: 1rem 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(
+          135deg,
+          var(--primary-600) 0%,
+          var(--primary-700) 100%
+        );
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: var(--shadow-lg);
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
       nav {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
-        padding: 0 2rem;
+        padding: 1rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
 
       .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo::before {
+        content: "🏠";
+        font-size: 1.5rem;
       }
 
       .nav-links {
@@ -46,13 +115,24 @@
       }
 
       .nav-links a {
-        color: white;
+        color: rgba(255, 255, 255, 0.9);
         text-decoration: none;
-        transition: opacity 0.3s;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: var(--transition);
+        position: relative;
       }
 
       .nav-links a:hover {
-        opacity: 0.8;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transform: translateY(-1px);
+      }
+
+      .nav-links a.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
       }
 
       .user-profile {
@@ -61,48 +141,112 @@
         gap: 1rem;
       }
 
+      .user-info {
+        text-align: right;
+        color: white;
+      }
+
+      .user-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .user-role {
+        font-size: 0.75rem;
+        opacity: 0.8;
+      }
+
       .profile-pic {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        background: white;
-        color: #8b5cf6;
+        background: linear-gradient(135deg, white, var(--gray-100));
+        color: var(--primary-600);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: var(--shadow-md);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        backdrop-filter: blur(10px);
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
       }
 
       /* Main Content */
       main {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
       }
 
+      /* Dashboard Header */
       .dashboard-header {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, white 0%, var(--gray-50) 100%);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
         margin-bottom: 2rem;
+        border: 1px solid var(--gray-200);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dashboard-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-500),
+          var(--primary-600),
+          var(--primary-700)
+        );
       }
 
       .dashboard-header h1 {
         font-size: 2.5rem;
+        font-weight: 700;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: var(--gray-900);
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .dashboard-header p {
-        color: #666;
+        color: var(--gray-600);
         font-size: 1.1rem;
+        font-weight: 400;
       }
 
       /* Stats Cards */
       .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
       }
@@ -110,51 +254,112 @@
       .stat-card {
         background: white;
         padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        transition: transform 0.3s;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
       }
 
       .stat-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--card-color);
+      }
+
+      .stat-card.rooms::before {
+        background: var(--success-500);
+      }
+      .stat-card.bookings::before {
+        background: var(--info-500);
+      }
+      .stat-card.revenue::before {
+        background: var(--warning-500);
+      }
+      .stat-card.occupancy::before {
+        background: var(--error-500);
+      }
+
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
       }
 
       .stat-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        margin: 0 auto 1rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
         color: white;
+        box-shadow: var(--shadow-md);
       }
 
       .stat-icon.rooms {
-        background: #10b981;
+        background: linear-gradient(
+          135deg,
+          var(--success-500),
+          var(--success-600)
+        );
       }
       .stat-icon.bookings {
-        background: #3b82f6;
+        background: linear-gradient(135deg, var(--info-500), var(--info-600));
       }
       .stat-icon.revenue {
-        background: #f59e0b;
+        background: linear-gradient(
+          135deg,
+          var(--warning-500),
+          var(--warning-600)
+        );
       }
       .stat-icon.occupancy {
-        background: #ef4444;
+        background: linear-gradient(135deg, var(--error-500), var(--error-600));
       }
 
       .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 0.5rem;
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.25rem;
+        line-height: 1.1;
       }
 
       .stat-label {
-        color: #666;
-        font-size: 1rem;
+        color: var(--gray-600);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-change {
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+      }
+
+      .stat-change.positive {
+        color: var(--success-600);
+      }
+      .stat-change.negative {
+        color: var(--error-600);
       }
 
       /* Action Buttons */
@@ -166,34 +371,52 @@
       }
 
       .btn {
-        padding: 0.8rem 1.5rem;
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        font-weight: 500;
-        transition: all 0.3s;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        white-space: nowrap;
       }
 
       .btn-primary {
-        background: #8b5cf6;
+        background: linear-gradient(
+          135deg,
+          var(--primary-500),
+          var(--primary-600)
+        );
         color: white;
+        border: 1px solid var(--primary-600);
       }
 
       .btn-primary:hover {
-        background: #7c3aed;
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
       }
 
       .btn-secondary {
-        background: #e5e7eb;
-        color: #374151;
+        background: white;
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
       }
 
       .btn-secondary:hover {
-        background: #d1d5db;
+        background: var(--gray-50);
+        border-color: var(--gray-400);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
       }
 
       /* Content Grid */
@@ -203,108 +426,128 @@
         gap: 2rem;
       }
 
-      .main-content {
+      .main-content,
+      .sidebar-card {
         background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
         overflow: hidden;
       }
 
-      .content-header {
-        background: #f8f9fa;
+      .content-header,
+      .sidebar-header {
+        background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
         padding: 1.5rem;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid var(--gray-200);
       }
 
-      .content-header h2 {
-        font-size: 1.5rem;
-        color: #333;
+      .content-header h2,
+      .sidebar-header h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gray-900);
       }
 
-      .content-body {
+      .content-body,
+      .sidebar-body {
         padding: 1.5rem;
       }
 
-      /* Property Table */
+      /* Enhanced Table */
+      .table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid var(--gray-200);
+      }
+
       .property-table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 0.9rem;
       }
 
       .property-table th,
       .property-table td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid var(--gray-200);
       }
 
       .property-table th {
-        background: #f8f9fa;
+        background: var(--gray-50);
         font-weight: 600;
-        color: #374151;
+        color: var(--gray-700);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8rem;
       }
 
       .property-table tr:hover {
-        background: #f8f9fa;
+        background: var(--gray-50);
       }
 
+      .property-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Enhanced Status Badges */
       .status-badge {
-        padding: 0.25rem 0.75rem;
+        padding: 0.375rem 0.75rem;
         border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .status-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
       }
 
       .status-active {
-        background: #d1fae5;
-        color: #065f46;
+        background: var(--success-50);
+        color: var(--success-600);
       }
 
       .status-pending {
-        background: #fef3c7;
-        color: #92400e;
+        background: var(--warning-50);
+        color: var(--warning-600);
       }
 
       .status-inactive {
-        background: #fee2e2;
-        color: #991b1b;
+        background: var(--error-50);
+        color: var(--error-600);
       }
 
-      /* Sidebar */
+      /* Sidebar Enhancements */
       .sidebar {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
       }
 
-      .sidebar-card {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-
-      .sidebar-header {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .sidebar-header h3 {
-        font-size: 1.2rem;
-        color: #333;
-      }
-
-      .sidebar-body {
-        padding: 1.5rem;
-      }
-
       .recent-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--gray-200);
+        transition: var(--transition);
+      }
+
+      .recent-item:hover {
+        background: var(--gray-50);
+        margin: 0 -1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
       }
 
       .recent-item:last-child {
@@ -313,21 +556,23 @@
 
       .recent-item-info h4 {
         font-size: 0.9rem;
-        color: #333;
+        color: var(--gray-900);
         margin-bottom: 0.25rem;
+        font-weight: 600;
       }
 
       .recent-item-info p {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--gray-600);
       }
 
       .recent-item-amount {
-        font-weight: bold;
-        color: #10b981;
+        font-weight: 700;
+        color: var(--success-600);
+        font-size: 0.9rem;
       }
 
-      /* Modal Styles */
+      /* Enhanced Modal */
       .modal {
         display: none;
         position: fixed;
@@ -336,28 +581,60 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
       }
 
       .modal-content {
-        background-color: white;
-        margin: 5% auto;
+        background: white;
+        margin: 2% auto;
         padding: 2rem;
-        border-radius: 10px;
+        border-radius: var(--border-radius);
         width: 90%;
-        max-width: 600px;
+        max-width: 700px;
         position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--gray-200);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
       }
 
       .close {
-        position: absolute;
-        right: 1rem;
-        top: 1rem;
-        font-size: 1.5rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--gray-100);
+        border: none;
         cursor: pointer;
-        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--gray-600);
+        transition: var(--transition);
       }
 
+      .close:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+      }
+
+      /* Enhanced Forms */
       .form-group {
         margin-bottom: 1.5rem;
       }
@@ -365,8 +642,9 @@
       .form-group label {
         display: block;
         margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #333;
+        font-weight: 600;
+        color: var(--gray-700);
+        font-size: 0.9rem;
       }
 
       .form-group input,
@@ -374,9 +652,19 @@
       .form-group textarea {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #d1d5db;
-        border-radius: 5px;
-        font-size: 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        background: white;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
       }
 
       .form-group textarea {
@@ -390,14 +678,52 @@
         gap: 1rem;
       }
 
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .nav-links {
-          display: none;
-        }
+      /* Loading States */
+      .loading {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--gray-600);
+        font-size: 0.9rem;
+      }
 
+      .loading::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--gray-300);
+        border-top: 2px solid var(--primary-500);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
         .content-grid {
           grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 1rem;
+        }
+
+        .nav-links {
+          display: none;
         }
 
         .stats-grid {
@@ -411,6 +737,34 @@
         .form-row {
           grid-template-columns: 1fr;
         }
+
+        main {
+          padding: 1rem;
+        }
+
+        .dashboard-header {
+          padding: 1.5rem;
+        }
+
+        .dashboard-header h1 {
+          font-size: 2rem;
+        }
+      }
+
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* Focus styles */
+      button:focus,
+      .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
       }
     </style>
   </head>
@@ -420,15 +774,19 @@
       <nav>
         <div class="logo">Hostel Hive</div>
         <ul class="nav-links">
-          <li><a href="#dashboard">Dashboard</a></li>
-          <li><a href="#properties">Properties</a></li>
+          <li><a href="#dashboard" class="active">Dashboard</a></li>
+          <li><a href="addproperty.html">Properties</a></li>
           <li><a href="#bookings">Bookings</a></li>
           <li><a href="#payments">Payments</a></li>
-          <li><a href="#reports">Reports</a></li>
+          <!-- <li><a href="#reports">Reports</a></li> -->
         </ul>
         <div class="user-profile">
-          <span>John Kimani</span>
-          <div class="profile-pic">JK</div>
+          <div class="user-info">
+            <div class="user-name" id="userName">Loading...</div>
+            <div class="user-role">Property Manager</div>
+          </div>
+          <div id="profilePic" class="profile-pic"></div>
+          <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
       </nav>
     </header>
@@ -437,44 +795,77 @@
     <main>
       <!-- Dashboard Header -->
       <div class="dashboard-header">
-        <h1>Welcome back, John!</h1>
-        <p>Manage your hostel properties and track your business performance</p>
+        <h1 id="welcomeMessage">Welcome back!</h1>
+        <p>
+          Manage your hostel properties and track your business performance with
+          ease
+        </p>
       </div>
 
       <!-- Stats Cards -->
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon rooms">🏠</div>
-          <div class="stat-number">24</div>
-          <div class="stat-label">Active Properties</div>
+        <div class="stat-card rooms">
+          <div class="stat-header">
+            <div>
+              <div id="activeProperties" class="stat-number">0</div>
+              <div class="stat-label">Active Properties</div>
+            </div>
+            <div class="stat-icon rooms">🏠</div>
+          </div>
+          <div class="stat-change positive">
+            <span>↗</span> +2 from last month
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon bookings">📅</div>
-          <div class="stat-number">156</div>
-          <div class="stat-label">Total Bookings</div>
+
+        <div class="stat-card bookings">
+          <div class="stat-header">
+            <div>
+              <div id="totalBookings" class="stat-number">0</div>
+              <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-icon bookings">📅</div>
+          </div>
+          <div class="stat-change positive"><span>↗</span> +15% this month</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon revenue">💰</div>
-          <div class="stat-number">KSh 2.4M</div>
-          <div class="stat-label">Monthly Revenue</div>
+
+        <div class="stat-card revenue">
+          <div class="stat-header">
+            <div>
+              <div id="monthlyRevenue" class="stat-number">KSh 0</div>
+              <div class="stat-label">Monthly Revenue</div>
+            </div>
+            <div class="stat-icon revenue">💰</div>
+          </div>
+          <div class="stat-change positive">
+            <span>↗</span> +8% vs last month
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon occupancy">📊</div>
-          <div class="stat-number">87%</div>
-          <div class="stat-label">Occupancy Rate</div>
+
+        <div class="stat-card occupancy">
+          <div class="stat-header">
+            <div>
+              <div id="occupancyRate" class="stat-number">0%</div>
+              <div class="stat-label">Occupancy Rate</div>
+            </div>
+            <div class="stat-icon occupancy">📊</div>
+          </div>
+          <div class="stat-change positive"><span>↗</span> +5% this week</div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
         <button class="btn btn-primary" onclick="openAddPropertyModal()">
-          ➕ Add New Property
+          <span>➕</span> Add New Property
         </button>
         <button class="btn btn-secondary" onclick="viewReports()">
-          📊 View Reports
+          <span>📊</span> View Reports
         </button>
         <button class="btn btn-secondary" onclick="manageBookings()">
-          📋 Manage Bookings
+          <span>📋</span> Manage Bookings
+        </button>
+        <button class="btn btn-secondary" onclick="exportData()">
+          <span>📤</span> Export Data
         </button>
       </div>
 
@@ -486,68 +877,28 @@
             <h2>Your Properties</h2>
           </div>
           <div class="content-body">
-            <table class="property-table">
-              <thead>
-                <tr>
-                  <th>Property Name</th>
-                  <th>Location</th>
-                  <th>Rooms</th>
-                  <th>Occupancy</th>
-                  <th>Monthly Revenue</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Strathmore Heights</td>
-                  <td>Madaraka Estate</td>
-                  <td>12/15</td>
-                  <td>80%</td>
-                  <td>KSh 180,000</td>
-                  <td>
-                    <span class="status-badge status-active">Active</span>
-                  </td>
-                  <td>
-                    <button class="btn btn-secondary" style="padding: 0.5rem">
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>University Lodge</td>
-                  <td>Madaraka Estate</td>
-                  <td>8/10</td>
-                  <td>80%</td>
-                  <td>KSh 120,000</td>
-                  <td>
-                    <span class="status-badge status-active">Active</span>
-                  </td>
-                  <td>
-                    <button class="btn btn-secondary" style="padding: 0.5rem">
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Student Paradise</td>
-                  <td>Madaraka Estate</td>
-                  <td>6/8</td>
-                  <td>75%</td>
-                  <td>KSh 96,000</td>
-                  <td>
-                    <span class="status-badge status-pending"
-                      >Pending Review</span
-                    >
-                  </td>
-                  <td>
-                    <button class="btn btn-secondary" style="padding: 0.5rem">
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-wrapper">
+              <table class="property-table">
+                <thead>
+                  <tr>
+                    <th>Property Name</th>
+                    <th>Location</th>
+                    <th>Rooms</th>
+                    <th>Occupancy</th>
+                    <th>Monthly Revenue</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="propertyTableBody">
+                  <tr>
+                    <td colspan="7">
+                      <div class="loading">Loading properties...</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -558,28 +909,8 @@
             <div class="sidebar-header">
               <h3>Recent Bookings</h3>
             </div>
-            <div class="sidebar-body">
-              <div class="recent-item">
-                <div class="recent-item-info">
-                  <h4>Mary Wanjiku</h4>
-                  <p>Strathmore Heights - Room 12</p>
-                </div>
-                <div class="recent-item-amount">KSh 15,000</div>
-              </div>
-              <div class="recent-item">
-                <div class="recent-item-info">
-                  <h4>Peter Ochieng</h4>
-                  <p>University Lodge - Room 5</p>
-                </div>
-                <div class="recent-item-amount">KSh 12,000</div>
-              </div>
-              <div class="recent-item">
-                <div class="recent-item-info">
-                  <h4>Grace Mutua</h4>
-                  <p>Student Paradise - Room 3</p>
-                </div>
-                <div class="recent-item-amount">KSh 12,000</div>
-              </div>
+            <div class="sidebar-body" id="recentBookings">
+              <div class="loading">Loading bookings...</div>
             </div>
           </div>
 
@@ -592,17 +923,23 @@
               <button
                 class="btn btn-primary"
                 style="width: 100%; margin-bottom: 1rem"
+                onclick="updateAvailability()"
               >
-                🔄 Update Availability
+                <span>🔄</span> Update Availability
               </button>
               <button
                 class="btn btn-secondary"
                 style="width: 100%; margin-bottom: 1rem"
+                onclick="messageStudents()"
               >
-                💬 Message Students
+                <span>💬</span> Message Students
               </button>
-              <button class="btn btn-secondary" style="width: 100%">
-                📧 Send Notifications
+              <button
+                class="btn btn-secondary"
+                style="width: 100%"
+                onclick="sendNotifications()"
+              >
+                <span>📧</span> Send Notifications
               </button>
             </div>
           </div>
@@ -613,57 +950,127 @@
     <!-- Add Property Modal -->
     <div id="addPropertyModal" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="closeAddPropertyModal()">&times;</span>
-        <h2>Add New Property</h2>
+        <div class="modal-header">
+          <h2>Add New Property</h2>
+          <button class="close" onclick="closeAddPropertyModal()">×</button>
+        </div>
+
         <form id="addPropertyForm">
           <div class="form-group">
-            <label for="propertyName">Property Name</label>
-            <input type="text" id="propertyName" name="propertyName" required />
+            <label for="propertyName">Property Name *</label>
+            <input
+              type="text"
+              id="propertyName"
+              name="name"
+              required
+              placeholder="Enter property name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="address">Full Address *</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              required
+              placeholder="Enter complete address"
+            />
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="location">Location</label>
+              <label for="location">Location *</label>
               <select id="location" name="location" required>
                 <option value="">Select Location</option>
-                <option value="madaraka">Madaraka Estate</option>
-                <option value="langata">Langata</option>
-                <option value="south-b">South B</option>
-                <option value="karen">Karen</option>
+                <option value="Madaraka, Nairobi">Madaraka, Nairobi</option>
+                <option value="Langata, Nairobi">Langata, Nairobi</option>
+                <option value="South B, Nairobi">South B, Nairobi</option>
+                <option value="Karen, Nairobi">Karen, Nairobi</option>
+                <option value="Kibera, Nairobi">Kibera, Nairobi</option>
+                <option value="Kasarani, Nairobi">Kasarani, Nairobi</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="totalRooms">Total Rooms</label>
+              <label for="totalRooms">Total Rooms *</label>
               <input
                 type="number"
                 id="totalRooms"
                 name="totalRooms"
                 min="1"
                 required
+                placeholder="e.g., 20"
               />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="pricePerRoom">Price per Room (KSh)</label>
+              <label for="availableRooms">Available Rooms *</label>
               <input
                 type="number"
-                id="pricePerRoom"
-                name="pricePerRoom"
+                id="availableRooms"
+                name="availableRooms"
                 min="0"
                 required
+                placeholder="e.g., 15"
               />
             </div>
             <div class="form-group">
-              <label for="propertyType">Property Type</label>
-              <select id="propertyType" name="propertyType" required>
+              <label for="pricePerMonth">Price per Month (KSh) *</label>
+              <input
+                type="number"
+                id="pricePerMonth"
+                name="pricePerMonth"
+                min="0"
+                required
+                placeholder="e.g., 15000"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="roomType">Room Type *</label>
+              <select id="roomType" name="roomType" required>
                 <option value="">Select Type</option>
                 <option value="boys">Boys Only</option>
                 <option value="girls">Girls Only</option>
                 <option value="mixed">Mixed</option>
               </select>
             </div>
+            <div class="form-group">
+              <label for="depositAmount">Deposit Amount (KSh)</label>
+              <input
+                type="number"
+                id="depositAmount"
+                name="depositAmount"
+                min="0"
+                placeholder="e.g., 15000"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contactPhone">Contact Phone *</label>
+            <input
+              type="tel"
+              id="contactPhone"
+              name="contactPhone"
+              required
+              placeholder="+254 7XX XXX XXX"
+              pattern="\+254[0-9]{9}"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="contactEmail">Contact Email</label>
+            <input
+              type="email"
+              id="contactEmail"
+              name="contactEmail"
+              placeholder="contact@example.com"
+            />
           </div>
 
           <div class="form-group">
@@ -671,7 +1078,7 @@
             <textarea
               id="amenities"
               name="amenities"
-              placeholder="List amenities separated by commas (e.g., Wi-Fi, Kitchen, Laundry, Security)"
+              placeholder="e.g., Wi-Fi, Kitchen, Laundry, Security"
             ></textarea>
           </div>
 
@@ -682,17 +1089,6 @@
               name="description"
               placeholder="Provide a detailed description of your property"
             ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="contactPhone">Contact Phone</label>
-            <input
-              type="tel"
-              id="contactPhone"
-              name="contactPhone"
-              placeholder="+254 7XX XXX XXX"
-              required
-            />
           </div>
 
           <div class="action-buttons">
@@ -710,79 +1106,244 @@
     </div>
 
     <script>
+      const API_BASE_URL = 'http://localhost:8099';
+
+      // Helper to get JWT token from cookie
+      function getToken() {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+          const [name, value] = cookie.trim().split('=');
+          if (name === 'jwtToken') {
+            return value;
+          }
+        }
+        return null;
+      }
+
+      // Axios instance with auth header
+      const axiosInstance = axios.create({
+        baseURL: API_BASE_URL,
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      axiosInstance.interceptors.request.use(config => {
+        const token = getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      });
+
+      // Logout handler
+      function logout() {
+        document.cookie = 'jwtToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        window.location.href = '/login.html';
+      }
+
+      // Fetch user data
+      async function fetchUserData() {
+        try {
+          const response = await axiosInstance.get('/users/me');
+          const user = response.data;
+          const userName = document.getElementById('userName');
+          const welcomeMessage = document.getElementById('welcomeMessage');
+          const profilePic = document.getElementById('profilePic');
+
+          userName.textContent = user.fullName || 'Manager';
+          welcomeMessage.textContent = `Welcome back, ${user.fullName ? user.fullName.split(' ')[0] : 'Manager'}!`;
+          const initials = user.fullName ? user.fullName.split(' ').map(n => n[0]).join('').substring(0, 2) : 'M';
+          profilePic.textContent = initials;
+          return user;
+        } catch (err) {
+          console.error('Error fetching user:', err);
+          alert('Session expired. Please log in again.');
+          logout();
+        }
+      }
+
+      // Fetch hostels and bookings
+      async function fetchData() {
+        try {
+          const [hostelsResponse, bookingsResponse] = await Promise.all([
+            axiosInstance.get('/api/hostels/by-manager'),
+            axiosInstance.get('/api/bookings/active'),
+          ]);
+          const hostels = hostelsResponse.data;
+          const bookings = bookingsResponse.data;
+
+          // Update property table
+          const tableBody = document.getElementById('propertyTableBody');
+          tableBody.innerHTML = '';
+          if (hostels.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="7">No properties found</td></tr>';
+          } else {
+            hostels.forEach(hostel => {
+              const row = document.createElement('tr');
+              const occupancy = hostel.totalRooms
+                ? Math.round(((hostel.totalRooms - hostel.availableRooms) / hostel.totalRooms) * 100)
+                : 0;
+              const monthlyRevenue = (hostel.pricePerMonth * (hostel.totalRooms - hostel.availableRooms)).toLocaleString('en-KE', { style: 'currency', currency: 'KES' });
+              row.innerHTML = `
+                <td>${hostel.name}</td>
+                <td>${hostel.location}</td>
+                <td>${hostel.availableRooms}/${hostel.totalRooms}</td>
+                <td>${occupancy}%</td>
+                <td>${monthlyRevenue}</td>
+                <td>
+                  <span class="status-badge ${hostel.isVerified ? 'status-active' : 'status-pending'}">
+                    ${hostel.isVerified ? 'Active' : 'Pending Review'}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary" style="padding: 0.5rem" onclick="editHostel(${hostel.id})">
+                    Edit
+                  </button>
+                </td>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+
+          // Update bookings
+          const bookingsDiv = document.getElementById('recentBookings');
+          bookingsDiv.innerHTML = '';
+          if (bookings.length === 0) {
+            bookingsDiv.innerHTML = '<p>No recent bookings</p>';
+          } else {
+            bookings.forEach(booking => {
+              const hostel = hostels.find(h => h.id === booking.roomId);
+              const item = document.createElement('div');
+              item.className = 'recent-item';
+              item.innerHTML = `
+                <div class="recent-item-info">
+                  <h4>Student ID: ${booking.studentId}</h4>
+                  <p>${hostel ? hostel.name : 'Unknown'} - Room ${booking.roomId}</p>
+                </div>
+                <div class="recent-item-amount">${hostel ? (hostel.pricePerMonth.toLocaleString('en-KE', { style: 'currency', currency: 'KES' })) : 'N/A'}</div>
+              `;
+              bookingsDiv.appendChild(item);
+            });
+          }
+
+          // Update stats
+          const activeProperties = hostels.filter(h => h.isVerified).length;
+          const totalBookings = bookings.length;
+          const monthlyRevenue = hostels.reduce(
+            (sum, h) => sum + (h.pricePerMonth * (h.totalRooms - h.availableRooms)),
+            0
+          );
+          const totalRooms = hostels.reduce((sum, h) => sum + h.totalRooms, 0);
+          const occupiedRooms = hostels.reduce(
+            (sum, h) => sum + (h.totalRooms - h.availableRooms),
+            0
+          );
+          const occupancyRate = totalRooms ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
+
+          document.getElementById('activeProperties').textContent = activeProperties;
+          document.getElementById('totalBookings').textContent = totalBookings;
+          document.getElementById('monthlyRevenue').textContent = monthlyRevenue.toLocaleString('en-KE', { style: 'currency', currency: 'KES' });
+          document.getElementById('occupancyRate').textContent = `${occupancyRate}%`;
+        } catch (err) {
+          console.error('Error fetching data:', err);
+          document.getElementById('propertyTableBody').innerHTML = '<tr><td colspan="7">Error loading properties</td></tr>';
+          document.getElementById('recentBookings').innerHTML = '<p>Error loading bookings</p>';
+        }
+      }
+
       // Modal Functions
       function openAddPropertyModal() {
-        document.getElementById("addPropertyModal").style.display = "block";
+        document.getElementById('addPropertyModal').style.display = 'block';
       }
 
       function closeAddPropertyModal() {
-        document.getElementById("addPropertyModal").style.display = "none";
+        document.getElementById('addPropertyModal').style.display = 'none';
       }
 
       // Form Submission
-      document
-        .getElementById("addPropertyForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+      document.getElementById('addPropertyForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const propertyData = {
+          name: formData.get('name'),
+          address: formData.get('address'),
+          location: formData.get('location'),
+          pricePerMonth: parseFloat(formData.get('pricePerMonth')),
+          totalRooms: parseInt(formData.get('totalRooms')),
+          availableRooms: parseInt(formData.get('availableRooms')),
+          roomType: formData.get('roomType'),
+          depositAmount: parseFloat(formData.get('depositAmount')) || null,
+          contactPhone: formData.get('contactPhone'),
+          contactEmail: formData.get('contactEmail') || null,
+          description: formData.get('description') || null,
+          amenities: formData.get('amenities') || null,
+          managerId: (await fetchUserData())?.id,
+          isVerified: false,
+          imagesBase64: [],
+        };
 
-          const formData = new FormData(this);
-          const propertyData = {
-            name: formData.get("propertyName"),
-            location: formData.get("location"),
-            totalRooms: formData.get("totalRooms"),
-            price: formData.get("pricePerRoom"),
-            type: formData.get("propertyType"),
-            amenities: formData.get("amenities"),
-            description: formData.get("description"),
-            contact: formData.get("contactPhone"),
-          };
+        // Basic validation
+        if (propertyData.availableRooms > propertyData.totalRooms) {
+          alert('Available rooms cannot exceed total rooms');
+          return;
+        }
 
-          // In a real application, this would send data to the server
-          console.log("Property Data:", propertyData);
-          alert(
-            "Property added successfully! It will be reviewed and activated within 24 hours."
-          );
-
+        try {
+          await axiosInstance.post('/api/hostels/post-hostel', propertyData);
+          alert('Property added successfully! It will be reviewed and activated within 24 hours.');
           closeAddPropertyModal();
           this.reset();
-        });
+          fetchData();
+        } catch (err) {
+          alert('Error adding property: ' + (err.response?.data?.message || err.message));
+        }
+      });
 
       // Quick Actions
       function viewReports() {
-        alert(
-          "Reports feature coming soon! You will be able to view detailed analytics about your properties."
-        );
+        alert('Reports feature coming soon! You will be able to view detailed analytics about your properties.');
       }
 
       function manageBookings() {
-        alert(
-          "Bookings management feature coming soon! You will be able to view and manage all your bookings."
-        );
+        alert('Bookings management feature coming soon! You will be able to view and manage all your bookings.');
+      }
+
+      function updateAvailability() {
+        alert('Update availability feature coming soon!');
+      }
+
+      function messageStudents() {
+        alert('Message students feature coming soon!');
+      }
+
+      function sendNotifications() {
+        alert('Send notifications feature coming soon!');
+      }
+
+      function editHostel(id) {
+        alert(`Edit hostel ID ${id} feature coming soon!`);
+      }
+
+      function exportData() {
+        alert('Export data feature coming soon! You will be able to export your properties and bookings data.');
       }
 
       // Close modal when clicking outside
       window.onclick = function (event) {
-        const modal = document.getElementById("addPropertyModal");
+        const modal = document.getElementById('addPropertyModal');
         if (event.target === modal) {
           closeAddPropertyModal();
         }
       };
 
-      // Update stats periodically (simulated)
-      function updateStats() {
-        const occupancyElement = document.querySelector(
-          ".stat-card:nth-child(4) .stat-number"
-        );
-        const currentOccupancy = parseInt(occupancyElement.textContent);
-        const newOccupancy = Math.max(
-          75,
-          Math.min(95, currentOccupancy + Math.floor(Math.random() * 6) - 3)
-        );
-        occupancyElement.textContent = newOccupancy + "%";
+      // Initialize
+      if (getToken()) {
+        fetchUserData();
+        fetchData();
+        setInterval(fetchData, 30000); // Poll every 30 seconds
+      } else {
+        alert('No session found. Please log in.');
+        window.location.href = '/login.html';
       }
-
-      // Update stats every 30 seconds (for demo purposes)
-      setInterval(updateStats, 30000);
     </script>
   </body>
 </html>
