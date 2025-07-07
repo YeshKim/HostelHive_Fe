@@ -3,365 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hostel Hive - Find Your Perfect Student Home in Nairobi</title>
+    <title>Hostel Hive - Find Your Perfect Student Housing</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
       body {
-        font-family: "Arial", sans-serif;
-        line-height: 1.6;
-        color: #333;
-      }
-
-      /* Header Styles */
-      header {
-        background: linear-gradient(135deg, #8b5cf6, #a855f7);
-        color: white;
-        padding: 1rem 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      nav {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
-      }
-
-      .nav-links {
-        display: flex;
-        list-style: none;
-        gap: 2rem;
-      }
-
-      .nav-links a {
-        color: white;
-        text-decoration: none;
-        transition: opacity 0.3s;
-      }
-
-      .nav-links a:hover {
-        opacity: 0.8;
-      }
-
-      .auth-buttons {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .btn {
-        padding: 0.5rem 1.5rem;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s;
-      }
-
-      .btn-outline {
-        background: transparent;
-        color: white;
-        border: 2px solid white;
-      }
-
-      .btn-outline:hover {
-        background: white;
-        color: #8b5cf6;
-      }
-
-      .btn-solid {
-        background: white;
-        color: #8b5cf6;
-      }
-
-      .btn-solid:hover {
-        background: #f0f0f0;
-      }
-
-      /* Hero Section */
-      .hero {
-        background: linear-gradient(135deg, #8b5cf6, #a855f7);
-        color: white;
-        padding: 4rem 0;
-        text-align: center;
-      }
-
-      .hero-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-      }
-
-      .hero h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        font-weight: bold;
-      }
-
-      .hero p {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-      }
-
-      .search-container {
-        border-radius: 10px;
-        max-width: 600px;
-        margin: 0 auto;
-        backdrop-filter: blur(10px);
-      }
-
-      .search-form {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .search-input {
-        flex: 1;
-        padding: 0.8rem;
-        border: none;
-        border-radius: 5px;
-        font-size: 1rem;
-      }
-
-      .search-input:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-      }
-
-      .budget-range {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-      }
-
-      .budget-range input {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .budget-range span {
-        color: white;
-        font-size: 1rem;
-      }
-
-      .search-btn {
-        background: #7c3aed;
-        color: white;
-        border: none;
-        padding: 0.8rem 1.5rem;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: background 0.3s;
-      }
-
-      .search-btn:hover {
-        background: #6d28d9;
-      }
-
-      /* Features Section */
-      .features {
-        padding: 4rem 0;
+        font-family: 'Arial', sans-serif;
         background: #f8f9fa;
       }
-
-      .features-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
+      .gradient-bg {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
       }
-
-      .features h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-        color: #333;
+      .search-input {
+        border: 2px solid #e5e7eb;
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        width: 100%;
       }
-
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
+      .search-input:focus {
+        outline: none;
+        border-color: #8b5cf6;
       }
-
-      .feature-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        text-align: center;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
+      .budget-range input {
+        border: 2px solid #e5e7eb;
+        border-radius: 0.375rem;
+        padding: 0.5rem;
+        width: 120px;
       }
-
-      .feature-card:hover {
-        transform: translateY(-5px);
-      }
-
-      .feature-icon {
-        width: 60px;
-        height: 60px;
+      .search-btn {
         background: #8b5cf6;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 1.5rem;
         color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        transition: background 0.3s;
       }
-
-      .feature-card h3 {
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-        color: #333;
+      .search-btn:hover {
+        background: #7c3aed;
       }
-
-      .feature-card p {
-        color: #666;
-        line-height: 1.6;
+      .mobile-menu {
+        display: none;
       }
-
-      /* Footer */
-      footer {
-        background: #1a202c;
-        color: white;
-        padding: 3rem 0 1rem;
-      }
-
-      .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-      }
-
-      .footer-section h3 {
-        color: #8b5cf6;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-      }
-
-      .footer-section p {
-        line-height: 1.6;
-        opacity: 0.8;
-      }
-
-      .footer-links {
-        list-style: none;
-      }
-
-      .footer-links li {
-        margin-bottom: 0.5rem;
-      }
-
-      .footer-links a {
-        color: #ccc;
-        text-decoration: none;
-        transition: color 0.3s;
-      }
-
-      .footer-links a:hover {
-        color: #8b5cf6;
-      }
-
-      .footer-bottom {
-        text-align: center;
-        padding-top: 2rem;
-        margin-top: 2rem;
-        border-top: 1px solid #2d3748;
-        opacity: 0.7;
-      }
-
-      /* Responsive Design */
       @media (max-width: 768px) {
+        .mobile-menu {
+          display: block;
+        }
         .nav-links {
           display: none;
         }
-
-        .hero h1 {
-          font-size: 2rem;
-        }
-
-        .search-form {
+        .nav-links.active {
+          display: flex;
           flex-direction: column;
-        }
-
-        .budget-range {
-          flex-direction: column;
-        }
-
-        .budget-range span {
-          display: none;
+          position: absolute;
+          top: 4rem;
+          left: 0;
+          right: 0;
+          background: #8b5cf6;
+          padding: 1rem;
         }
       }
     </style>
   </head>
   <body>
     <!-- Header -->
-    <header>
-      <nav>
-        <div class="logo">Hostel Hive</div>
-        <ul class="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#housing">Find Housing</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
+    <header class="gradient-bg text-white py-4 shadow-lg">
+      <nav class="container mx-auto px-4 flex justify-between items-center">
+        <div class="text-2xl font-bold">Hostel Hive</div>
+        <ul class="nav-links flex space-x-6 items-center">
+          <li><a href="#" class="hover:opacity-80">Home</a></li>
+          <li><a href="#" class="hover:opacity-80">Find Housing</a></li>
+          <li><a href="#" class="hover:opacity-80">About</a></li>
+          <li><a href="#" class="hover:opacity-80">Contact</a></li>
+          <li id="auth-links"></li>
         </ul>
-        <div class="auth-buttons">
-          <a href="login.html" class="btn btn-outline sign-in-btn">Sign In</a>
-          <a href="register-student.html" class="btn btn-solid register-btn">Register</a>
-          <a href="#" class="btn btn-outline logout-btn" style="display: none;">Logout</a>
+        <div class="mobile-menu md:hidden">
+          <button class="menu-toggle text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
       </nav>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Find Your Perfect Student Home</h1>
-        <p>
-          Your trusted platform for finding verified student accommodation. Safe, affordable, and student-friendly housing options.
-        </p>
-
-        <div class="search-container">
-          <div class="search-form">
-            <input
-              type="text"
-              class="search-input"
-              placeholder="Enter location or university name"
-            />
-            <div class="budget-range">
-              <input
-                type="number"
-                class="search-input"
-                placeholder="Min Budget (KSH)"
-                min="0"
-              />
-              <span>-</span>
-              <input
-                type="number"
-                class="search-input"
-                placeholder="Max Budget (KSH)"
-                min="0"
-              />
-            </div>
+    <section class="bg-gray-100 py-16">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Find Your Perfect Student Housing</h1>
+        <p class="text-lg md:text-xl text-gray-600 mb-8">Discover safe, affordable, and convenient hostels near your university.</p>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-4 max-w-3xl mx-auto">
+          <input type="text" class="search-input" placeholder="Enter location or university name" />
+          <div class="budget-range flex gap-2 items-center">
+            <input type="number" placeholder="Min (KSH)" value="5000" />
+            <span class="text-gray-600">-</span>
+            <input type="number" placeholder="Max (KSH)" value="15000" />
           </div>
           <button class="search-btn">Search Hostels</button>
         </div>
@@ -369,188 +102,117 @@
     </section>
 
     <!-- Features Section -->
-    <section class="features">
-      <div class="features-container">
-        <h2>Why Choose Hostel Hive?</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">✓</div>
-            <h3>Verified Hostel Listings</h3>
-            <p>
-              All our hostel listings are thoroughly verified to ensure quality
-              and safety for students.
-            </p>
+    <section class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Why Choose Hostel Hive?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="text-4xl mb-4">🏠</div>
+            <h3 class="text-xl font-semibold mb-2">Verified Hostels</h3>
+            <p class="text-gray-600">All hostels are verified for safety and quality, ensuring peace of mind.</p>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Real-time Availability</h3>
-            <p>
-              Get instant updates on room availability and book your
-              accommodation in real-time.
-            </p>
+          <div class="text-center">
+            <div class="text-4xl mb-4">💰</div>
+            <h3 class="text-xl font-semibold mb-2">Affordable Prices</h3>
+            <p class="text-gray-600">Find hostels that fit your budget with transparent pricing.</p>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Secure M-Pesa Payments</h3>
-            <p>
-              Safe and convenient payment processing through M-Pesa for
-              hassle-free transactions.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">💰</div>
-            <h3>Transparent Pricing</h3>
-            <p>
-              No hidden fees or surprises. Clear, upfront pricing for all
-              accommodation options.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔍</div>
-            <h3>Student-focused Search</h3>
-            <p>
-              Advanced filters designed specifically for student needs and
-              preferences.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📍</div>
-            <h3>Prime Locations</h3>
-            <p>
-              Hostels near major universities and colleges across Nairobi for
-              easy commuting.
-            </p>
+          <div class="text-center">
+            <div class="text-4xl mb-4">📍</div>
+            <h3 class="text-xl font-semibold mb-2">Prime Locations</h3>
+            <p class="text-gray-600">Choose from hostels close to your university and amenities.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Hostel Hive</h3>
-          <p>
-            Your trusted platform for finding verified student accommodation in
-            Nairobi.
-          </p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <ul class="footer-links">
-            <li><a href="#housing">Find Housing</a></li>
-            <li><a href="#list">List Your Property</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#help">Help Center</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h3>Support</h3>
-          <ul class="footer-links">
-            <li><a href="#contact">Contact Us</a></li>
-            <li><a href="#faq">FAQs</a></li>
-            <li><a href="#terms">Terms of Service</a></li>
-            <li><a href="#privacy">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h3>Connect</h3>
-          <ul class="footer-links">
-            <li><a href="#facebook">Facebook</a></li>
-            <li><a href="#twitter">Twitter</a></li>
-            <li><a href="#instagram">Instagram</a></li>
-            <li><a href="#whatsapp">WhatsApp</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
+    <footer class="gradient-bg text-white py-8">
+      <div class="container mx-auto px-4 text-center">
         <p>© 2025 Hostel Hive. All rights reserved.</p>
       </div>
     </footer>
 
     <script>
-      // Check login status and handle user type selection on page load
+      // Function to get cookie by name
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
       document.addEventListener('DOMContentLoaded', function() {
-        const authButtons = document.querySelector('.auth-buttons');
-        const signInBtn = document.querySelector('.sign-in-btn');
-        const registerBtn = document.querySelector('.register-btn');
-        const logoutBtn = document.querySelector('.logout-btn');
+        // Check for JWT token in cookie
+        const jwtToken = getCookie('jwtToken');
+        const authLinks = document.getElementById('auth-links');
 
-        // Check if user is logged in by looking for currentUser in sessionStorage
-        const currentUser = sessionStorage.getItem('currentUser');
-        let userType = 'student'; // Default user type
-
-        if (currentUser) {
-          // User is logged in - hide sign-in/register, show logout
-          signInBtn.style.display = 'none';
-          registerBtn.style.display = 'none';
-          logoutBtn.style.display = 'inline-block';
-          // Get user type from sessionStorage
-          const userData = JSON.parse(currentUser);
-          userType = userData.userType.replace('ROLE_', '').toLowerCase();
+        if (jwtToken) {
+          // If token exists, show logout option
+          authLinks.innerHTML = '<a href="#" class="btn-logout hover:opacity-80">Logout</a>';
         } else {
-          // User is not logged in - show sign-in/register, hide logout
-          signInBtn.style.display = 'inline-block';
-          registerBtn.style.display = 'inline-block';
-          logoutBtn.style.display = 'none';
+          // If no token, show sign-in and sign-up options
+          authLinks.innerHTML = `
+            <a href="login.html" class="hover:opacity-80">Sign In</a>
+            <span class="mx-2">|</span>
+            <a href="register-student.html" class="hover:opacity-80">Sign Up</a>
+          `;
         }
 
-        // Set register link based on user type
-        registerBtn.href = `register-${userType}.html`;
-      });
+        // Logout functionality
+        const logoutBtn = document.querySelector('.btn-logout');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Clear the JWT token cookie
+            document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            alert('You have been logged out.');
+            window.location.href = 'login.html';
+          });
+        }
 
-      // Logout handler
-      document.querySelector('.logout-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        // Clear session storage
-        sessionStorage.removeItem('currentUser');
-        // Redirect to home page
-        window.location.href = 'login.html';
-      });
+        // Search functionality with budget range
+        document.querySelector('.search-btn').addEventListener('click', function() {
+          const location = document.querySelector('.search-input').value;
+          const minBudget = document.querySelector('.budget-range input:first-child').value;
+          const maxBudget = document.querySelector('.budget-range input:last-child').value;
 
-      // Search functionality with budget range
-      document
-        .querySelector(".search-btn")
-        .addEventListener("click", function () {
-          const location = document.querySelector(
-            ".search-input:first-child"
-          ).value;
-          const minBudget = document.querySelector(
-            ".budget-range input:first-child"
-          ).value;
-          const maxBudget = document.querySelector(
-            ".budget-range input:last-child"
-          ).value;
-
-          if (location.trim() === "") {
-            alert("Please enter a location or university name");
+          if (location.trim() === '') {
+            alert('Please enter a location or university name');
             return;
           }
 
-          let budgetMessage = "";
-          if (minBudget && maxBudget) {
-            budgetMessage = ` with budget range KSH ${minBudget} - ${maxBudget}`;
-          } else if (minBudget) {
-            budgetMessage = ` with minimum budget KSH ${minBudget}`;
-          } else if (maxBudget) {
-            budgetMessage = ` with maximum budget KSH ${maxBudget}`;
-          }
-
-          // In a real application, this would redirect to search results
-          alert(`Searching for hostels in ${location}${budgetMessage}`);
+          // Construct the API URL with query parameters
+          let apiUrl = `http://localhost:8099/api/hostels/price?minPrice=${minBudget || 0}&maxPrice=${maxBudget || 1000000}`;
+          
+          // Make API call
+          fetch(apiUrl)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to fetch hostels');
+              }
+              return response.json();
+            })
+            .then(data => {
+              // Store search results and parameters in sessionStorage
+              sessionStorage.setItem('searchResults', JSON.stringify(data));
+              sessionStorage.setItem('searchLocation', location);
+              sessionStorage.setItem('minBudget', minBudget || '0');
+              sessionStorage.setItem('maxBudget', maxBudget || '1000000');
+              // Redirect to hostels-student.html
+              window.location.href = 'hostels-student.html';
+            })
+            .catch(error => {
+              console.error('Error fetching hostels:', error);
+              alert('Error fetching hostels. Please try again later.');
+            });
         });
 
-      // Mobile menu toggle (basic implementation)
-      const navLinks = document.querySelector(".nav-links");
-      const logo = document.querySelector(".logo");
-
-      // Add mobile menu functionality if needed
-      window.addEventListener("resize", function () {
-        if (window.innerWidth > 768) {
-          navLinks.style.display = "flex";
-        } else {
-          navLinks.style.display = "none";
-        }
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        menuToggle.addEventListener('click', function() {
+          navLinks.classList.toggle('active');
+        });
       });
     </script>
   </body>

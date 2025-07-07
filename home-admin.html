@@ -437,7 +437,6 @@
                   <i class="fas fa-users fa-2x"></i>
                 </div>
               </div>
-              </div>
             </div>
           </div>
           <div class="col-md-3">
@@ -652,7 +651,12 @@
                   <p class="text-muted">
                     Generate detailed occupancy statistics
                   </p>
-                  <button class="btn btn-primary" onclick="generateReport('occupancy')">Generate Report</button>
+                  <button
+                    class="btn btn-primary"
+                    onclick="generateReport('occupancy')"
+                  >
+                    Generate Report
+                  </button>
                 </div>
               </div>
             </div>
@@ -661,7 +665,12 @@
                 <div class="card-body">
                   <h6>Payment Analytics</h6>
                   <p class="text-muted">Revenue and payment method analysis</p>
-                  <button class="btn btn-primary" onclick="generateReport('payment')">Generate Report</button>
+                  <button
+                    class="btn btn-primary"
+                    onclick="generateReport('payment')"
+                  >
+                    Generate Report
+                  </button>
                 </div>
               </div>
             </div>
@@ -700,7 +709,9 @@
                       Email notifications
                     </label>
                   </div>
-                  <button class="btn btn-primary mt-3" onclick="saveSettings()">Save Settings</button>
+                  <button class="btn btn-primary mt-3" onclick="saveSettings()">
+                    Save Settings
+                  </button>
                 </div>
               </div>
             </div>
@@ -709,7 +720,12 @@
                 <div class="card-body">
                   <h6>User Management</h6>
                   <p class="text-muted">Manage admin users and permissions</p>
-                  <button class="btn btn-primary" onclick="showSection('students')">Manage Users</button>
+                  <button
+                    class="btn btn-primary"
+                    onclick="showSection('students')"
+                  >
+                    Manage Users
+                  </button>
                 </div>
               </div>
             </div>
@@ -787,7 +803,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="priceRange" class="form-label"
+                    <label for="pricePerMonth" class="form-label"
                       >Price per Month (KES)</label
                     >
                     <input
@@ -858,672 +874,851 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
-<script>
-  // Global variables
-  let currentSection = "dashboard";
-  let sidebarCollapsed = false;
-  const API_BASE_URL = "http://localhost:8099";
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+ <script>
+      // Global variables
+      let currentSection = "dashboard";
+      let sidebarCollapsed = false;
+      const API_BASE_URL = "http://localhost:8099";
 
-  // Helper to get JWT token from cookie
-  function getJwtToken() {
-    const cookies = document.cookie.split(";");
-    for (let cookie of cookies) {
-      const [name, value] = cookie.trim().split("=");
-      if (name === "jwtToken") {
-        return value;
+      // Helper to get JWT token from cookie
+      function getJwtToken() {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+          const [name, value] = cookie.trim().split("=");
+          if (name === "jwtToken") {
+            return value;
+          }
+        }
+        return null;
       }
-    }
-    return null;
-  }
 
-  // Axios instance with auth header
-  const axiosInstance = axios.create({
-    baseURL: API_BASE_URL,
-    headers: { "Content-Type": "application/json" },
-  });
-
-  axiosInstance.interceptors.request.use((config) => {
-    const token = getJwtToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
-
-  // Logout handler
-  function logout() {
-    document.cookie = "jwtToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-    window.location.href = "/login.html";
-  }
-
-  // Initialize dashboard
-  document.addEventListener("DOMContentLoaded", function () {
-    if (!getJwtToken()) {
-      alert("No session found. Please log in.");
-      window.location.href = "/login.html";
-      return;
-    }
-    showSection("dashboard");
-  });
-
-  // Toggle sidebar
-  function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    const mainContent = document.getElementById("main-content");
-    const toggleIcon = document.getElementById("toggle-icon");
-
-    sidebarCollapsed = !sidebarCollapsed;
-
-    if (sidebarCollapsed) {
-      sidebar.classList.add("collapsed");
-      mainContent.classList.add("expanded");
-      toggleIcon.classList.remove("fa-chevron-left");
-      toggleIcon.classList.add("fa-chevron-right");
-      document.querySelectorAll(".nav-text").forEach((text) => {
-        text.style.display = "none";
+      // Axios instance with auth header
+      const axiosInstance = axios.create({
+        baseURL: API_BASE_URL,
+        headers: { "Content-Type": "application/json" },
       });
-    } else {
-      sidebar.classList.remove("collapsed");
-      mainContent.classList.remove("expanded");
-      toggleIcon.classList.remove("fa-chevron-right");
-      toggleIcon.classList.add("fa-chevron-left");
-      document.querySelectorAll(".nav-text").forEach((text) => {
-        text.style.display = "inline";
+
+      axiosInstance.interceptors.request.use((config) => {
+        const token = getJwtToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
       });
-    }
-  }
 
-  // Show section
-  function showSection(sectionId) {
-    document.querySelectorAll(".content-section").forEach((section) => {
-      section.style.display = "none";
-    });
-    document.getElementById(sectionId).style.display = "block";
-    document.querySelectorAll(".nav-link").forEach((link) => {
-      link.classList.remove("active");
-    });
-    document.querySelector(`[href="#${sectionId}"]`).classList.add("active");
-
-    currentSection = sectionId;
-
-    switch (sectionId) {
-      case "dashboard":
-        fetchDashboardStats();
-        fetchRecentActivities();
-        break;
-      case "hostels":
-        fetchHostels();
-        break;
-      case "students":
-        fetchStudents();
-        break;
-      case "bookings":
-        fetchBookings();
-        break;
-      case "payments":
-        fetchPayments();
-        break;
-      case "verification":
-        fetchVerifications();
-        break;
-    }
-  }
-
-  // Fetch dashboard statistics
-  async function fetchDashboardStats() {
-    try {
-      const [hostelsRes, studentsRes, bookingsRes] = await Promise.all([
-        axiosInstance.get("/api/hostels/all"), // Fetch all hostels
-        axiosInstance.get("/users/by-role?name=ROLE_STUDENT"), // Fetch ROLE_STUDENT users
-        axiosInstance.get("/api/bookings/active"), // Fetch active bookings
-      ]);
-
-      const hostels = hostelsRes.data;
-      const students = studentsRes.data;
-      const bookings = bookingsRes.data;
-
-      // Count verified hostels
-      const verifiedHostels = hostels.filter(h => h.isVerified);
-
-      document.getElementById("total-hostels").textContent = verifiedHostels.length;
-      document.getElementById("active-students").textContent = students.length;
-      document.getElementById("pending-bookings").textContent = bookings.length;
-      document.getElementById("pending-verifications").textContent = hostels.filter(h => !h.isVerified).length;
-      document.getElementById("notification-badge").textContent = hostels.filter(h => !h.isVerified).length;
-    } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
-      handleError(error, "Failed to load dashboard statistics.");
-    }
-  }
-
-  // Fetch recent activities
-  async function fetchRecentActivities() {
-    try {
-      const response = await axiosInstance.get("/api/bookings/active");
-      const bookings = response.data;
-      const tbody = document.getElementById("recent-activities-body");
-      tbody.innerHTML = "";
-
-      bookings.slice(0, 4).forEach((booking) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${new Date().toLocaleTimeString()}</td>
-          <td>Booking #${booking.id}</td>
-          <td>${booking.student ? booking.student.name : 'Unknown'}</td>
-          <td><span class="badge bg-${booking.status === 'CONFIRMED' ? 'success' : 'warning'}">${booking.status}</span></td>
-        `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching recent activities:", error);
-      handleError(error, "Failed to load recent activities.");
-    }
-  }
-
-  // Fetch verified hostels
-  async function fetchHostels() {
-    try {
-      const response = await axiosInstance.get("/api/hostels/all");
-      const hostels = response.data.filter(h => h.isVerified); // Filter for verified hostels
-      const tbody = document.getElementById("hostels-table-body");
-      tbody.innerHTML = "";
-
-      hostels.forEach((hostel) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${hostel.name}</td>
-          <td>${hostel.location}</td>
-          <td>${hostel.totalRooms}</td>
-          <td>${hostel.availableRooms}/${hostel.totalRooms}</td>
-          <td><span class="badge bg-success">Verified</span></td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="viewHostel(${hostel.id})">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-warning" onclick="editHostel(${hostel.id})">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteHostel(${hostel.id})">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching hostels:", error);
-      handleError(error, "Failed to load hostels.");
-    }
-  }
-
-  // Fetch students (ROLE_STUDENT only)
-  async function fetchStudents() {
-    try {
-      const response = await axiosInstance.get("/users/by-role?name=ROLE_STUDENT");
-      const students = response.data;
-      const tbody = document.getElementById("students-table-body");
-      tbody.innerHTML = "";
-
-      students.forEach((student) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${student.fullName}</td>
-          <td>${student.email}</td>
-          <td>${student.university || 'N/A'}</td>
-          <td>${student.hostel ? student.hostel.name : 'None'}</td>
-          <td><span class="badge bg-success">Active</span></td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="viewStudent(${student.id})">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-warning" onclick="editStudent(${student.id})">
-              <i class="fas fa-edit"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching students:", error);
-      handleError(error, "Failed to load students.");
-    }
-  }
-
-  // Fetch bookings
-  async function fetchBookings() {
-    try {
-      const response = await axiosInstance.get("/api/bookings/active");
-      const bookings = response.data;
-      const tbody = document.getElementById("bookings-table-body");
-      tbody.innerHTML = "";
-
-      bookings.forEach((booking) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>#${booking.id}</td>
-          <td>${booking.student ? booking.student.name : 'Unknown'}</td>
-          <td>${booking.hostel ? booking.hostel.name : 'N/A'}</td>
-          <td>${booking.room ? booking.room.roomNumber : 'N/A'}</td>
-          <td>${new Date(booking.checkInDate).toLocaleDateString()}</td>
-          <td>KES ${booking.amount}</td>
-          <td><span class="badge bg-${booking.status === 'CONFIRMED' ? 'success' : 'warning'}">${booking.status}</span></td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="viewBooking(${booking.id})">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" onclick="cancelBooking(${booking.id})">
-              <i class="fas fa-times"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching bookings:", error);
-      handleError(error, "Failed to load bookings.");
-    }
-  }
-
-  // Fetch payments
-  async function fetchPayments() {
-    try {
-      const response = await axiosInstance.get("/api/bookings/active");
-      const bookings = response.data;
-      const tbody = document.getElementById("payments-table-body");
-      tbody.innerHTML = "";
-
-      bookings.forEach((booking) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>#PAY${booking.id}</td>
-          <td>${booking.student ? booking.student.name : 'Unknown'}</td>
-          <td>KES ${booking.amount}</td>
-          <td>${booking.paymentMethod || 'N/A'}</td>
-          <td>${new Date(booking.checkInDate).toLocaleDateString()}</td>
-          <td><span class="badge bg-${booking.status === 'CONFIRMED' ? 'success' : 'warning'}">${booking.status}</span></td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="viewPayment(${booking.id})">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary" onclick="downloadReceipt(${booking.id})">
-              <i class="fas fa-download"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching payments:", error);
-      handleError(error, "Failed to load payments.");
-    }
-  }
-
-  // Fetch verifications
-  async function fetchVerifications() {
-    try {
-      const response = await axiosInstance.get("/api/hostels/all");
-      const hostels = response.data;
-      const tbody = document.getElementById("verification-table-body");
-      tbody.innerHTML = "";
-
-      hostels.filter(h => !h.isVerified).forEach((hostel) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${hostel.name}</td>
-          <td>${hostel.owner}</td>
-          <td>${new Date().toLocaleDateString()}</td>
-          <td><span class="badge bg-warning">Incomplete</span></td>
-          <td><span class="badge bg-warning">Pending</span></td>
-          <td>
-            <button class="btn btn-sm btn-outline-success" onclick="approveHostel(${hostel.id})">
-              <i class="fas fa-check"></i> Approve
-            </button>
-            <button class="btn btn-sm btn-outline-danger" onclick="rejectHostel(${hostel.id})">
-              <i class="fas fa-times"></i> Reject
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching verifications:", error);
-      handleError(error, "Failed to load verifications.");
-    }
-  }
-
-  // Error handling
-  function handleError(error, defaultMessage) {
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      alert("Unauthorized access. Please log in.");
-      logout();
-    } else {
-      alert(defaultMessage);
-    }
-  }
-
-  // Show add hostel modal
-  function showAddHostelModal() {
-    const modal = new bootstrap.Modal(document.getElementById("addHostelModal"));
-    modal.show();
-  }
-
-  // Handle form submissions
-  document.getElementById("addHostelForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const formData = {
-      name: document.getElementById("hostelName").value,
-      owner: document.getElementById("ownerName").value,
-      location: document.getElementById("location").value,
-      address: document.getElementById("location").value,
-      totalRooms: parseInt(document.getElementById("totalRooms").value),
-      availableRooms: parseInt(document.getElementById("totalRooms").value),
-      pricePerMonth: parseFloat(document.getElementById("pricePerMonth").value),
-      contactPhone: document.getElementById("contactPhone").value,
-      amenities: document.getElementById("amenities").value,
-      description: document.getElementById("description").value,
-      managerId: parseInt(document.getElementById("managerId").value),
-      isVerified: false,
-    };
-
-    try {
-      await axiosInstance.post("/api/hostels/post-hostel", formData);
-      alert("Hostel added successfully! It will be reviewed before being published.");
-      const modal = bootstrap.Modal.getInstance(document.getElementById("addHostelModal"));
-      modal.hide();
-      this.reset();
-      if (currentSection === "hostels") {
-        fetchHostels();
+      // Helper function to convert amenities string to array
+      function processAmenitiesForAPI(amenitiesString) {
+        if (!amenitiesString || amenitiesString.trim() === "") {
+          return [];
+        }
+        return amenitiesString
+          .split(",")
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0);
       }
-      if (currentSection === "dashboard") {
-        fetchDashboardStats();
+
+      // Helper function to convert amenities array to string for display
+      function processAmenitiesForDisplay(amenitiesArray) {
+        if (!amenitiesArray || !Array.isArray(amenitiesArray)) {
+          return "";
+        }
+        return amenitiesArray.join(", ");
       }
-    } catch (error) {
-      console.error("Error adding hostel:", error);
-      handleError(error, "Failed to add hostel.");
-    }
-  });
 
-  // View hostel details
-  async function viewHostel(id) {
-    try {
-      const response = await axiosInstance.get(`/api/hostels/${id}`);
-      const hostel = response.data;
-      alert(`Viewing details for: ${hostel.name}\nLocation: ${hostel.location}\nRooms: ${hostel.totalRooms}\nPrice: KES ${hostel.pricePerMonth}`);
-    } catch (error) {
-      console.error("Error viewing hostel:", error);
-      handleError(error, "Failed to load hostel details.");
-    }
-  }
+      // Helper function to convert files to base64
+      async function convertToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
 
-  // Edit hostel
-  async function editHostel(id) {
-    try {
-      const response = await axiosInstance.get(`/api/hostels/${id}`);
-      const hostel = response.data;
+      // Helper function to process multiple files to base64
+      async function processImages(files) {
+        const base64Images = [];
+        for (const file of files) {
+          const base64 = await convertToBase64(file);
+          base64Images.push(base64);
+        }
+        return base64Images;
+      }
 
-      document.getElementById("hostelName").value = hostel.name;
-      document.getElementById("ownerName").value = hostel.owner;
-      document.getElementById("location").value = hostel.location;
-      document.getElementById("totalRooms").value = hostel.totalRooms;
-      document.getElementById("pricePerMonth").value = hostel.pricePerMonth;
-      document.getElementById("contactPhone").value = hostel.contactPhone;
-      document.getElementById("amenities").value = hostel.amenities;
-      document.getElementById("description").value = hostel.description;
-      document.getElementById("managerId").value = hostel.managerId;
+      // Logout handler
+      function logout() {
+        document.cookie =
+          "jwtToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        window.location.href = "/login.html";
+      }
 
-      const modal = new bootstrap.Modal(document.getElementById("addHostelModal"));
-      modal.show();
+      // Initialize dashboard
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!getJwtToken()) {
+          alert("No session found. Please log in.");
+          window.location.href = "/login.html";
+          return;
+        }
+        showSection("dashboard");
+      });
 
-      const form = document.getElementById("addHostelForm");
-      form.onsubmit = async function (e) {
-        e.preventDefault();
-        const updatedData = {
-          name: document.getElementById("hostelName").value,
-          owner: document.getElementById("ownerName").value,
-          location: document.getElementById("location").value,
-          address: document.getElementById("location").value,
-          totalRooms: parseInt(document.getElementById("totalRooms").value),
-          availableRooms: parseInt(document.getElementById("totalRooms").value),
-          pricePerMonth: parseFloat(document.getElementById("pricePerMonth").value),
-          contactPhone: document.getElementById("contactPhone").value,
-          amenities: document.getElementById("amenities").value,
-          description: document.getElementById("description").value,
-          managerId: parseInt(document.getElementById("managerId").value),
-          isVerified: hostel.isVerified,
-        };
+      // Toggle sidebar
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.getElementById("main-content");
+        const toggleIcon = document.getElementById("toggle-icon");
 
-        try {
-          await axiosInstance.put(`/api/hostels/${id}`, updatedData);
-          alert("Hostel updated successfully!");
-          modal.hide();
-          form.reset();
-          if (currentSection === "hostels") {
+        sidebarCollapsed = !sidebarCollapsed;
+
+        if (sidebarCollapsed) {
+          sidebar.classList.add("collapsed");
+          mainContent.classList.add("expanded");
+          toggleIcon.classList.remove("fa-chevron-left");
+          toggleIcon.classList.add("fa-chevron-right");
+          document.querySelectorAll(".nav-text").forEach((text) => {
+            text.style.display = "none";
+          });
+        } else {
+          sidebar.classList.remove("collapsed");
+          mainContent.classList.remove("expanded");
+          toggleIcon.classList.remove("fa-chevron-right");
+          toggleIcon.classList.add("fa-chevron-left");
+          document.querySelectorAll(".nav-text").forEach((text) => {
+            text.style.display = "inline";
+          });
+        }
+      }
+
+      // Show section
+      function showSection(sectionId) {
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.style.display = "none";
+        });
+        document.getElementById(sectionId).style.display = "block";
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.classList.remove("active");
+        });
+        document
+          .querySelector(`[href="#${sectionId}"]`)
+          .classList.add("active");
+
+        currentSection = sectionId;
+
+        switch (sectionId) {
+          case "dashboard":
+            fetchDashboardStats();
+            fetchRecentActivities();
+            break;
+          case "hostels":
             fetchHostels();
+            break;
+          case "students":
+            fetchStudents();
+            break;
+          case "bookings":
+            fetchBookings();
+            break;
+          case "payments":
+            fetchPayments();
+            break;
+          case "verification":
+            fetchVerifications();
+            break;
+        }
+      }
+
+      // Fetch dashboard statistics
+      async function fetchDashboardStats() {
+        try {
+          const [hostelsRes, studentsRes, bookingsRes] = await Promise.all([
+            axiosInstance.get("/api/hostels/all"),
+            axiosInstance.get("/users/by-role?name=ROLE_STUDENT"),
+            axiosInstance.get("/api/bookings/active"),
+          ]);
+
+          const hostels = hostelsRes.data;
+          const students = studentsRes.data;
+          const bookings = bookingsRes.data;
+
+          const verifiedHostels = hostels.filter((h) => h.isVerified);
+
+          document.getElementById("total-hostels").textContent =
+            verifiedHostels.length;
+          document.getElementById("active-students").textContent =
+            students.length;
+          document.getElementById("pending-bookings").textContent =
+            bookings.length;
+          document.getElementById("pending-verifications").textContent =
+            hostels.filter((h) => !h.isVerified).length;
+          document.getElementById("notification-badge").textContent =
+            hostels.filter((h) => !h.isVerified).length;
+        } catch (error) {
+          console.error("Error fetching dashboard stats:", error);
+          handleError(error, "Failed to load dashboard statistics.");
+        }
+      }
+
+      // Add this helper function to fetch user details by ID
+      async function fetchUserById(userId) {
+        try {
+          const response = await axiosInstance.get(`/users/${userId}`);
+          return response.data;
+        } catch (error) {
+          console.error(`Error fetching user with ID ${userId}:`, error);
+          return null;
+        }
+      }
+
+      // Fetch recent activities
+      async function fetchRecentActivities() {
+        try {
+          const response = await axiosInstance.get("/api/bookings/active");
+          const bookings = response.data;
+          const tbody = document.getElementById("recent-activities-body");
+          tbody.innerHTML = "";
+
+          bookings.slice(0, 4).forEach((booking) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${new Date().toLocaleTimeString()}</td>
+              <td>Booking #${booking.id}</td>
+              <td>${booking.student ? booking.student.name : "Unknown"}</td>
+              <td><span class="badge bg-${
+                booking.status === "CONFIRMED" ? "success" : "warning"
+              }">${booking.status}</span></td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching recent activities:", error);
+          handleError(error, "Failed to load recent activities.");
+        }
+      }
+
+      // Fetch verified hostels
+      async function fetchHostels() {
+        try {
+          const response = await axiosInstance.get("/api/hostels/all");
+          const hostels = response.data.filter((h) => h.isVerified);
+          const tbody = document.getElementById("hostels-table-body");
+          tbody.innerHTML = "";
+
+          hostels.forEach((hostel) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${hostel.name}</td>
+              <td>${hostel.location}</td>
+              <td>${hostel.totalRooms}</td>
+              <td>${hostel.availableRooms}/${hostel.totalRooms}</td>
+              <td><span class="badge bg-success">Verified</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewHostel(${hostel.id})">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning" onclick="editHostel(${hostel.id})">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteHostel(${hostel.id})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching hostels:", error);
+          handleError(error, "Failed to load hostels.");
+        }
+      }
+
+      // Fetch students (ROLE_STUDENT only)
+      async function fetchStudents() {
+        try {
+          const response = await axiosInstance.get(
+            "/users/by-role?name=ROLE_STUDENT"
+          );
+          const students = response.data;
+          const tbody = document.getElementById("students-table-body");
+          tbody.innerHTML = "";
+
+          students.forEach((student) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${student.fullName}</td>
+              <td>${student.email}</td>
+              <td>${student.university || "N/A"}</td>
+              <td>${student.hostel ? student.hostel.name : "None"}</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewStudent(${student.id})">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning" onclick="editStudent(${student.id})">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching students:", error);
+          handleError(error, "Failed to load students.");
+        }
+      }
+
+      // Fetch bookings
+      async function fetchBookings() {
+        try {
+          const response = await axiosInstance.get("/api/bookings/active");
+          const bookings = response.data;
+          const tbody = document.getElementById("bookings-table-body");
+          tbody.innerHTML = "";
+
+          bookings.forEach((booking) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>#${booking.id}</td>
+              <td>${booking.student ? booking.student.name : "Unknown"}</td>
+              <td>${booking.hostel ? booking.hostel.name : "N/A"}</td>
+              <td>${booking.room ? booking.room.roomNumber : "N/A"}</td>
+              <td>${new Date(booking.checkInDate).toLocaleDateString()}</td>
+              <td>KES ${booking.amount}</td>
+              <td><span class="badge bg-${
+                booking.status === "CONFIRMED" ? "success" : "warning"
+              }">${booking.status}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewBooking(${
+                  booking.id
+                })">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="cancelBooking(${
+                  booking.id
+                })">
+                  <i class="fas fa-times"></i>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching bookings:", error);
+          handleError(error, "Failed to load bookings.");
+        }
+      }
+
+      // Fetch payments
+      async function fetchPayments() {
+        try {
+          const response = await axiosInstance.get("/api/bookings/active");
+          const bookings = response.data;
+          const tbody = document.getElementById("payments-table-body");
+          tbody.innerHTML = "";
+
+          bookings.forEach((booking) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>#PAY${booking.id}</td>
+              <td>${booking.student ? booking.student.name : "Unknown"}</td>
+              <td>KES ${booking.amount}</td>
+              <td>${booking.paymentMethod || "N/A"}</td>
+              <td>${new Date(booking.checkInDate).toLocaleDateString()}</td>
+              <td><span class="badge bg-${
+                booking.status === "CONFIRMED" ? "success" : "warning"
+              }">${booking.status}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewPayment(${
+                  booking.id
+                })">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="downloadReceipt(${
+                  booking.id
+                })">
+                  <i class="fas fa-download"></i>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching payments:", error);
+          handleError(error, "Failed to load payments.");
+        }
+      }
+
+      // Fetch verifications
+      async function fetchVerifications() {
+        try {
+          const response = await axiosInstance.get("/api/hostels/all");
+          const hostels = response.data;
+          const tbody = document.getElementById("verification-table-body");
+          tbody.innerHTML = "";
+
+          // Process hostels that are not verified
+          const unverifiedHostels = hostels.filter((h) => !h.isVerified);
+
+          // Fetch user details for each hostel concurrently
+          const hostelsWithOwners = await Promise.all(
+            unverifiedHostels.map(async (hostel) => {
+              const user = await fetchUserById(hostel.managerId);
+              return {
+                ...hostel,
+                ownerName: user ? user.fullName : "Unknown",
+              };
+            })
+          );
+
+          hostelsWithOwners.forEach((hostel) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${hostel.name}</td>
+              <td>${hostel.ownerName}</td>
+              <td>${new Date().toLocaleDateString()}</td>
+              <td><span class="badge bg-warning">Incomplete</span></td>
+              <td><span class="badge bg-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-success" onclick="approveHostel(${
+                  hostel.id
+                })">
+                  <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="rejectHostel(${
+                  hostel.id
+                })">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching verifications:", error);
+          handleError(error, "Failed to load verifications.");
+        }
+      }
+
+      // Error handling
+      function handleError(error, defaultMessage) {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          alert("Unauthorized access. Please log in.");
+          logout();
+        } else {
+          alert(defaultMessage);
+        }
+      }
+
+      // Show add hostel modal
+      function showAddHostelModal() {
+        const modal = new bootstrap.Modal(
+          document.getElementById("addHostelModal")
+        );
+        modal.show();
+      }
+
+      // Handle form submissions
+      document
+        .getElementById("addHostelForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const imagesInput = document.getElementById("images");
+          const images = imagesInput.files;
+          let base64Images = [];
+          if (images.length > 0) {
+            base64Images = await processImages(images);
+          }
+
+          const formData = {
+            name: document.getElementById("hostelName").value,
+            address: document.getElementById("address").value,
+            location: document.getElementById("location").value,
+            pricePerMonth: parseFloat(
+              document.getElementById("pricePerMonth").value
+            ),
+            managerId: parseInt(document.getElementById("managerId").value),
+            propertyType: document.getElementById("propertyType").value,
+            roomType: document.getElementById("roomType").value,
+            totalRooms: parseInt(document.getElementById("totalRooms").value),
+            availableRooms: parseInt(
+              document.getElementById("availableRooms").value
+            ),
+            depositAmount: parseFloat(
+              document.getElementById("depositAmount").value
+            ),
+            amenities: processAmenitiesForAPI(
+              document.getElementById("amenities").value
+            ),
+            description: document.getElementById("description").value,
+            contactPhone: document.getElementById("contactPhone").value,
+            alternatePhone: document.getElementById("alternatePhone").value || "",
+            contactEmail: document.getElementById("contactEmail").value,
+            imagesBase64: base64Images,
+            isVerified: false,
+            distance: parseFloat(document.getElementById("distance").value),
+          };
+
+          console.log("Adding hostel with data:", formData);
+
+          try {
+            await axiosInstance.post("/api/hostels/post-hostel", formData);
+            alert(
+              "Hostel added successfully! It will be reviewed before being published."
+            );
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("addHostelModal")
+            );
+            modal.hide();
+            this.reset();
+            if (currentSection === "hostels") {
+              fetchHostels();
+            }
+            if (currentSection === "dashboard") {
+              fetchDashboardStats();
+            }
+          } catch (error) {
+            console.error("Error adding hostel:", error);
+            handleError(error, "Failed to add hostel.");
+          }
+        });
+
+      // View hostel details
+      async function viewHostel(id) {
+        try {
+          const response = await axiosInstance.get(`/api/hostels/${id}`);
+          const hostel = response.data;
+          const amenitiesDisplay = processAmenitiesForDisplay(hostel.amenities);
+          alert(
+            `Viewing details for: ${hostel.name}\nLocation: ${hostel.location}\nRooms: ${hostel.totalRooms}\nPrice: KES ${hostel.pricePerMonth}\nAmenities: ${amenitiesDisplay}`
+          );
+        } catch (error) {
+          console.error("Error viewing hostel:", error);
+          handleError(error, "Failed to load hostel details.");
+        }
+      }
+
+      // Edit hostel
+      async function editHostel(id) {
+        try {
+          const response = await axiosInstance.get(`/api/hostels/${id}`);
+          const hostel = response.data;
+
+          document.getElementById("hostelName").value = hostel.name;
+          document.getElementById("ownerName").value = hostel.owner || "";
+          document.getElementById("address").value = hostel.address;
+          document.getElementById("location").value = hostel.location;
+          document.getElementById("totalRooms").value = hostel.totalRooms;
+          document.getElementById("availableRooms").value = hostel.availableRooms;
+          document.getElementById("pricePerMonth").value = hostel.pricePerMonth;
+          document.getElementById("depositAmount").value =
+            hostel.depositAmount || "";
+          document.getElementById("contactPhone").value = hostel.contactPhone;
+          document.getElementById("alternatePhone").value =
+            hostel.alternatePhone || "";
+          document.getElementById("contactEmail").value =
+            hostel.contactEmail || "";
+          document.getElementById("distance").value = hostel.distance || "";
+          document.getElementById("propertyType").value =
+            hostel.propertyType || "Hostel";
+          document.getElementById("roomType").value = hostel.roomType || "Single";
+          document.getElementById("amenities").value =
+            processAmenitiesForDisplay(hostel.amenities);
+          document.getElementById("description").value = hostel.description;
+          document.getElementById("managerId").value = hostel.managerId;
+
+          const modal = new bootstrap.Modal(
+            document.getElementById("addHostelModal")
+          );
+          modal.show();
+
+          const form = document.getElementById("addHostelForm");
+          form.onsubmit = async function (e) {
+            e.preventDefault();
+
+            const imagesInput = document.getElementById("images");
+            const images = imagesInput.files;
+            let base64Images = hostel.imagesBase64 || [];
+            if (images.length > 0) {
+              base64Images = await processImages(images);
+            }
+
+            const updatedData = {
+              name: document.getElementById("hostelName").value,
+              address: document.getElementById("address").value,
+              location: document.getElementById("location").value,
+              pricePerMonth: parseFloat(
+                document.getElementById("pricePerMonth").value
+              ),
+              managerId: parseInt(document.getElementById("managerId").value),
+              propertyType: document.getElementById("propertyType").value,
+              roomType: document.getElementById("roomType").value,
+              totalRooms: parseInt(document.getElementById("totalRooms").value),
+              availableRooms: parseInt(
+                document.getElementById("availableRooms").value
+              ),
+              depositAmount: parseFloat(
+                document.getElementById("depositAmount").value
+              ),
+              amenities: processAmenitiesForAPI(
+                document.getElementById("amenities").value
+              ),
+              description: document.getElementById("description").value,
+              contactPhone: document.getElementById("contactPhone").value,
+              alternatePhone:
+                document.getElementById("alternatePhone").value || "",
+              contactEmail: document.getElementById("contactEmail").value,
+              imagesBase64: base64Images,
+              isVerified: hostel.isVerified,
+              distance: parseFloat(document.getElementById("distance").value),
+            };
+
+            console.log("Updating hostel with data:", updatedData);
+
+            try {
+              await axiosInstance.put(`/api/hostels/${id}`, updatedData);
+              alert("Hostel updated successfully!");
+              modal.hide();
+              form.reset();
+              if (currentSection === "hostels") {
+                fetchHostels();
+              }
+            } catch (error) {
+              console.error("Error updating hostel:", error);
+              handleError(error, "Failed to update hostel.");
+            }
+          };
+        } catch (error) {
+          console.error("Error editing hostel:", error);
+          handleError(error, "Failed to load hostel for editing.");
+        }
+      }
+
+      // Delete hostel
+      async function deleteHostel(id) {
+        if (confirm("Are you sure you want to delete this hostel?")) {
+          try {
+            await axiosInstance.delete(`/api/hostels/${id}`);
+            alert("Hostel deleted successfully!");
+            if (currentSection === "hostels") {
+              fetchHostels();
+            }
+            if (currentSection === "dashboard") {
+              fetchDashboardStats();
+            }
+          } catch (error) {
+            console.error("Error deleting hostel:", error);
+            handleError(error, "Failed to delete hostel.");
+          }
+        }
+      }
+
+      // View student details
+      async function viewStudent(id) {
+        try {
+          const response = await axiosInstance.get(`/api/users/me`);
+          const user = response.data;
+          alert(
+            `Viewing details for: ${user.name}\nEmail: ${
+              user.email
+            }\nUniversity: ${user.university || "N/A"}`
+          );
+        } catch (error) {
+          console.error("Error viewing student:", error);
+          handleError(error, "Failed to load student details.");
+        }
+      }
+
+      // Edit student
+      async function editStudent(id) {
+        alert("Edit student functionality to be implemented.");
+      }
+
+      // View booking details
+      async function viewBooking(id) {
+        try {
+          const response = await axiosInstance.get(`/api/bookings/${id}`);
+          const booking = response.data;
+          alert(
+            `Viewing booking #${booking.id}\nStudent: ${
+              booking.student ? booking.student.name : "Unknown"
+            }\nHostel: ${booking.hostel ? booking.hostel.name : "N/A"}\nRoom: ${
+              booking.room ? booking.room.roomNumber : "N/A"
+            }\nAmount: KES ${booking.amount}`
+          );
+        } catch (error) {
+          console.error("Error viewing booking:", error);
+          handleError(error, "Failed to load booking details.");
+        }
+      }
+
+      // Cancel booking
+      async function cancelBooking(id) {
+        if (confirm("Are you sure you want to cancel this booking?")) {
+          try {
+            await axiosInstance.delete(`/api/bookings/${id}`);
+            alert("Booking cancelled successfully!");
+            if (currentSection === "bookings") {
+              fetchBookings();
+            }
+          } catch (error) {
+            console.error("Error cancelling booking:", error);
+            handleError(error, "Failed to cancel booking.");
+          }
+        }
+      }
+
+      // View payment details
+      async function viewPayment(id) {
+        try {
+          const response = await axiosInstance.get(`/api/bookings/${id}`);
+          const booking = response.data;
+          alert(
+            `Viewing payment #PAY${booking.id}\nStudent: ${
+              booking.student ? booking.student.name : "Unknown"
+            }\nAmount: KES ${booking.amount}\nMethod: ${
+              booking.paymentMethod || "N/A"
+            }`
+          );
+        } catch (error) {
+          console.error("Error viewing payment:", error);
+          handleError(error, "Failed to load payment details.");
+        }
+      }
+
+      // Download receipt
+      function downloadReceipt(id) {
+        alert(`Downloading receipt for payment #PAY${id}...`);
+      }
+
+      // Approve hostel
+      async function approveHostel(id) {
+        try {
+          console.log(`Sending request to approve hostel with ID: ${id}`);
+          const response = await axiosInstance.put(`/api/hostels/${id}/approve`);
+          console.log("Approval request response:", response.data);
+          alert("Hostel approved successfully!");
+          if (currentSection === "verification") {
+            fetchVerifications();
+          }
+          if (currentSection === "dashboard") {
+            fetchDashboardStats();
           }
         } catch (error) {
-          console.error("Error updating hostel:", error);
-          handleError(error, "Failed to update hostel.");
+          console.error("Error approving hostel:", error);
+          handleError(error, "Failed to approve hostel.");
         }
-      };
-    } catch (error) {
-      console.error("Error editing hostel:", error);
-      handleError(error, "Failed to load hostel for editing.");
-    }
-  }
+      }
 
-  // Delete hostel
-  async function deleteHostel(id) {
-    if (confirm("Are you sure you want to delete this hostel?")) {
-      try {
-        await axiosInstance.delete(`/api/hostels/${id}`);
-        alert("Hostel deleted successfully!");
-        if (currentSection === "hostels") {
-          fetchHostels();
+      // Reject hostel
+      async function rejectHostel(id) {
+        if (confirm("Are you sure you want to reject this hostel?")) {
+          try {
+            await axiosInstance.delete(`/api/hostels/${id}`);
+            alert("Hostel rejected successfully!");
+            if (currentSection === "verification") {
+              fetchVerifications();
+            }
+          } catch (error) {
+            console.error("Error rejecting hostel:", error);
+            handleError(error, "Failed to reject hostel.");
+          }
         }
-        if (currentSection === "dashboard") {
-          fetchDashboardStats();
+      }
+
+      // Generate report
+      function generateReport(type) {
+        alert(`Generating ${type} report...`);
+      }
+
+      // Save settings
+      function saveSettings() {
+        const settings = {
+          autoVerify: document.getElementById("autoVerify").checked,
+          emailNotifications:
+            document.getElementById("emailNotifications").checked,
+        };
+        localStorage.setItem("settings", JSON.stringify(settings));
+        alert("Settings saved successfully!");
+      }
+
+      // Handle responsive design
+      window.addEventListener("resize", function () {
+        if (window.innerWidth <= 768) {
+          if (!sidebarCollapsed) {
+            toggleSidebar();
+          }
         }
-      } catch (error) {
-        console.error("Error deleting hostel:", error);
-        handleError(error, "Failed to delete hostel.");
-      }
-    }
-  }
-
-  // View student details
-  async function viewStudent(id) {
-    try {
-      const response = await axiosInstance.get(`/api/users/me`);
-      const user = response.data;
-      alert(`Viewing details for: ${user.name}\nEmail: ${user.email}\nUniversity: ${user.university || 'N/A'}`);
-    } catch (error) {
-      console.error("Error viewing student:", error);
-      handleError(error, "Failed to load student details.");
-    }
-  }
-
-  // Edit student
-  async function editStudent(id) {
-    alert("Edit student functionality to be implemented.");
-  }
-
-  // View booking details
-  async function viewBooking(id) {
-    try {
-      const response = await axiosInstance.get(`/api/bookings/${id}`);
-      const booking = response.data;
-      alert(`Viewing booking #${booking.id}\nStudent: ${booking.student ? booking.student.name : 'Unknown'}\nHostel: ${booking.hostel ? booking.hostel.name : 'N/A'}\nRoom: ${booking.room ? booking.room.roomNumber : 'N/A'}\nAmount: KES ${booking.amount}`);
-    } catch (error) {
-      console.error("Error viewing booking:", error);
-      handleError(error, "Failed to load booking details.");
-    }
-  }
-
-  // Cancel booking
-  async function cancelBooking(id) {
-    if (confirm("Are you sure you want to cancel this booking?")) {
-      try {
-        await axiosInstance.delete(`/api/bookings/${id}`);
-        alert("Booking cancelled successfully!");
-        if (currentSection === "bookings") {
-          fetchBookings();
-        }
-      } catch (error) {
-        console.error("Error cancelling booking:", error);
-        handleError(error, "Failed to cancel booking.");
-      }
-    }
-  }
-
-  // View payment details
-  async function viewPayment(id) {
-    try {
-      const response = await axiosInstance.get(`/api/bookings/${id}`);
-      const booking = response.data;
-      alert(`Viewing payment #PAY${booking.id}\nStudent: ${booking.student ? booking.student.name : 'Unknown'}\nAmount: KES ${booking.amount}\nMethod: ${booking.paymentMethod || 'N/A'}`);
-    } catch (error) {
-      console.error("Error viewing payment:", error);
-      handleError(error, "Failed to load payment details.");
-    }
-  }
-
-  // Download receipt
-  function downloadReceipt(id) {
-    alert(`Downloading receipt for payment #PAY${id}...`);
-  }
-
-  // Approve hostel
-  async function approveHostel(id) {
-    try {
-      const response = await axiosInstance.get(`/api/hostels/${id}`);
-      const hostel = response.data;
-      hostel.isVerified = true;
-
-      await axiosInstance.put(`/api/hostels/${id}`, hostel);
-      alert("Hostel approved successfully!");
-      if (currentSection === "verification") {
-        fetchVerifications();
-      }
-      if (currentSection === "dashboard") {
-        fetchDashboardStats();
-      }
-    } catch (error) {
-      console.error("Error approving hostel:", error);
-      handleError(error, "Failed to approve hostel.");
-    }
-  }
-
-  // Reject hostel
-  async function rejectHostel(id) {
-    if (confirm("Are you sure you want to reject this hostel?")) {
-      try {
-        await axiosInstance.delete(`/api/hostels/${id}`);
-        alert("Hostel rejected successfully!");
-        if (currentSection === "verification") {
-          fetchVerifications();
-        }
-      } catch (error) {
-        console.error("Error rejecting hostel:", error);
-        handleError(error, "Failed to reject hostel.");
-      }
-    }
-  }
-
-  // Generate report
-  function generateReport(type) {
-    alert(`Generating ${type} report...`);
-  }
-
-  // Save settings
-  function saveSettings() {
-    const settings = {
-      autoVerify: document.getElementById("autoVerify").checked,
-      emailNotifications: document.getElementById("emailNotifications").checked,
-    };
-    localStorage.setItem("settings", JSON.stringify(settings));
-    alert("Settings saved successfully!");
-  }
-
-  // Handle responsive design
-  window.addEventListener("resize", function () {
-    if (window.innerWidth <= 768) {
-      if (!sidebarCollapsed) {
-        toggleSidebar();
-      }
-    }
-  });
-
-  // Initialize tooltips
-  const tooltipTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  );
-  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-
-  // Auto-save form data
-  function autoSave() {
-    const forms = document.querySelectorAll("form");
-    forms.forEach((form) => {
-      form.addEventListener("input", function () {
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-        localStorage.setItem(`autosave_${form.id}`, JSON.stringify(data));
       });
-    });
-  }
 
-  // Load auto-saved data
-  function loadAutoSaved() {
-    const forms = document.querySelectorAll("form");
-    forms.forEach((form) => {
-      const saved = localStorage.getItem(`autosave_${form.id}`);
-      if (saved) {
-        const data = JSON.parse(saved);
-        Object.keys(data).forEach((key) => {
-          const input = form.querySelector(`[name="${key}"]`);
-          if (input) {
-            input.value = data[key];
+      // Initialize tooltips
+      const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      );
+      const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Auto-save form data
+      function autoSave() {
+        const forms = document.querySelectorAll("form");
+        forms.forEach((form) => {
+          form.addEventListener("input", function () {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            localStorage.setItem(`autosave_${form.id}`, JSON.stringify(data));
+          });
+        });
+      }
+
+      // Load auto-saved data
+      function loadAutoSaved() {
+        const forms = document.querySelectorAll("form");
+        forms.forEach((form) => {
+          const saved = localStorage.getItem(`autosave_${form.id}`);
+          if (saved) {
+            const data = JSON.parse(saved);
+            Object.keys(data).forEach((key) => {
+              const input = form.querySelector(`[name="${key}"]`);
+              if (input) {
+                input.value = data[key];
+              }
+            });
           }
         });
       }
-    });
-  }
 
-  // Initialize auto-save
-  autoSave();
-  loadAutoSaved();
+      // Initialize auto-save
+      autoSave();
+      loadAutoSaved();
 
-  // Keyboard shortcuts
-  document.addEventListener("keydown", function (e) {
-    if (e.ctrlKey || e.metaKey) {
-      switch (e.key) {
-        case "d":
-          e.preventDefault();
-          showSection("dashboard");
-          break;
-        case "h":
-          e.preventDefault();
-          showSection("hostels");
-          break;
-        case "s":
-          e.preventDefault();
-          showSection("students");
-          break;
-        case "b":
-          e.preventDefault();
-          showSection("bookings");
-          break;
-        case "p":
-          e.preventDefault();
-          showSection("payments");
-          break;
-      }
-    }
-  });
-</script>
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key) {
+            case "d":
+              e.preventDefault();
+              showSection("dashboard");
+              break;
+            case "h":
+              e.preventDefault();
+              showSection("hostels");
+              break;
+            case "s":
+              e.preventDefault();
+              showSection("students");
+              break;
+            case "b":
+              e.preventDefault();
+              showSection("bookings");
+              break;
+            case "p":
+              e.preventDefault();
+              showSection("payments");
+              break;
+          }
+        }
+      });
+    </script>
   </body>
 </html>

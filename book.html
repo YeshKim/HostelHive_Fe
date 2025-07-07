@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -556,14 +557,13 @@
       <nav>
         <div class="logo">Hostel Hive</div>
         <ul class="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#housing">Find Housing</a></li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="hostels-student.html">Find Housing</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
-        <div class="auth-buttons">
-          <a href="#signin" class="btn btn-outline">Sign In</a>
-          <a href="#register" class="btn btn-solid">Register</a>
+        <div class="auth-buttons" id="authButtons">
+          <!-- Dynamically populated based on cookie -->
         </div>
       </nav>
     </header>
@@ -572,9 +572,11 @@
     <section class="breadcrumb">
       <div class="breadcrumb-container">
         <nav class="breadcrumb-nav">
-          <a href="#home">Home</a>
+          <a href="index.html">Home</a>
           <span>›</span>
-          <a href="#search">Search Results</a>
+          <a href="hostels-student.html">Search Results</a>
+          <span>›</span>
+          <a href="#" id="hostelDetailsLink">Hostel Details</a>
           <span>›</span>
           <span>Book Your Stay</span>
         </nav>
@@ -586,7 +588,7 @@
       <!-- Booking Form -->
       <div class="booking-form">
         <div class="form-header">
-          <h1>Complete Your Booking</h1>
+          <h1 id="formHeaderTitle">Complete Your Booking</h1>
           <p>Fill in your details to secure your accommodation</p>
         </div>
 
@@ -620,7 +622,7 @@
               </div>
               <div class="form-group">
                 <label for="university">University/College</label>
-                <input type="text" id="university" name="university" value="University of Nairobi">
+                <input type="text" id="university" name="university" value="">
               </div>
             </div>
           </div>
@@ -631,23 +633,23 @@
               <div class="section-icon">2</div>
               Select Your Room
             </h3>
-            <div class="room-options">
+            <div class="room-options" id="roomOptions">
               <div class="room-option selected">
                 <input type="radio" name="roomType" value="single" id="singleRoom" checked>
                 <div class="room-info">
                   <h4>Single Room</h4>
                   <p>Private room with shared bathroom</p>
                   <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-                  <div class="room-price">KSH 8,500/month</div>
+                  <div class="room-price" id="singleRoomPrice">KSH 8,500/month</div>
                 </div>
               </div>
               <div class="room-option">
-                <input type="radio" name="roomType" value="studio" id="studioRoom">
+                <input type="radio" name="roomType" value="shared" id="sharedRoom">
                 <div class="room-info">
-                  <h4>Studio Room</h4>
-                  <p>Private room with private bathroom</p>
-                  <p>Includes: Bed, Desk, Wardrobe, Kitchenette</p>
-                  <div class="room-price">KSH 12,000/month</div>
+                  <h4>Shared Room</h4>
+                  <p>Shared room with individual storage</p>
+                  <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+                  <div class="room-price" id="sharedRoomPrice">KSH 6,000/month</div>
                 </div>
               </div>
             </div>
@@ -719,18 +721,6 @@
                 <h4>M-Pesa</h4>
                 <p>Pay via mobile money</p>
               </div>
-              <div class="payment-method">
-                <input type="radio" name="paymentMethod" value="bank" id="bank">
-                <div class="payment-icon">🏦</div>
-                <h4>Bank Transfer</h4>
-                <p>Direct bank payment</p>
-              </div>
-              <div class="payment-method">
-                <input type="radio" name="paymentMethod" value="card" id="card">
-                <div class="payment-icon">💳</div>
-                <h4>Credit/Debit Card</h4>
-                <p>Visa, Mastercard accepted</p>
-              </div>
             </div>
           </div>
 
@@ -757,7 +747,7 @@
 
           <!-- Submit Button -->
           <div class="submit-section">
-            <button type="submit" class="btn-submit" id="submitBtn">
+            <button type="submit" class="btn-submit" id="submitBtn" disabled>
               Complete Booking & Pay
             </button>
           </div>
@@ -767,16 +757,20 @@
       <!-- Booking Summary -->
       <div class="booking-summary">
         <div class="summary-header">
-          <h2>Booking Summary</h2>
+          <h2 id="summaryHostelName">Booking Summary</h2>
           <p>Review your selection</p>
         </div>
 
         <div class="hostel-info">
-          <h3>UoN Student Lodge</h3>
+          <h3 id="hostelName">Hostel Name</h3>
           <div class="hostel-details">
             <div class="detail-row">
               <span class="detail-label">Location</span>
-              <span class="detail-value">500m from UoN</span>
+              <span class="detail-value" id="hostelLocation">Not selected</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Price Range</span>
+              <span class="detail-value" id="priceRange">Not selected</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Room Type</span>
@@ -808,11 +802,11 @@
           </div>
           <div class="price-row">
             <span>Registration Fee</span>
-            <span>KSH 500</span>
+            <span id="registrationFee">KSH 1,000</span>
           </div>
           <div class="price-row total">
             <span>Total Due Today</span>
-            <span id="totalAmount">KSH 17,500</span>
+            <span id="totalAmount">KSH 18,000</span>
           </div>
         </div>
 
@@ -824,14 +818,141 @@
     </div>
 
     <script>
-      // Initialize form
+      // Function to get cookie by name
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      // Function to handle logout
+      function handleLogout() {
+        // Clear the JWT token cookie
+        document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        // Refresh the page to update the auth buttons
+        window.location.reload();
+      }
+
+      // Function to update auth buttons based on cookie
+      function updateAuthButtons() {
+        const authButtons = document.getElementById('authButtons');
+        const jwtToken = getCookie('jwtToken');
+
+        if (jwtToken) {
+          // User is logged in, show logout button
+          authButtons.innerHTML = `
+            <button class="btn btn-outline" onclick="handleLogout()">Log Out</button>
+          `;
+        } else {
+          // User is not logged in, show sign-in and register buttons
+          authButtons.innerHTML = `
+            <a href="#signin" class="btn btn-outline">Sign In</a>
+            <a href="#register" class="btn btn-solid">Register</a>
+          `;
+        }
+      }
+
+      // Get hostel ID from URL
+      function getHostelId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+      }
+
+      // Initialize form and fetch hostel data
       document.addEventListener('DOMContentLoaded', function() {
+        // Update auth buttons on page load
+        updateAuthButtons();
+
+        const hostelId = getHostelId();
+        const minBudget = parseFloat(sessionStorage.getItem('minBudget')) || 5000;
+        const maxBudget = parseFloat(sessionStorage.getItem('maxBudget')) || 15000;
+
+        // Update price range in summary
+        document.getElementById('priceRange').textContent = 
+          `KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
+
         // Set minimum date to today
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('checkIn').min = today;
-        
-        // Initialize event listeners
-        initializeEventListeners();
+
+        const moveInDate = sessionStorage.getItem('bookingMoveInDate');
+        const duration = sessionStorage.getItem('bookingDuration');
+        const roomType = sessionStorage.getItem('bookingRoomType');
+
+        if (moveInDate) {
+          document.getElementById('checkIn').value = moveInDate;
+          updateCheckIn();
+        }
+        if (duration) {
+          document.getElementById('duration').value = duration;
+          updateDuration();
+        }
+        if (roomType) {
+          document.querySelector(`input[name="roomType"][value="${roomType}"]`).checked = true;
+          updateRoomSelection();
+        }
+
+        if (hostelId) {
+          fetch(`http://localhost:8099/api/hostels/${hostelId}`)
+            .then(response => {
+              if (!response.ok) throw new Error('Failed to fetch hostel details');
+              return response.json();
+            })
+            .then(hostel => {
+              // Update page title and form header
+              document.title = `${hostel.name} - Book Your Stay | Hostel Hive`;
+              document.getElementById('formHeaderTitle').textContent = `Book ${hostel.name}`;
+              document.getElementById('summaryHostelName').textContent = hostel.name;
+              document.getElementById('hostelName').textContent = hostel.name;
+              document.getElementById('hostelLocation').textContent = hostel.location || 'Unknown Location';
+
+              // Update breadcrumb
+              document.getElementById('hostelDetailsLink').href = `hostel-details.html?id=${hostelId}`;
+              document.getElementById('hostelDetailsLink').textContent = hostel.name;
+
+              // Update room options
+              const monthlyRent = hostel.pricePerMonth || 8500;
+              const sharedRoomPrice = hostel.roomType === 'Shared Room' ? (hostel.pricePerMonth * 0.75) : 6000;
+              const roomOptions = document.getElementById('roomOptions');
+              roomOptions.innerHTML = `
+                <div class="room-option selected">
+                  <input type="radio" name="roomType" value="single" id="singleRoom" checked>
+                  <div class="room-info">
+                    <h4>Single Room</h4>
+                    <p>Private room with shared bathroom</p>
+                    <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+                    <div class="room-price" id="singleRoomPrice">KSH ${monthlyRent.toLocaleString()}/month</div>
+                  </div>
+                </div>
+                ${hostel.roomType === 'Shared Room' ? `
+                  <div class="room-option">
+                    <input type="radio" name="roomType" value="shared" id="sharedRoom">
+                    <div class="room-info">
+                      <h4>Shared Room</h4>
+                      <p>Shared room with individual storage</p>
+                      <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+                      <div class="room-price" id="sharedRoomPrice">KSH ${sharedRoomPrice.toLocaleString()}/month</div>
+                    </div>
+                  </div>
+                ` : ''}
+              `;
+
+              // Update booking summary prices
+              updateBookingSummary(monthlyRent);
+
+              // Initialize event listeners after dynamic content is loaded
+              initializeEventListeners();
+            })
+            .catch(error => {
+              console.error('Error fetching hostel details:', error);
+              alert('Error fetching hostel details. Please try again later.');
+              document.getElementById('submitBtn').disabled = true;
+            });
+        } else {
+          alert('No hostel ID provided.');
+          document.getElementById('submitBtn').disabled = true;
+        }
       });
 
       function initializeEventListeners() {
@@ -858,6 +979,9 @@
         document.querySelectorAll('input[required], select[required]').forEach(field => {
           field.addEventListener('blur', validateField);
         });
+
+        // Enable submit button when required fields are filled
+        document.getElementById('bookingForm').addEventListener('input', checkFormValidity);
       }
 
       function updateRoomSelection() {
@@ -871,13 +995,13 @@
         selectedRoom.closest('.room-option').classList.add('selected');
 
         // Update summary
-        const roomType = selectedRoom.value === 'single' ? 'Single Room' : 'Studio Room';
-        const price = selectedRoom.value === 'single' ? 8500 : 12000;
+        const roomType = selectedRoom.value === 'single' ? 'Single Room' : 'Shared Room';
+        const price = selectedRoom.value === 'single' ? 
+          parseFloat(document.getElementById('singleRoomPrice').textContent.replace('KSH ', '').replace('/month', '').replace(',', '')) :
+          parseFloat(document.getElementById('sharedRoomPrice').textContent.replace('KSH ', '').replace('/month', '').replace(',', ''));
         
         document.getElementById('selectedRoomType').textContent = roomType;
-        document.getElementById('monthlyRent').textContent = `KSH ${price.toLocaleString()}`;
-        document.getElementById('securityDeposit').textContent = `KSH ${price.toLocaleString()}`;
-        document.getElementById('totalAmount').textContent = `KSH ${(price * 2 + 500).toLocaleString()}`;
+        updateBookingSummary(price);
       }
 
       function updatePaymentMethod() {
@@ -915,6 +1039,17 @@
         } else {
           document.getElementById('selectedCheckIn').textContent = 'Not selected';
         }
+      }
+
+      function updateBookingSummary(monthlyRent) {
+        const securityDeposit = monthlyRent;
+        const registrationFee = 1000;
+        const total = monthlyRent + securityDeposit + registrationFee;
+
+        document.getElementById('monthlyRent').textContent = `KSH ${monthlyRent.toLocaleString()}`;
+        document.getElementById('securityDeposit').textContent = `KSH ${securityDeposit.toLocaleString()}`;
+        document.getElementById('registrationFee').textContent = `KSH ${registrationFee.toLocaleString()}`;
+        document.getElementById('totalAmount').textContent = `KSH ${total.toLocaleString()}`;
       }
 
       function validateField(event) {
@@ -963,6 +1098,24 @@
         formGroup.appendChild(errorElement);
       }
 
+      function checkFormValidity() {
+        const requiredFields = document.querySelectorAll('input[required], select[required]');
+        const termsCheckbox = document.getElementById('termsAccepted');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+          if (!field.value.trim()) {
+            isValid = false;
+          }
+        });
+
+        if (!termsCheckbox.checked) {
+          isValid = false;
+        }
+
+        document.getElementById('submitBtn').disabled = !isValid;
+      }
+
       function handleFormSubmission(event) {
         event.preventDefault();
         const form = event.target;
@@ -997,6 +1150,7 @@
 
         // Collect form data
         const formData = {
+          hostelId: getHostelId(),
           firstName: document.getElementById('firstName').value,
           lastName: document.getElementById('lastName').value,
           email: document.getElementById('email').value,
@@ -1005,31 +1159,53 @@
           university: document.getElementById('university').value,
           roomType: document.querySelector('input[name="roomType"]:checked').value,
           checkIn: document.getElementById('checkIn').value,
-          duration: document.getElementById('duration').value,
+          duration: parseInt(document.getElementById('duration').value),
           emergencyName: document.getElementById('emergencyName').value,
           emergencyPhone: document.getElementById('emergencyPhone').value,
           relationship: document.getElementById('relationship').value,
           paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
           specialRequests: document.getElementById('specialRequests').value,
+          monthlyRent: parseFloat(document.getElementById('monthlyRent').textContent.replace('KSH ', '').replace(',', '')),
+          securityDeposit: parseFloat(document.getElementById('securityDeposit').textContent.replace('KSH ', '').replace(',', '')),
+          registrationFee: parseFloat(document.getElementById('registrationFee').textContent.replace('KSH ', '').replace(',', '')),
+          totalAmount: parseFloat(document.getElementById('totalAmount').textContent.replace('KSH ', '').replace(',', ''))
         };
 
-        // In a real application, this would send data to a server
-        alert('Booking submitted successfully!\n\n' + 
-              `Name: ${formData.firstName} ${formData.lastName}\n` +
-              `Email: ${formData.email}\n` +
-              `Phone: ${formData.phone}\n` +
-              `Room Type: ${formData.roomType === 'single' ? 'Single Room' : 'Studio Room'}\n` +
-              `Check-in: ${new Date(formData.checkIn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n` +
-              `Duration: ${formData.duration} Month${formData.duration > 1 ? 's' : ''}\n` +
-              `Payment Method: ${formData.paymentMethod === 'mpesa' ? 'M-Pesa' : formData.paymentMethod === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card'}\n` +
-              `Total: KSH ${(formData.roomType === 'single' ? 8500 : 12000) * 2 + 500}`);
-
-        // Reset form after submission
-        form.reset();
-        updateRoomSelection();
-        updatePaymentMethod();
-        updateDuration();
-        updateCheckIn();
+        // Submit booking to API
+        fetch('http://localhost:8099/api/bookings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to submit booking');
+          return response.json();
+        })
+        .then(data => {
+          alert('Booking submitted successfully!\n\n' + 
+                `Name: ${formData.firstName} ${formData.lastName}\n` +
+                `Email: ${formData.email}\n` +
+                `Phone: ${formData.phone}\n` +
+                `Room Type: ${formData.roomType === 'single' ? 'Single Room' : 'Shared Room'}\n` +
+                `Check-in: ${new Date(formData.checkIn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n` +
+                `Duration: ${formData.duration} Month${formData.duration > 1 ? 's' : ''}\n` +
+                `Payment Method: ${formData.paymentMethod === 'mpesa' ? 'M-Pesa' : formData.paymentMethod === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card'}\n` +
+                `Total: KSH ${formData.totalAmount.toLocaleString()}`);
+          
+          // Reset form
+          form.reset();
+          updateRoomSelection();
+          updatePaymentMethod();
+          updateDuration();
+          updateCheckIn();
+          document.getElementById('submitBtn').disabled = true;
+        })
+        .catch(error => {
+          console.error('Error submitting booking:', error);
+          alert('Error submitting booking. Please try again later.');
+        });
       }
     </script>
   </body>

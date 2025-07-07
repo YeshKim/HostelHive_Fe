@@ -509,11 +509,8 @@
           <li><a href="#housing">Find Housing</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li id="auth-links"></li>
         </ul>
-        <div class="auth-buttons">
-          <a href="#signin" class="btn btn-outline">Sign In</a>
-          <a href="#register" class="btn btn-solid">Register</a>
-        </div>
       </nav>
     </header>
 
@@ -525,7 +522,7 @@
             type="text"
             class="search-input"
             placeholder="Enter location or university name"
-            value="University of Nairobi"
+          
           />
           <div class="budget-inputs">
             <input type="number" placeholder="Min (KSH)" value="5000" />
@@ -593,299 +590,435 @@
         <div class="results-header">
           <h2>Available Hostels</h2>
           <p class="results-count">12 hostels found near University of Nairobi</p>
+          <p class="price-range-display">Price Range: KSH 5,000 - KSH 15,000</p>
         </div>
 
         <div class="hostel-list">
-          <!-- Hostel Card 1 -->
-          <div class="hostel-card">
-            <div class="availability">Available</div>
-            <div class="hostel-header">
-              <div class="hostel-title">
-                <h3>UoN Student Lodge</h3>
-                <div class="hostel-location">📍 500m from University of Nairobi</div>
-              </div>
-              <div class="price-tag">
-                <span class="amount">KSH 8,500</span>
-                <span class="period">per month</span>
-              </div>
-            </div>
-            
-            <div class="hostel-details">
-              <div class="detail-item">
-                <div class="detail-icon">🛏️</div>
-                <span>Single Room</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">👥</div>
-                <span>Mixed Gender</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">🚿</div>
-                <span>Shared Bathroom</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">🔒</div>
-                <span>24/7 Security</span>
-              </div>
-            </div>
+          <!-- Dynamic hostel cards will be inserted here -->
+        </div>
 
-            <div class="amenities">
-              <h4>Amenities</h4>
-              <div class="amenities-list">
-                <span class="amenity-tag">Wi-Fi</span>
-                <span class="amenity-tag">Laundry</span>
-                <span class="amenity-tag">Kitchen</span>
-                <span class="amenity-tag">Study Room</span>
-                <span class="amenity-tag">Parking</span>
-              </div>
-            </div>
-
-            <div class="hostel-actions">
-              <a href="#" class="btn-view">View Details</a>
-              <button class="btn-book">Book Now</button>
-            </div>
-          </div>
-
-          <!-- Hostel Card 2 -->
-          <div class="hostel-card">
-            <div class="availability limited">3 rooms left</div>
-            <div class="hostel-header">
-              <div class="hostel-title">
-                <h3>Campus View Hostel</h3>
-                <div class="hostel-location">📍 800m from University of Nairobi</div>
-              </div>
-              <div class="price-tag">
-                <span class="amount">KSH 12,000</span>
-                <span class="period">per month</span>
-              </div>
-            </div>
-            
-            <div class="hostel-details">
-              <div class="detail-item">
-                <div class="detail-icon">🛏️</div>
-                <span>Studio</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">👥</div>
-                <span>Mixed Gender</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">🚿</div>
-                <span>Private Bathroom</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">🍳</div>
-                <span>Kitchenette</span>
-              </div>
-            </div>
-
-            <div class="amenities">
-              <h4>Amenities</h4>
-              <div class="amenities-list">
-                <span class="amenity-tag">Wi-Fi</span>
-                <span class="amenity-tag">Laundry</span>
-                <span class="amenity-tag">Gym</span>
-                <span class="amenity-tag">Balcony</span>
-                <span class="amenity-tag">Generator</span>
-              </div>
-            </div>
-
-            <div class="hostel-actions">
-              <a href="#" class="btn-view">View Details</a>
-              <button class="btn-book">Book Now</button>
-            </div>
-          </div>
-
-          <!-- Hostel Card 3 -->
-          <div class="hostel-card">
-            <div class="availability">Available</div>
-            <div class="hostel-header">
-              <div class="hostel-title">
-                <h3>Scholars Inn</h3>
-                <div class="hostel-location">📍 1.2km from University of Nairobi</div>
-              </div>
-              <div class="price-tag">
-                <span class="amount">KSH 6,500</span>
-                <span class="period">per month</span>
-              </div>
-            </div>
-            
-            <div class="hostel-details">
-              <div class="detail-item">
-                <div class="detail-icon">🛏️</div>
-                <span>Shared Room</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">👥</div>
-                <span>Male Only</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">🚿</div>
-                <span>Shared Bathroom</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">📚</div>
-                <span>Study Areas</span>
-              </div>
-            </div>
-
-            <div class="amenities">
-              <h4>Amenities</h4>
-              <div class="amenities-list">
-                <span class="amenity-tag">Wi-Fi</span>
-                <span class="amenity-tag">Laundry</span>
-                <span class="amenity-tag">Kitchen</span>
-                <span class="amenity-tag">Library</span>
-                <span class="amenity-tag">Cafeteria</span>
-              </div>
-            </div>
-
-            <div class="hostel-actions">
-              <a href="#" class="btn-view">View Details</a>
-              <button class="btn-book">Book Now</button>
-            </div>
-          </div>
-
-          <!-- Hostel Card 4 -->
-          <div class="hostel-card">
-            <div class="availability">Available</div>
-            <div class="hostel-header">
-              <div class="hostel-title">
-                <h3>Elite Student Residence</h3>
-                <div class="hostel-location">📍 1.5km from University of Nairobi</div>
-              </div>
-              <div class="price-tag">
-                <span class="amount">KSH 15,000</span>
-                <span class="period">per month</span>
-              </div>
-            </div>
-            
-            <div class="hostel-details">
-              <div class="detail-item">
-                <div class="detail-icon">🛏️</div>
-                <span>Single Room</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">👥</div>
-                <span>Mixed Gender</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">🚿</div>
-                <span>Private Bathroom</span>
-              </div>
-              <div class="detail-item">
-                <div class="detail-icon">❄️</div>
-                <span>Air Conditioning</span>
-              </div>
-            </div>
-
-            <div class="amenities">
-              <h4>Amenities</h4>
-              <div class="amenities-list">
-                <span class="amenity-tag">Wi-Fi</span>
-                <span class="amenity-tag">Laundry</span>
-                <span class="amenity-tag">Kitchen</span>
-                <span class="amenity-tag">Swimming Pool</span>
-                <span class="amenity-tag">Gym</span>
-                <span class="amenity-tag">Elevator</span>
-              </div>
-            </div>
-
-            <div class="hostel-actions">
-              <a href="#" class="btn-view">View Details</a>
-              <button class="btn-book">Book Now</button>
-            </div>
-          </div>
-
-          <!-- Load More Button -->
-          <div style="text-align: center; margin-top: 2rem;">
-            <button class="btn btn-primary">Load More Hostels</button>
-          </div>
+        <!-- Load More Button -->
+        <div style="text-align: center; margin-top: 2rem;">
+          <button class="btn btn-primary">Load More Hostels</button>
         </div>
       </main>
     </div>
 
-    <script>
-      // Filter functionality
-      const filterCheckboxes = document.querySelectorAll('.filter-options input[type="checkbox"]');
-      const priceSliders = document.querySelectorAll('.price-range input[type="range"]');
-      const hostelCards = document.querySelectorAll('.hostel-card');
+  <script>
+// Function to get cookie by name
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
 
-      // Update search functionality
-      document.querySelector('.search-btn').addEventListener('click', function() {
-        const location = document.querySelector('.search-input').value;
-        const minBudget = document.querySelectorAll('.budget-inputs input')[0].value;
-        const maxBudget = document.querySelectorAll('.budget-inputs input')[1].value;
-        
-        // Simulate search update
-        document.querySelector('.results-count').textContent = 
-          `${Math.floor(Math.random() * 20) + 5} hostels found near ${location}`;
-      });
+document.addEventListener('DOMContentLoaded', function() {
+  // Check for JWT token in cookie
+  const jwtToken = getCookie('jwtToken');
+  const authLinks = document.getElementById('auth-links');
 
-      // Book Now button functionality
-      document.querySelectorAll('.btn-book').forEach(button => {
-        button.addEventListener('click', function() {
-          const hostelName = this.closest('.hostel-card').querySelector('h3').textContent;
-          const price = this.closest('.hostel-card').querySelector('.amount').textContent;
-          
-          if (confirm(`Book ${hostelName} for ${price} per month?\n\nThis will redirect you to the booking page.`)) {
-            alert('Redirecting to secure booking page...');
-            // In a real app, this would redirect to the booking page
-          }
-        });
-      });
+  if (jwtToken) {
+    // If token exists, show logout option
+    authLinks.innerHTML = '<a href="#" class="btn-logout hover:opacity-80">Logout</a>';
+  } else {
+    // If no token, show sign-in and sign-up options
+    authLinks.innerHTML = `
+      <a href="login.html" class="hover:opacity-80">Sign In</a>
+      <span class="mx-2">|</span>
+      <a href="register-student.html" class="hover:opacity-80">Sign Up</a>
+    `;
+  }
 
-      // View Details functionality
-      document.querySelectorAll('.btn-view').forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const hostelName = this.closest('.hostel-card').querySelector('h3').textContent;
-          alert(`Opening detailed view for ${hostelName}...`);
-          // In a real app, this would open a detailed view page
-        });
-      });
+  // Logout functionality
+  const logoutBtn = document.querySelector('.btn-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Clear the JWT token cookie
+      document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      alert('You have been logged out.');
+      window.location.href = 'login.html';
+    });
+  }
 
-      // Price range slider updates
-      priceSliders.forEach(slider => {
-        slider.addEventListener('input', function() {
-          const minPrice = document.getElementById('minPrice').value;
-          const maxPrice = document.getElementById('maxPrice').value;
-          const priceDisplay = document.querySelector('.price-range div');
-          priceDisplay.innerHTML = `
-            <span>KSH ${parseInt(minPrice).toLocaleString()}</span>
-            <span>KSH ${parseInt(maxPrice).toLocaleString()}</span>
-          `;
-        });
-      });
+  const hostelList = document.querySelector('.hostel-list');
+  const resultsCount = document.querySelector('.results-count');
+  const priceRangeDisplay = document.querySelector('.price-range-display');
+  const searchLocation = sessionStorage.getItem('searchLocation') || 'University of Nairobi';
+  const minBudget = sessionStorage.getItem('minBudget') || '5000';
+  const maxBudget = sessionStorage.getItem('maxBudget') || '15000';
+  let hostels = [];
 
-      // Filter change simulation
-      filterCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          // Simulate filtering - in a real app, this would filter the results
-          const checkedFilters = Array.from(filterCheckboxes).filter(cb => cb.checked).length;
-          const totalHostels = Math.max(5, 20 - checkedFilters);
-          document.querySelector('.results-count').textContent = 
-            `${totalHostels} hostels found near University of Nairobi`;
-        });
-      });
+  // Load hostels from sessionStorage or fetch from API
+  const storedHostels = sessionStorage.getItem('searchResults');
+  if (storedHostels) {
+    try {
+      hostels = JSON.parse(storedHostels);
+    } catch (e) {
+      console.error('Error parsing stored hostels:', e);
+      hostels = [];
+    }
+  }
 
-      // Load more functionality
-      document.querySelector('.btn-primary').addEventListener('click', function() {
-        this.textContent = 'Loading...';
-        setTimeout(() => {
-          this.textContent = 'Load More Hostels';
-          alert('More hostels loaded! (In a real app, this would load additional results)');
-        }, 1500);
-      });
+  // If no stored hostels, fetch from API
+  if (hostels.length === 0) {
+    fetchHostelsByPriceRange(minBudget, maxBudget);
+  } else {
+    displayHostels(hostels);
+  }
 
-      // Mobile responsiveness
-      window.addEventListener('resize', function() {
-        if (window.innerWidth <= 768) {
-          document.querySelector('.nav-links').style.display = 'none';
-        } else {
-          document.querySelector('.nav-links').style.display = 'flex';
+  // Update price range display
+  updatePriceRangeDisplay(minBudget, maxBudget);
+
+  // Function to fetch hostels by price range
+  function fetchHostelsByPriceRange(minPrice, maxPrice) {
+    const url = `http://localhost:8099/api/hostels/price?minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Fetched hostels:', data);
+        if (Array.isArray(data)) {
+          hostels = data;
+          sessionStorage.setItem('searchResults', JSON.stringify(data));
+          displayHostels(data);
+        } else {
+          console.error('Expected array but got:', typeof data);
+          hostels = [];
+          displayHostels([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching hostels:', error);
+        alert('Error fetching hostels. Please check your connection and try again.');
+        hostels = [];
+        displayHostels([]);
       });
-    </script>
+  }
+
+  // Function to fetch all hostels
+  function fetchAllHostels() {
+    fetch('http://localhost:8099/api/hostels/all')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Fetched all hostels:', data);
+        if (Array.isArray(data)) {
+          hostels = data;
+          sessionStorage.setItem('searchResults', JSON.stringify(data));
+          displayHostels(data);
+        } else {
+          console.error('Expected array but got:', typeof data);
+          hostels = [];
+          displayHostels([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching all hostels:', error);
+        alert('Error fetching hostels. Please check your connection and try again.');
+        hostels = [];
+        displayHostels([]);
+      });
+  }
+
+  // Function to update price range display
+  function updatePriceRangeDisplay(minPrice, maxPrice) {
+    if (priceRangeDisplay) {
+      priceRangeDisplay.textContent = `Price Range: KSH ${parseInt(minPrice || 0).toLocaleString()} - KSH ${parseInt(maxPrice || 1000000).toLocaleString()}`;
+    }
+  }
+
+  // Function to display hostels
+  function displayHostels(hostelsToDisplay) {
+    if (!hostelList) {
+      console.error('Hostel list element not found');
+      return;
+    }
+
+    hostelList.innerHTML = ''; // Clear existing content
+    
+    if (!Array.isArray(hostelsToDisplay) || hostelsToDisplay.length === 0) {
+      if (resultsCount) {
+        resultsCount.textContent = `No hostels found near ${searchLocation}`;
+      }
+      return;
+    }
+
+    if (resultsCount) {
+      resultsCount.textContent = `${hostelsToDisplay.length} hostels found near ${searchLocation}`;
+    }
+    
+    hostelsToDisplay.forEach(hostel => {
+      // Ensure hostel has required properties
+      const hostelName = hostel.name || 'Unknown Hostel';
+      const hostelLocation = hostel.location || 'Unknown Location';
+      const hostelPrice = hostel.pricePerMonth || 0;
+      const hostelId = hostel.id || Math.random().toString(36).substr(2, 9);
+      const availableRooms = hostel.availableRooms || 0;
+      const totalRooms = hostel.totalRooms || 0;
+
+      // Calculate availability status
+      const availability = availableRooms > 0 
+        ? availableRooms <= 3 
+          ? `<div class="availability limited">${availableRooms} rooms left</div>`
+          : `<div class="availability">Available</div>`
+        : `<div class="availability full">Fully Booked</div>`;
+
+      // Handle amenities array
+      let amenitiesHtml = '';
+      if (hostel.amenities && Array.isArray(hostel.amenities)) {
+        if (hostel.amenities.length > 0) {
+          amenitiesHtml = hostel.amenities.map(amenity => {
+            // Handle both string amenities and object amenities
+            const amenityName = typeof amenity === 'string' ? amenity : (amenity.name || amenity.toString());
+            return `<span class="amenity-tag">${amenityName.trim()}</span>`;
+          }).join('');
+        } else {
+          amenitiesHtml = '<span class="amenity-tag">Wi-Fi</span>';
+        }
+      } else {
+        amenitiesHtml = '<span class="amenity-tag">Wi-Fi</span>';
+      }
+
+      const hostelCard = `
+        <div class="hostel-card" data-id="${hostelId}">
+          ${availability}
+          <div class="hostel-header">
+            <div class="hostel-title">
+              <h3>${hostelName}</h3>
+              <div class="hostel-location">📍 ${hostelLocation}</div>
+            </div>
+            <div class="price-tag">
+              <span class="amount">KSH ${hostelPrice.toLocaleString()}</span>
+              <span class="period">per month</span>
+            </div>
+          </div>
+          
+          <div class="hostel-details">
+            <div class="detail-item">
+              <div class="detail-icon">🛏️</div>
+              <span>${hostel.roomType || 'Single Room'}</span>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">👥</div>
+              <span>${hostel.propertyType || 'Mixed Gender'}</span>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">🚿</div>
+              <span>Shared Bathroom</span>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">🔒</div>
+              <span>24/7 Security</span>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">📞</div>
+              <span>${hostel.contactPhone || 'Contact Available'}</span>
+            </div>
+          </div>
+
+          <div class="amenities">
+            <h4>Amenities</h4>
+            <div class="amenities-list">
+              ${amenitiesHtml}
+            </div>
+          </div>
+
+          <div class="hostel-actions">
+            <a href="HostelDetails.html?id=${hostelId}" class="btn-view">View Details</a>
+            <button class="btn-book" ${availableRooms === 0 ? 'disabled' : ''}>
+              ${availableRooms === 0 ? 'Fully Booked' : 'Book Now'}
+            </button>
+          </div>
+        </div>
+      `;
+      hostelList.insertAdjacentHTML('beforeend', hostelCard);
+    });
+
+    // Add event listeners for booking and view details
+    document.querySelectorAll('.btn-book').forEach(button => {
+      button.addEventListener('click', function() {
+        if (this.disabled) return;
+        
+        const hostelId = this.closest('.hostel-card').getAttribute('data-id');
+        sessionStorage.setItem('bookingHostelId', hostelId);
+        window.location.href = `book.html?id=${hostelId}`;
+      });
+    });
+  }
+
+  // Update search functionality
+  const searchBtn = document.querySelector('.search-btn');
+  if (searchBtn) {
+    searchBtn.addEventListener('click', function() {
+      const locationInput = document.querySelector('.search-input');
+      const budgetInputs = document.querySelectorAll('.budget-inputs input');
+      
+      const location = locationInput ? locationInput.value.trim() : '';
+      const minBudget = budgetInputs[0] ? budgetInputs[0].value : '';
+      const maxBudget = budgetInputs[1] ? budgetInputs[1].value : '';
+
+      // Validate inputs
+      const minPrice = minBudget ? parseFloat(minBudget) : 0;
+      const maxPrice = maxBudget ? parseFloat(maxBudget) : 1000000;
+
+      if (minPrice < 0 || maxPrice < 0) {
+        alert('Please enter valid positive numbers for budget.');
+        return;
+      }
+
+      if (minPrice > maxPrice) {
+        alert('Minimum budget cannot be greater than maximum budget.');
+        return;
+      }
+
+      // Update session storage
+      sessionStorage.setItem('searchLocation', location || 'University of Nairobi');
+      sessionStorage.setItem('minBudget', minPrice.toString());
+      sessionStorage.setItem('maxBudget', maxPrice.toString());
+
+      // Update price range display
+      updatePriceRangeDisplay(minPrice, maxPrice);
+
+      // Fetch hostels with new criteria
+      fetchHostelsByPriceRange(minPrice, maxPrice);
+    });
+  }
+
+  // Filter functionality
+  const filterCheckboxes = document.querySelectorAll('.filter-options input[type="checkbox"]');
+  const priceSliders = document.querySelectorAll('.price-range input[type="range"]');
+
+  filterCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', applyFilters);
+  });
+
+  priceSliders.forEach(slider => {
+    slider.addEventListener('input', function() {
+      const minPriceSlider = document.getElementById('minPrice');
+      const maxPriceSlider = document.getElementById('maxPrice');
+      const priceDisplay = document.querySelector('.price-range div');
+      
+      if (minPriceSlider && maxPriceSlider && priceDisplay) {
+        const minPrice = minPriceSlider.value;
+        const maxPrice = maxPriceSlider.value;
+        priceDisplay.innerHTML = `
+          <span>KSH ${parseInt(minPrice).toLocaleString()}</span>
+          <span>KSH ${parseInt(maxPrice).toLocaleString()}</span>
+        `;
+        applyFilters();
+      }
+    });
+  });
+
+  function applyFilters() {
+    const minPriceSlider = document.getElementById('minPrice');
+    const maxPriceSlider = document.getElementById('maxPrice');
+    
+    if (!minPriceSlider || !maxPriceSlider) return;
+
+    const minPrice = parseInt(minPriceSlider.value);
+    const maxPrice = parseInt(maxPriceSlider.value);
+    
+    const roomTypeCheckboxes = document.querySelectorAll('.filter-group:nth-child(1) input:checked');
+    const amenityCheckboxes = document.querySelectorAll('.filter-group:nth-child(2) input:checked');
+    const distanceCheckboxes = document.querySelectorAll('.filter-group:nth-child(3) input:checked');
+
+    const roomTypes = Array.from(roomTypeCheckboxes)
+      .map(cb => cb.parentElement.textContent.trim());
+    const amenities = Array.from(amenityCheckboxes)
+      .map(cb => cb.parentElement.textContent.trim());
+    const distances = Array.from(distanceCheckboxes)
+      .map(cb => cb.parentElement.textContent.trim());
+
+    let filteredHostels = [...hostels];
+
+    // Apply price filter
+    filteredHostels = filteredHostels.filter(hostel => 
+      (hostel.pricePerMonth || 0) >= minPrice && (hostel.pricePerMonth || 0) <= maxPrice
+    );
+
+    // Apply room type filter
+    if (roomTypes.length > 0) {
+      filteredHostels = filteredHostels.filter(hostel => 
+        roomTypes.includes(hostel.roomType || ''));
+    }
+
+    // Apply amenities filter
+    if (amenities.length > 0) {
+      filteredHostels = filteredHostels.filter(hostel => {
+        if (!hostel.amenities || !Array.isArray(hostel.amenities)) return false;
+
+        const hostelAmenities = hostel.amenities.map(amenity => {
+          const amenityName = typeof amenity === 'string' ? amenity : (amenity.name || amenity.toString());
+          return amenityName.trim().toLowerCase();
+        });
+
+        return amenities.every(amenity => 
+          hostelAmenities.includes(amenity.trim().toLowerCase())
+        );
+      });
+    }
+
+    // Apply distance filter
+    if (distances.length > 0) {
+      filteredHostels = filteredHostels.filter(hostel => {
+        if (!hostel.distance) return true;
+        const dist = parseFloat(hostel.distance);
+        return distances.some(range => {
+          if (range === 'Under 1km') return dist < 1;
+          if (range === '1-3km') return dist >= 1 && dist <= 3;
+          if (range === '3-5km') return dist > 3 && dist <= 5;
+          if (range === '5km+') return dist > 5;
+          return true;
+        });
+      });
+    }
+
+    displayHostels(filteredHostels);
+  }
+
+  // Load more functionality
+  const loadMoreBtn = document.querySelector('.btn-primary');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', function() {
+      this.textContent = 'Loading...';
+      this.disabled = true;
+      
+      // Simulate loading more hostels
+      setTimeout(() => {
+        this.textContent = 'Load More Hostels';
+        this.disabled = false;
+        
+        // In a real application, you would fetch more hostels here
+        // For now, we'll just show an alert
+        alert('More hostels loaded! (In a real app, this would load additional results via pagination)');
+      }, 1500);
+    });
+  }
+
+  // Mobile responsiveness
+  window.addEventListener('resize', function() {
+    const navLinks = document.querySelector('.nav-links');
+    if (navLinks) {
+      if (window.innerWidth <= 768) {
+        navLinks.style.display = 'none';
+      } else {
+        navLinks.style.display = 'flex';
+      }
+    }
+  });
+});
+</script>
   </body>
 </html>

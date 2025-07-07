@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Details | Hostel Hive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Arial", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hostel-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .hostel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .hostel-title h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .location {
+            color: #666;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .price-section {
+            text-align: right;
+        }
+
+        .price-tag {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .price-tag .amount {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .price-tag .period {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .availability-status {
+            background: #10b981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .availability-status.limited {
+            background: #f59e0b;
+        }
+
+        .availability-status.full {
+            background: #ef4444;
+        }
+
+        .price-range-display {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 1.2rem;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-gallery h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .gallery-container {
+            position: relative;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .main-image:hover {
+            transform: scale(1.02);
+        }
+
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            opacity: 1;
+            border-color: #8b5cf6;
+        }
+
+        .view-all-btn {
+            background: #8b5cf6;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .view-all-btn:hover {
+            background: #7c3aed;
+        }
+
+        /* Description Section */
+        .description-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .description-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .description-text {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .feature-text h4 {
+            color: #333;
+            margin-bottom: 0.2rem;
+        }
+
+        .feature-text p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Amenities Section */
+        .amenities-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .amenities-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .amenity-category {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .amenity-category h3 {
+            color: #8b5cf6;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .amenity-list {
+            list-style: none;
+        }
+
+        .amenity-list li {
+            color: #666;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .amenity-list li::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .booking-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .booking-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .booking-summary {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-total {
+            font-weight: bold;
+            color: #333;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 0.5rem;
+        }
+
+        .book-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .book-btn:hover {
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .contact-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-text {
+            color: #666;
+        }
+
+        .contact-text strong {
+            color: #333;
+            display: block;
+        }
+
+        /* Location Map */
+        .location-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .location-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 300px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .nearby-places {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .place-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .place-icon {
+            width: 30px;
+            height: 30px;
+            background: #8b5cf6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .place-text {
+            color: #666;
+        }
+
+        .place-text strong {
+            color: #333;
+            display: block;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .reviews-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .reviews-summary {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .overall-rating {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .rating-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #8b5cf6;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rating-bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .rating-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            transition: width 0.3s;
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .review-item {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .review-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .review-stars {
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-card {
+                position: static;
+            }
+            
+            .reviews-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hostel-title {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hostel-title h1 {
+                font-size: 2rem;
+            }
+            
+            .price-section {
+                text-align: left;
+            }
+            
+            .key-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .amenities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nearby-places {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Image Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            margin: 2% auto;
+            display: block;
+        }
+
+        .modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">Hostel Hive</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#housing">Find Housing</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="hostels-student.html" class="back-btn">← Back to Results</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Hostel Header -->
+        <div class="hostel-header">
+            <div class="hostel-title">
+                <div>
+                    <h1>UoN Student Lodge</h1>
+                    <div class="location">📍 500m from University of Nairobi, Nairobi</div>
+                    <div class="rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-text">4.2 (127 reviews)</span>
+                    </div>
+                </div>
+                <div class="price-section">
+                    <div class="price-tag">
+                        <span class="amount">KSH 8,500</span>
+                        <span class="period">per month</span>
+                    </div>
+                    <div class="availability-status">Available Now</div>
+                    <div class="price-range-display">Price Range: KSH 5,000 - KSH 15,000</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Main Section -->
+            <div class="main-section">
+                <!-- Image Gallery -->
+                <div class="image-gallery">
+                    <h2>Photos</h2>
+                    <div class="gallery-container">
+                        <img src="https://images.unsplash.com/photo-1555854877-bab0e460b1e5?w=800&h=400&fit=crop" alt="Main hostel view" class="main-image" id="mainImage">
+                        <div class="thumbnail-grid">
+                            <img src="https://images.unsplash.com/photo-1555854877-bab0e460b1e5?w=120&h=80&fit=crop" alt="Hostel exterior" class="thumbnail active" onclick="changeImage(this)">
+                            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=120&h=80&fit=crop" alt="Single room" class="thumbnail" onclick="changeImage(this)">
+                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=120&h=80&fit=crop" alt="Common area" class="thumbnail" onclick="changeImage(this)">
+                            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=120&h=80&fit=crop" alt="Kitchen" class="thumbnail" onclick="changeImage(this)">
+                            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=120&h=80&fit=crop" alt="Study room" class="thumbnail" onclick="changeImage(this)">
+                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=120&h=80&fit=crop" alt="Bathroom" class="thumbnail" onclick="changeImage(this)">
+                        </div>
+                        <button class="view-all-btn" onclick="openImageModal()">View All Photos</button>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="description-section">
+                    <h2>About This Hostel</h2>
+                    <p class="description-text">
+                        UoN Student Lodge is a premier student accommodation facility located just 500 meters from the University of Nairobi main campus. Our modern hostel combines comfort, convenience, and affordability to provide the perfect living environment for students.
+                    </p>
+                    <div class="key-features" id="keyFeatures">
+                        <div class="feature-item">
+                            <div class="feature-icon">🛏️</div>
+                            <div class="feature-text">
+                                <h4>Single Rooms</h4>
+                                <p>Private single rooms with study desk and wardrobe</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔒</div>
+                            <div class="feature-text">
+                                <h4>24/7 Security</h4>
+                                <p>Round-the-clock security with CCTV surveillance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💻</div>
+                            <div class="feature-text">
+                                <h4>High-Speed Wi-Fi</h4>
+                                <p>Free unlimited Wi-Fi throughout the facility</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🚿</div>
+                            <div class="feature-text">
+                                <h4>Modern Facilities</h4>
+                            <p>Clean, modern bathrooms and common areas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amenities -->
+                <div class="amenities-section">
+                    <h2>Amenities & Services</h2>
+                    <div class="amenities-grid" id="amenitiesGrid">
+                        <div class="amenity-category">
+                            <h3>Room Features</h3>
+                            <ul class="amenity-list">
+                                <li>Single bed with mattress</li>
+                                <li>Study desk and chair</li>
+                                <li>Wardrobe and storage</li>
+                                <li>Reading light</li>
+                                <li>Power outlets</li>
+                            </ul>
+                        </div>
+                        <div class="amenity-category">
+                            <h3>Common Areas</h3>
+                            <ul class="amenity-list">
+                                <li>Shared kitchen</li>
+                                <li>Common lounge</li>
+                                <li>Study rooms</li>
+                                <li>Dining area</li>
+                                <li>Recreation room</li>
+                            </ul>
+                        </div>
+                        <div class="amenity-category">
+                            <h3>Services</h3>
+                            <ul class="amenity-list">
+                                <li>Laundry service</li>
+                                <li>Housekeeping</li>
+                                <li>24/7 Reception</li>
+                                <li>Maintenance</li>
+                                <li>Mail service</li>
+                            </ul>
+                        </div>
+                        <div class="amenity-category">
+                            <h3>Security & Safety</h3>
+                            <ul class="amenity-list">
+                                <li>CCTV surveillance</li>
+                                <li>Key card access</li>
+                                <li>Fire safety systems</li>
+                                <li>Emergency exits</li>
+                                <li>First aid facilities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Booking Card -->
+                <div class="booking-card">
+                    <h3>Book Your Room</h3>
+                    <div class="booking-form">
+                        <div class="form-group">
+                            <label for="moveInDate">Move-in Date</label>
+                            <input type="date" id="moveInDate" name="moveInDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duration</label>
+                            <select id="duration" name="duration">
+                                <option value="1">1 Month</option>
+                                <option value="3">3 Months</option>
+                                <option value="6">6 Months</option>
+                                <option value="12">1 Year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="roomType">Room Type</label>
+                            <select id="roomType" name="roomType">
+                                <option value="single">Single Room - KSH 8,500</option>
+                                <option value="shared">Shared Room - KSH 6,000</option>
+                            </select>
+                        </div>
+                        
+                        <div class="booking-summary">
+                            <div class="summary-row">
+                                <span>Monthly rent:</span>
+                                <span id="monthlyRent">KSH 8,500</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Security deposit:</span>
+                                <span id="securityDeposit">KSH 8,500</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Registration fee:</span>
+                                <span id="registrationFee">KSH 1,000</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span>Total (First month):</span>
+                                <span id="totalAmount">KSH 18,000</span>
+                            </div>
+                        </div>
+                        
+                        <button class="book-btn" onclick="bookRoom()">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="contact-card">
+                    <h3>Contact Information</h3>
+                    <div class="contact-info" id="contactInfo">
+                        <div class="contact-item">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-text">
+                                <strong>Phone</strong>
+                                +254 712 345 678
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📧</div>
+                            <div class="contact-text">
+                                <strong>Email</strong>
+                                info@uonstudentlodge.com
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📍</div>
+                            <div class="contact-text">
+                                <strong>Address</strong>
+                                500m from University of Nairobi, Nairobi
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Section -->
+      
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2>Guest Reviews</h2>
+            <div class="reviews-summary">
+                <div class="overall-rating">
+                    <div class="rating-number">4.2</div>
+                    <div class="stars">★★★★☆</div>
+                    <div class="rating-text">Based on 127 reviews</div>
+                </div>
+                <div class="rating-breakdown">
+                    <div class="rating-item">
+                        <span>Cleanliness</span>
+                        <div class="rating-bar"><div class="rating-fill" style="width: 90%"></div></div>
+                        <span>4.5</span>
+                    </div>
+                    <div class="rating-item">
+                        <span>Facilities</span>
+                        <div class="rating-bar"><div class="rating-fill" style="width: 85%"></div></div>
+                        <span>4.3</span>
+                    </div>
+                    <div class="rating-item">
+                        <span>Location</span>
+                        <div class="rating-bar"><div class="rating-fill" style="width: 88%"></div></div>
+                        <span>4.4</span>
+                    </div>
+                    <div class="rating-item">
+                        <span>Value</span>
+                        <div class="rating-bar"><div class="rating-fill" style="width: 80%"></div></div>
+                        <span>4.0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="review-list" id="reviewList">
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-name">Jane M.</div>
+                        <div class="review-date">October 2024</div>
+                    </div>
+                    <div class="review-stars">★★★★☆</div>
+                    <div class="review-text">
+                        Great location and clean rooms! The Wi-Fi is super fast, perfect for studying. Only downside is the kitchen can get crowded during peak hours.
+                    </div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-name">John K.</div>
+                        <div class="review-date">September 2024</div>
+                    </div>
+                    <div class="review-stars">★★★★★</div>
+                    <div class="review-text">
+                        Amazing hostel! The staff is friendly, and the facilities are top-notch. Highly recommend for UoN students.
+                    </div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-name">Sarah W.</div>
+                        <div class="review-date">August 2024</div>
+                    </div>
+                    <div class="review-stars">★★★★☆</div>
+                    <div class="review-text">
+                        Comfortable and secure. The study rooms are a great addition. Would love more parking space, though.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+        <span class="close" onclick="closeImageModal()">×</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #333; color: white; padding: 2rem; text-align: center; margin-top: 2rem;">
+        <div class="logo">Hostel Hive</div>
+        <p>© 2025 Hostel Hive. All rights reserved.</p>
+        <ul style="list-style: none; display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem;">
+            <li><a href="#privacy" style="color: #a855f7; text-decoration: none;">Privacy Policy</a></li>
+            <li><a href="#terms" style="color: #a855f7; text-decoration: none;">Terms of Service</a></li>
+            <li><a href="#contact" style="color: #a855f7; text-decoration: none;">Contact Us</a></li>
+        </ul>
+    </footer>
+
+   <script>
+    // Get hostel ID from URL
+    function getHostelId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
+
+    // Fetch and display hostel details
+    document.addEventListener('DOMContentLoaded', function() {
+        const hostelId = getHostelId();
+        const minBudget = parseFloat(sessionStorage.getItem('minBudget')) || 5000;
+        const maxBudget = parseFloat(sessionStorage.getItem('maxBudget')) || 15000;
+
+        // Update price range display
+        const priceRangeDisplay = document.querySelector('.price-range-display');
+        if (priceRangeDisplay) {
+            priceRangeDisplay.textContent = 
+                `Price Range: KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
+        }
+
+        if (hostelId) {
+            fetch(`http://localhost:8099/api/hostels/${hostelId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch hostel details');
+                    return response.json();
+                })
+                .then(hostel => {
+                    // Update title
+                    document.title = `${hostel.name} - Hostel Details | Hostel Hive`;
+
+                    // Update hostel header
+                    const hostelTitle = document.querySelector('.hostel-title h1');
+                    if (hostelTitle) {
+                        hostelTitle.textContent = hostel.name || 'Hostel Name';
+                    }
+
+                    const locationElement = document.querySelector('.location');
+                    if (locationElement) {
+                        locationElement.innerHTML = `📍 ${hostel.location || 'Unknown Location'}`;
+                    }
+
+                    const priceAmount = document.querySelector('.price-tag .amount');
+                    if (priceAmount) {
+                        priceAmount.textContent = 
+                            `KSH ${hostel.pricePerMonth ? hostel.pricePerMonth.toLocaleString() : 'N/A'}`;
+                    }
+
+                    const availabilityStatus = document.querySelector('.availability-status');
+                    if (availabilityStatus) {
+                        availabilityStatus.textContent = hostel.availableRooms > 0 
+                            ? (hostel.availableRooms <= 3 ? `${hostel.availableRooms} Rooms Left` : 'Available Now')
+                            : 'Fully Booked';
+                        availabilityStatus.className = `availability-status ${hostel.availableRooms > 0 ? (hostel.availableRooms <= 3 ? 'limited' : '') : 'full'}`;
+                    }
+
+                    // Update rating (fallback to static values if not provided)
+                    const rating = hostel.rating || 4.2;
+                    const reviewsCount = hostel.reviewsCount || 127;
+                    
+                    const ratingStars = document.querySelector('.rating .stars');
+                    if (ratingStars) {
+                        ratingStars.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+                    }
+
+                    const ratingText = document.querySelector('.rating .rating-text');
+                    if (ratingText) {
+                        ratingText.textContent = `${rating} (${reviewsCount} reviews)`;
+                    }
+
+                    // Update booking form
+                    const roomTypeSelect = document.getElementById('roomType');
+                    if (roomTypeSelect) {
+                        const monthlyRent = hostel.pricePerMonth || 8500;
+                        const sharedRoomPrice = hostel.roomType === 'Shared Room' ? (hostel.pricePerMonth * 0.75) : 6000;
+                        roomTypeSelect.innerHTML = `
+                            <option value="single">Single Room - KSH ${monthlyRent.toLocaleString()}</option>
+                            ${hostel.roomType === 'Shared Room' ? 
+                                `<option value="shared">Shared Room - KSH ${sharedRoomPrice.toLocaleString()}</option>` : ''}
+                        `;
+
+                        // Update booking summary
+                        updateBookingSummary(monthlyRent);
+                    }
+
+                    // Update description
+                    const descriptionSection = document.querySelector('.description-section');
+                    if (descriptionSection) {
+                        const descriptionText = descriptionSection.querySelector('.description-text');
+                        if (descriptionText) {
+                            descriptionText.textContent = 
+                                hostel.description || 'This modern hostel offers a comfortable and convenient living environment for students, located near major universities with excellent amenities and security.';
+                        }
+                    }
+
+                    // Update key features
+                    const keyFeatures = document.getElementById('keyFeatures');
+                    if (keyFeatures) {
+                        keyFeatures.innerHTML = `
+                            <div class="feature-item">
+                                <div class="feature-icon">🛏️</div>
+                                <div class="feature-text">
+                                    <h4>${hostel.roomType || 'Single Rooms'}</h4>
+                                    <p>${hostel.roomType === 'Shared Room' ? 'Comfortable shared rooms with individual storage' : 'Private single rooms with study desk and wardrobe'}</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🔒</div>
+                                <div class="feature-text">
+                                    <h4>Security</h4>
+                                    <p>${hostel.security || 'Round-the-clock security with CCTV surveillance'}</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">💻</div>
+                                <div class="feature-text">
+                                    <h4>Wi-Fi</h4>
+                                    <p>${hostel.amenities && hostel.amenities.some(a => 
+                                        (typeof a === 'object' ? a.name : a).toLowerCase().includes('wi-fi') || 
+                                        (typeof a === 'object' ? a.name : a).toLowerCase().includes('wifi')
+                                    ) ? 'Free unlimited Wi-Fi throughout the facility' : 'Internet access available'}</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🚿</div>
+                                <div class="feature-text">
+                                    <h4>Bathroom</h4>
+                                    <p>${hostel.bathroomType || 'Clean, modern bathrooms and common areas'}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Update amenities with error handling
+                    const amenitiesGrid = document.getElementById('amenitiesGrid') || 
+                                         document.getElementById('amenities') || 
+                                         document.querySelector('.amenities-grid') ||
+                                         document.querySelector('.amenities-section') ||
+                                         document.querySelector('[id*="amenit"]');
+
+                    if (amenitiesGrid) {
+                        if (hostel.amenities && hostel.amenities.length > 0) {
+                            // hostel.amenities is an array of Amenity objects, not a string
+                            const amenityNames = hostel.amenities.map(amenity => 
+                                typeof amenity === 'object' ? (amenity.name || amenity.amenityName || '') : amenity
+                            ).filter(name => name); // Filter out empty names
+                            
+                            amenitiesGrid.innerHTML = `
+                                <div class="amenity-category">
+                                    <h3>Amenities</h3>
+                                    <ul class="amenity-list">
+                                        ${amenityNames.map(name => `<li>${name}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        } else {
+                            amenitiesGrid.innerHTML = `
+                                <div class="amenity-category">
+                                    <h3>Amenities</h3>
+                                    <ul class="amenity-list">
+                                        <li>Wi-Fi</li>
+                                        <li>Laundry Service</li>
+                                        <li>Shared Kitchen</li>
+                                        <li>24/7 Security</li>
+                                    </ul>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        console.warn('Amenities container element not found. Check your HTML for the correct ID.');
+                    }
+
+                    // Update contact information
+                    const contactInfo = document.getElementById('contactInfo');
+                    if (contactInfo) {
+                        contactInfo.innerHTML = `
+                            <div class="contact-item">
+                                <div class="contact-icon">📞</div>
+                                <div class="contact-text">
+                                    <strong>Phone</strong>
+                                    ${hostel.contactPhone || '+254 712 345 678'}
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">📧</div>
+                                <div class="contact-text">
+                                    <strong>Email</strong>
+                                    ${hostel.contactEmail || 'info@hostelhive.com'}
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">📍</div>
+                                <div class="contact-text">
+                                    <strong>Address</strong>
+                                    ${hostel.address || hostel.location || '500m from University of Nairobi, Nairobi'}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Update images (use placeholder images if none provided)
+                    const imageUrls = hostel.images && hostel.images.length > 0 ? hostel.images : [
+                        'https://images.unsplash.com/photo-1555854877-bab0e460b1e5',
+                        'https://images.unsplash.com/photo-1631049307264-da0ec9d70304',
+                        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7',
+                        'https://images.unsplash.com/photo-1571896349842-33c89424de2d',
+                        'https://images.unsplash.com/photo-1584622650111-993a426fbf0a',
+                        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b'
+                    ];
+
+                    const mainImage = document.getElementById('mainImage');
+                    if (mainImage) {
+                        mainImage.src = `${imageUrls[0]}?w=800&h=400&fit=crop`;
+                        mainImage.alt = `${hostel.name} main view`;
+                    }
+
+                    const thumbnailGrid = document.querySelector('.thumbnail-grid');
+                    if (thumbnailGrid) {
+                        thumbnailGrid.innerHTML = imageUrls.map((url, index) => `
+                            <img src="${url}?w=120&h=80&fit=crop" alt="${hostel.name} image ${index + 1}" 
+                                 class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeImage(this)">
+                        `).join('');
+                    }
+
+                    const viewAllBtn = document.querySelector('.view-all-btn');
+                    if (viewAllBtn) {
+                        viewAllBtn.textContent = `View All ${imageUrls.length} Photos`;
+                    }
+
+                    // Update nearby places (use placeholder if not provided)
+                    const nearbyPlaces = document.getElementById('nearbyPlaces');
+                    if (nearbyPlaces) {
+                        nearbyPlaces.innerHTML = (hostel.nearbyPlaces && hostel.nearbyPlaces.length > 0) ? 
+                            hostel.nearbyPlaces.map(place => `
+                                <div class="place-item">
+                                    <div class="place-icon">${place.icon || '📍'}</div>
+                                    <div class="place-text">
+                                        <strong>${place.name}</strong>
+                                        ${place.distance}
+                                    </div>
+                                </div>
+                            `).join('') : `
+                                <div class="place-item">
+                                    <div class="place-icon">🏫</div>
+                                    <div class="place-text">
+                                        <strong>University of Nairobi</strong>
+                                        500m (7 min walk)
+                                    </div>
+                                </div>
+                                <div class="place-item">
+                                    <div class="place-icon">🛒</div>
+                                    <div class="place-text">
+                                        <strong>Supermarket</strong>
+                                        300m (5 min walk)
+                                    </div>
+                                </div>
+                                <div class="place-item">
+                                    <div class="place-icon">☕</div>
+                                    <div class="place-text">
+                                        <strong>Cafe</strong>
+                                        400m (6 min walk)
+                                    </div>
+                                </div>
+                                <div class="place-item">
+                                    <div class="place-icon">🚌</div>
+                                    <div class="place-text">
+                                        <strong>Bus Stop</strong>
+                                        200m (3 min walk)
+                                    </div>
+                                </div>
+                            `;
+                    }
+
+                    // Update reviews (use placeholder if not provided)
+                    const reviewList = document.getElementById('reviewList');
+                    if (reviewList) {
+                        const reviews = hostel.reviews && hostel.reviews.length > 0 ? hostel.reviews : [
+                            { reviewer: 'Jane M.', date: 'October 2024', rating: 4, text: 'Great location and clean rooms! The Wi-Fi is super fast, perfect for studying. Only downside is the kitchen can get crowded during peak hours.' },
+                            { reviewer: 'John K.', date: 'September 2024', rating: 5, text: 'Amazing hostel! The staff is friendly, and the facilities are top-notch. Highly recommend for UoN students.' },
+                            { reviewer: 'Sarah W.', date: 'August 2024', rating: 4, text: 'Comfortable and secure. The study rooms are a great addition. Would love more parking space, though.' }
+                        ];
+                        reviewList.innerHTML = reviews.map(review => `
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-name">${review.reviewer}</div>
+                                    <div class="review-date">${review.date}</div>
+                                </div>
+                                <div class="review-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                                <div class="review-text">${review.text}</div>
+                            </div>
+                        `).join('');
+                    }
+
+                    // Update reviews summary
+                    const overallRatingNumber = document.querySelector('.overall-rating .rating-number');
+                    if (overallRatingNumber) {
+                        overallRatingNumber.textContent = rating;
+                    }
+
+                    const overallRatingStars = document.querySelector('.overall-rating .stars');
+                    if (overallRatingStars) {
+                        overallRatingStars.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+                    }
+
+                    const overallRatingText = document.querySelector('.overall-rating .rating-text');
+                    if (overallRatingText) {
+                        overallRatingText.textContent = `Based on ${reviewsCount} reviews`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching hostel details:', error);
+                    alert('Error fetching hostel details. Please try again later.');
+                });
+        } else {
+            alert('No hostel ID provided.');
+        }
+    });
+
+    // Image Gallery Functionality
+    function changeImage(thumbnail) {
+        const mainImage = document.getElementById('mainImage');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        
+        if (mainImage) {
+            mainImage.src = thumbnail.src.replace('w=120&h=80', 'w=800&h=400');
+            mainImage.alt = thumbnail.alt;
+        }
+        
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        thumbnail.classList.add('active');
+    }
+
+    function openImageModal() {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const mainImage = document.getElementById('mainImage');
+        
+        if (modal && modalImage && mainImage) {
+            modalImage.src = mainImage.src;
+            modal.style.display = 'block';
+        }
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('imageModal');
+        if (event.target === modal) {
+            closeImageModal();
+        }
+    }
+
+    // Booking Form Functionality
+    function bookRoom() {
+        const moveInDate = document.getElementById('moveInDate');
+        const duration = document.getElementById('duration');
+        const roomType = document.getElementById('roomType');
+        const hostelId = getHostelId();
+
+        if (!moveInDate || !moveInDate.value) {
+            alert('Please select a move-in date.');
+            return;
+        }
+
+        // Store booking details in sessionStorage
+        sessionStorage.setItem('bookingMoveInDate', moveInDate.value);
+        sessionStorage.setItem('bookingDuration', duration ? duration.value : '1');
+        sessionStorage.setItem('bookingRoomType', roomType ? roomType.value : 'single');
+
+        // Redirect to book.html with hostel ID
+        window.location.href = `book.html?id=${hostelId}`;
+    }
+
+    function updateBookingSummary(monthlyRent) {
+        const securityDeposit = monthlyRent;
+        const registrationFee = 1000;
+        const total = monthlyRent + securityDeposit + registrationFee;
+
+        const monthlyRentElement = document.getElementById('monthlyRent');
+        const securityDepositElement = document.getElementById('securityDeposit');
+        const registrationFeeElement = document.getElementById('registrationFee');
+        const totalAmountElement = document.getElementById('totalAmount');
+
+        if (monthlyRentElement) {
+            monthlyRentElement.textContent = `KSH ${monthlyRent.toLocaleString()}`;
+        }
+        if (securityDepositElement) {
+            securityDepositElement.textContent = `KSH ${securityDeposit.toLocaleString()}`;
+        }
+        if (registrationFeeElement) {
+            registrationFeeElement.textContent = `KSH ${registrationFee.toLocaleString()}`;
+        }
+        if (totalAmountElement) {
+            totalAmountElement.textContent = `KSH ${total.toLocaleString()}`;
+        }
+    }
+
+    // Event listener for room type changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const roomTypeSelect = document.getElementById('roomType');
+        if (roomTypeSelect) {
+            roomTypeSelect.addEventListener('change', function() {
+                const roomType = this.value;
+                const monthlyRent = roomType === 'single' ? 
+                    parseFloat(this.options[0].text.split(' - KSH ')[1].replace(/,/g, '')) : 
+                    parseFloat(this.options[1].text.split(' - KSH ')[1].replace(/,/g, ''));
+                updateBookingSummary(monthlyRent);
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -152,6 +152,7 @@ if (registerForm) {
         phoneNumber: formData.get("phone").replace(/\D/g, ""),
         password: formData.get("password"),
         role: "ROLE_STUDENT",
+        university: formData.get("university"), // Added university field
       };
 
       console.log("Sending registration data:", registrationData);
