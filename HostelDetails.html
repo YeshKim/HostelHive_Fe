@@ -800,15 +800,8 @@
                 <div class="image-gallery">
                     <h2>Photos</h2>
                     <div class="gallery-container">
-                        <img src="https://images.unsplash.com/photo-1555854877-bab0e460b1e5?w=800&h=400&fit=crop" alt="Main hostel view" class="main-image" id="mainImage">
-                        <div class="thumbnail-grid">
-                            <img src="https://images.unsplash.com/photo-1555854877-bab0e460b1e5?w=120&h=80&fit=crop" alt="Hostel exterior" class="thumbnail active" onclick="changeImage(this)">
-                            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=120&h=80&fit=crop" alt="Single room" class="thumbnail" onclick="changeImage(this)">
-                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=120&h=80&fit=crop" alt="Common area" class="thumbnail" onclick="changeImage(this)">
-                            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=120&h=80&fit=crop" alt="Kitchen" class="thumbnail" onclick="changeImage(this)">
-                            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=120&h=80&fit=crop" alt="Study room" class="thumbnail" onclick="changeImage(this)">
-                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=120&h=80&fit=crop" alt="Bathroom" class="thumbnail" onclick="changeImage(this)">
-                        </div>
+                        <img src="" alt="Main hostel view" class="main-image" id="mainImage">
+                        <div class="thumbnail-grid" id="thumbnailGrid"></div>
                         <button class="view-all-btn" onclick="openImageModal()">View All Photos</button>
                     </div>
                 </div>
@@ -845,7 +838,7 @@
                             <div class="feature-icon">🚿</div>
                             <div class="feature-text">
                                 <h4>Modern Facilities</h4>
-                            <p>Clean, modern bathrooms and common areas</p>
+                                <p>Clean, modern bathrooms and common areas</p>
                             </div>
                         </div>
                     </div>
@@ -979,9 +972,6 @@
             </div>
         </div>
 
-        <!-- Location Section -->
-      
-
         <!-- Reviews Section -->
         <div class="reviews-section">
             <h2>Guest Reviews</h2>
@@ -1066,11 +1056,23 @@
         </ul>
     </footer>
 
-   <script>
+    <script>
     // Get hostel ID from URL
     function getHostelId() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('id');
+    }
+
+    // Convert base64 string to data URL with MIME type detection
+    function base64ToDataUrl(base64String) {
+        // Basic MIME type detection based on base64 prefix or content
+        let mimeType = 'image/jpeg'; // Default to JPEG
+        if (base64String.startsWith('/9j/')) {
+            mimeType = 'image/jpeg';
+        } else if (base64String.startsWith('iVBORw0KGgo')) {
+            mimeType = 'image/png';
+        } // Add more checks for other formats if needed
+        return `data:${mimeType};base64,${base64String}`;
     }
 
     // Fetch and display hostel details
@@ -1207,10 +1209,9 @@
 
                     if (amenitiesGrid) {
                         if (hostel.amenities && hostel.amenities.length > 0) {
-                            // hostel.amenities is an array of Amenity objects, not a string
                             const amenityNames = hostel.amenities.map(amenity => 
                                 typeof amenity === 'object' ? (amenity.name || amenity.amenityName || '') : amenity
-                            ).filter(name => name); // Filter out empty names
+                            ).filter(name => name);
                             
                             amenitiesGrid.innerHTML = `
                                 <div class="amenity-category">
@@ -1265,113 +1266,32 @@
                         `;
                     }
 
-                    // Update images (use placeholder images if none provided)
-                    const imageUrls = hostel.images && hostel.images.length > 0 ? hostel.images : [
-                        'https://images.unsplash.com/photo-1555854877-bab0e460b1e5',
-                        'https://images.unsplash.com/photo-1631049307264-da0ec9d70304',
-                        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7',
-                        'https://images.unsplash.com/photo-1571896349842-33c89424de2d',
-                        'https://images.unsplash.com/photo-1584622650111-993a426fbf0a',
-                        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b'
+                    // Update images with base64 strings from imagesBase64
+                    const imageBase64s = hostel.imagesBase64 && hostel.imagesBase64.length > 0 ? hostel.imagesBase64 : [
+                        // Fallback placeholder base64 (1x1 transparent PNG)
+                        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwAB/AL+i4AAAAABJRU5ErkJggg=='
                     ];
 
                     const mainImage = document.getElementById('mainImage');
-                    if (mainImage) {
-                        mainImage.src = `${imageUrls[0]}?w=800&h=400&fit=crop`;
-                        mainImage.alt = `${hostel.name} main view`;
-                    }
+                    const thumbnailGrid = document.getElementById('thumbnailGrid');
 
-                    const thumbnailGrid = document.querySelector('.thumbnail-grid');
-                    if (thumbnailGrid) {
-                        thumbnailGrid.innerHTML = imageUrls.map((url, index) => `
-                            <img src="${url}?w=120&h=80&fit=crop" alt="${hostel.name} image ${index + 1}" 
+                    if (mainImage && thumbnailGrid) {
+                        // Set main image with base64
+                        mainImage.src = base64ToDataUrl(imageBase64s[0]);
+                        mainImage.alt = `${hostel.name || 'Hostel'} main view`;
+
+                        // Populate thumbnail grid with base64 images
+                        thumbnailGrid.innerHTML = imageBase64s.map((base64, index) => `
+                            <img src="${base64ToDataUrl(base64)}" alt="${hostel.name || 'Hostel'} image ${index + 1}" 
                                  class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeImage(this)">
                         `).join('');
-                    }
 
-                    const viewAllBtn = document.querySelector('.view-all-btn');
-                    if (viewAllBtn) {
-                        viewAllBtn.textContent = `View All ${imageUrls.length} Photos`;
-                    }
-
-                    // Update nearby places (use placeholder if not provided)
-                    const nearbyPlaces = document.getElementById('nearbyPlaces');
-                    if (nearbyPlaces) {
-                        nearbyPlaces.innerHTML = (hostel.nearbyPlaces && hostel.nearbyPlaces.length > 0) ? 
-                            hostel.nearbyPlaces.map(place => `
-                                <div class="place-item">
-                                    <div class="place-icon">${place.icon || '📍'}</div>
-                                    <div class="place-text">
-                                        <strong>${place.name}</strong>
-                                        ${place.distance}
-                                    </div>
-                                </div>
-                            `).join('') : `
-                                <div class="place-item">
-                                    <div class="place-icon">🏫</div>
-                                    <div class="place-text">
-                                        <strong>University of Nairobi</strong>
-                                        500m (7 min walk)
-                                    </div>
-                                </div>
-                                <div class="place-item">
-                                    <div class="place-icon">🛒</div>
-                                    <div class="place-text">
-                                        <strong>Supermarket</strong>
-                                        300m (5 min walk)
-                                    </div>
-                                </div>
-                                <div class="place-item">
-                                    <div class="place-icon">☕</div>
-                                    <div class="place-text">
-                                        <strong>Cafe</strong>
-                                        400m (6 min walk)
-                                    </div>
-                                </div>
-                                <div class="place-item">
-                                    <div class="place-icon">🚌</div>
-                                    <div class="place-text">
-                                        <strong>Bus Stop</strong>
-                                        200m (3 min walk)
-                                    </div>
-                                </div>
-                            `;
-                    }
-
-                    // Update reviews (use placeholder if not provided)
-                    const reviewList = document.getElementById('reviewList');
-                    if (reviewList) {
-                        const reviews = hostel.reviews && hostel.reviews.length > 0 ? hostel.reviews : [
-                            { reviewer: 'Jane M.', date: 'October 2024', rating: 4, text: 'Great location and clean rooms! The Wi-Fi is super fast, perfect for studying. Only downside is the kitchen can get crowded during peak hours.' },
-                            { reviewer: 'John K.', date: 'September 2024', rating: 5, text: 'Amazing hostel! The staff is friendly, and the facilities are top-notch. Highly recommend for UoN students.' },
-                            { reviewer: 'Sarah W.', date: 'August 2024', rating: 4, text: 'Comfortable and secure. The study rooms are a great addition. Would love more parking space, though.' }
-                        ];
-                        reviewList.innerHTML = reviews.map(review => `
-                            <div class="review-item">
-                                <div class="review-header">
-                                    <div class="reviewer-name">${review.reviewer}</div>
-                                    <div class="review-date">${review.date}</div>
-                                </div>
-                                <div class="review-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                                <div class="review-text">${review.text}</div>
-                            </div>
-                        `).join('');
-                    }
-
-                    // Update reviews summary
-                    const overallRatingNumber = document.querySelector('.overall-rating .rating-number');
-                    if (overallRatingNumber) {
-                        overallRatingNumber.textContent = rating;
-                    }
-
-                    const overallRatingStars = document.querySelector('.overall-rating .stars');
-                    if (overallRatingStars) {
-                        overallRatingStars.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
-                    }
-
-                    const overallRatingText = document.querySelector('.overall-rating .rating-text');
-                    if (overallRatingText) {
-                        overallRatingText.textContent = `Based on ${reviewsCount} reviews`;
+                        const viewAllBtn = document.querySelector('.view-all-btn');
+                        if (viewAllBtn) {
+                            viewAllBtn.textContent = `View All ${imageBase64s.length} Photos`;
+                        }
+                    } else {
+                        console.warn('Image gallery elements not found.');
                     }
                 })
                 .catch(error => {
@@ -1389,7 +1309,7 @@
         const thumbnails = document.querySelectorAll('.thumbnail');
         
         if (mainImage) {
-            mainImage.src = thumbnail.src.replace('w=120&h=80', 'w=800&h=400');
+            mainImage.src = thumbnail.src;
             mainImage.alt = thumbnail.alt;
         }
         
@@ -1480,6 +1400,6 @@
             });
         }
     });
-</script>
+    </script>
 </body>
 </html>

@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hostel Hive - Bookings Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-50: #f3f0ff;
+        --primary-100: #e9e2ff;
+        --primary-500: #8b5cf6;
+        --primary-600: #7c3aed;
+        --primary-700: #6d28d9;
+        --primary-900: #4c1d95;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --success-50: #ecfdf5;
+        --success-500: #10b981;
+        --success-600: #059669;
+        --warning-50: #fffbeb;
+        --warning-500: #f59e0b;
+        --warning-600: #d97706;
+        --error-50: #fef2f2;
+        --error-500: #ef4444;
+        --error-600: #dc2626;
+        --info-50: #eff6ff;
+        --info-500: #3b82f6;
+        --info-600: #2563eb;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --border-radius: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--gray-50) 0%,
+          var(--primary-50) 100%
+        );
+        color: var(--gray-800);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-600) 0%,
+          var(--primary-700) 100%
+        );
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: var(--shadow-lg);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      nav {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo::before {
+        content: "🏠";
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transform: translateY(-1px);
+      }
+
+      .nav-links a.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .user-info {
+        text-align: right;
+        color: white;
+      }
+
+      .user-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .user-role {
+        font-size: 0.75rem;
+        opacity: 0.8;
+      }
+
+      .profile-pic {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, white, var(--gray-100));
+        color: var(--primary-600);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: var(--shadow-md);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        backdrop-filter: blur(10px);
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      /* Main Content */
+      main {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      /* Page Header */
+      .page-header {
+        background: linear-gradient(135deg, white 0%, var(--gray-50) 100%);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        margin-bottom: 2rem;
+        border: 1px solid var(--gray-200);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .page-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-500),
+          var(--primary-600),
+          var(--primary-700)
+        );
+      }
+
+      .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--gray-900);
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .page-header p {
+        color: var(--gray-600);
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-500),
+          var(--primary-600)
+        );
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-400);
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: linear-gradient(
+          135deg,
+          var(--success-500),
+          var(--success-600)
+        );
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: linear-gradient(
+          135deg,
+          var(--success-600),
+          var(--success-700)
+        );
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, var(--error-500), var(--error-600));
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: linear-gradient(135deg, var(--error-600), var(--error-700));
+        transform: translateY(-2px);
+      }
+
+      .btn-warning {
+        background: linear-gradient(
+          135deg,
+          var(--warning-500),
+          var(--warning-600)
+        );
+        color: white;
+      }
+
+      .btn-warning:hover {
+        background: linear-gradient(
+          135deg,
+          var(--warning-600),
+          var(--warning-700)
+        );
+        transform: translateY(-2px);
+      }
+
+      /* Table */
+      .table-container {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+      }
+
+      .table-header {
+        background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .table-header h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gray-900);
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      .bookings-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      .bookings-table th,
+      .bookings-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .bookings-table th {
+        background: var(--gray-50);
+        font-weight: 600;
+        color: var(--gray-700);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8rem;
+      }
+
+      .bookings-table tr:hover {
+        background: var(--gray-50);
+      }
+
+      .bookings-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Status Badges */
+      .status-badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .status-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .status-confirmed {
+        background: var(--success-50);
+        color: var(--success-600);
+      }
+
+      .status-pending {
+        background: var(--warning-50);
+        color: var(--warning-600);
+      }
+
+      .status-cancelled {
+        background: var(--error-50);
+        color: var(--error-600);
+      }
+
+      .status-expired {
+        background: var(--gray-100);
+        color: var(--gray-600);
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        padding: 0.5rem 0.75rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.8rem;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-content {
+        background: white;
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        width: 90%;
+        max-width: 600px;
+        position: relative;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-xl);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      .close {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--gray-100);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--gray-600);
+        transition: var(--transition);
+      }
+
+      .close:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+      }
+
+      .detail-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--gray-100);
+      }
+
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+
+      .detail-value {
+        color: var(--gray-900);
+      }
+
+      /* Image Gallery in Modal */
+      .image-gallery {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+      }
+
+      .image-gallery img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+      }
+
+      .image-gallery img:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Loading States */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: var(--gray-600);
+        font-size: 0.9rem;
+        padding: 2rem;
+      }
+
+      .loading::before {
+        content: "";
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--gray-300);
+        border-top: 2px solid var(--primary-500);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--gray-600);
+      }
+
+      .empty-state h3 {
+        margin-bottom: 1rem;
+        color: var(--gray-700);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        main {
+          padding: 1rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 1rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        main {
+          padding: 1rem;
+        }
+
+        .page-header {
+          padding: 1.5rem;
+        }
+
+        .page-header h1 {
+          font-size: 2rem;
+        }
+
+        .table-wrapper {
+          font-size: 0.8rem;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <nav>
+        <div class="logo">Hostel Hive</div>
+        <ul class="nav-links">
+          <li><a href="home-manager.html">Dashboard</a></li>
+          <li><a href="addproperty.html">Properties</a></li>
+          <li><a href="bookings.html" class="active">Bookings</a></li>
+          <li><a href="#payments">Payments</a></li>
+        </ul>
+        <div class="user-profile">
+          <div class="user-info">
+            <div class="user-name" id="userName">Loading...</div>
+            <div class="user-role">Property Manager</div>
+          </div>
+          <div id="profilePic" class="profile-pic"></div>
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Bookings Management</h1>
+        <p>View and manage all booking requests for your properties</p>
+      </div>
+
+      <!-- Bookings Table -->
+      <div class="table-container">
+        <div class="table-header">
+          <h2>All Bookings</h2>
+          <button class="btn btn-secondary" onclick="refreshBookings()">
+            🔄 Refresh
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table class="bookings-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Student Info</th>
+                <th>Property</th>
+                <th>Room</th>
+        
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody">
+              <tr>
+                <td colspan="8">
+                  <div class="loading">Loading bookings...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Booking Details Modal -->
+    <div id="bookingDetailsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Booking Details</h2>
+          <button class="close" onclick="closeBookingDetailsModal()">×</button>
+        </div>
+        <div id="bookingDetailsContent">
+          <!-- Content will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirm Action</h2>
+          <button class="close" onclick="closeConfirmationModal()">×</button>
+        </div>
+        <div id="confirmationContent">
+          <p>Are you sure you want to perform this action?</p>
+          <div class="action-buttons" style="margin-top: 1.5rem;">
+            <button class="btn btn-primary" id="confirmBtn">Confirm</button>
+            <button class="btn btn-secondary" onclick="closeConfirmationModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE_URL = "http://localhost:8099";
+      let currentBookings = [];
+      let currentProperties = [];
+
+      // Helper to get JWT token from cookie
+      function getToken() {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+          const [name, value] = cookie.trim().split("=");
+          if (name === "jwtToken") {
+            return value;
+          }
+        }
+        return null;
+      }
+
+      // Convert base64 string to data URL
+      function base64ToDataUrl(base64String) {
+        let mimeType = 'image/jpeg'; // Default to JPEG
+        if (base64String.startsWith('/9j/')) {
+          mimeType = 'image/jpeg';
+        } else if (base64String.startsWith('iVBORw0KGgo')) {
+          mimeType = 'image/png';
+        }
+        return `data:${mimeType};base64,${base64String}`;
+      }
+
+      // Axios instance with auth header
+      const axiosInstance = axios.create({
+        baseURL: API_BASE_URL,
+        headers: { "Content-Type": "application/json" },
+      });
+
+      axiosInstance.interceptors.request.use((config) => {
+        const token = getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      });
+
+      // Logout handler
+      function logout() {
+        document.cookie = "jwtToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        window.location.href = "/login.html";
+      }
+
+      // Fetch user data
+      async function fetchUserData() {
+        try {
+          const response = await axiosInstance.get("/users/me");
+          const user = response.data;
+          const userName = document.getElementById("userName");
+          const profilePic = document.getElementById("profilePic");
+
+          userName.textContent = user.fullName || "Manager";
+          const initials = user.fullName
+            ? user.fullName.split(" ").map(n => n[0]).join("").substring(0, 2)
+            : "M";
+          profilePic.textContent = initials;
+          return user;
+        } catch (err) {
+          console.error("Error fetching user:", err);
+          alert("Unable to load user data. Please check your session or try again later.");
+          logout();
+          throw err;
+        }
+      }
+
+      // Fetch manager's hostels
+      async function fetchHostels() {
+        try {
+          const user = await fetchUserData();
+          if (!user?.id) {
+            throw new Error("Invalid user data");
+          }
+          const response = await axiosInstance.get(`/api/hostels/manager/${user.id}`);
+          currentProperties = response.data || [];
+          return currentProperties;
+        } catch (err) {
+          console.error("Error fetching hostels:", err);
+          alert("Error fetching hostels. Please try again.");
+          return [];
+        }
+      }
+
+      // Fetch student name by studentId
+      async function fetchStudentName(studentId) {
+        if (!studentId) return null;
+        try {
+          const response = await axiosInstance.get(`/users/${studentId}`);
+          return response.data.fullName || null;
+        } catch (err) {
+          console.error(`Error fetching student with ID ${studentId}:`, err);
+          return null;
+        }
+      }
+
+      // Fetch bookings for hostels
+      async function fetchBookings() {
+        try {
+          const hostels = await fetchHostels();
+          if (hostels.length === 0) {
+            updateBookingsTable([]);
+            alert("No hostels found for your account.");
+            return;
+          }
+
+          // Fetch all bookings for table display
+          const allBookingsPromises = hostels.map(hostel => {
+            const url = `/api/bookings/hostel/${hostel.id}`;
+            return axiosInstance.get(url)
+              .then(response => response.data || [])
+              .catch(err => {
+                console.error(`Error fetching all bookings for hostel ${hostel.id}:`, err);
+                return [];
+              });
+          });
+
+          // Wait for all requests to complete
+          let allBookings = (await Promise.all(allBookingsPromises)).flat();
+
+          // Fetch student names for each booking
+          const studentNamePromises = allBookings.map(async booking => {
+            const studentName = await fetchStudentName(booking.studentId);
+            return { ...booking, fetchedStudentName: studentName };
+          });
+
+          allBookings = await Promise.all(studentNamePromises);
+
+          // Update currentBookings for table
+          currentBookings = allBookings;
+
+          if (allBookings.length === 0) {
+            alert("No bookings found for your hostels.");
+          }
+
+          // Update table with all bookings
+          updateBookingsTable(allBookings);
+        } catch (err) {
+          console.error("Error fetching bookings:", err);
+          updateBookingsTable([]);
+          alert("Error fetching bookings. Please check your connection or try again later.");
+        }
+      }
+
+      // Update bookings table
+      function updateBookingsTable(bookings) {
+        const tableBody = document.getElementById("bookingsTableBody");
+        tableBody.innerHTML = "";
+
+        if (bookings.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="8">
+                <div class="empty-state">
+                  <h3>No bookings found</h3>
+                  <p>Check back later for new bookings.</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        bookings.forEach(booking => {
+          const property = currentProperties.find(p => p.id === booking.hostelId);
+          const studentName = booking.fetchedStudentName || booking.studentName || "Unknown";
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${booking.id}</td>
+            <td>${studentName}<br>${booking.studentEmail || ""}</td>
+            <td>${property ? property.name : "Unknown"}</td>
+            <td>${booking.roomType || "N/A"}</td>
+           
+            <td>KSH ${booking.amount ? booking.amount.toLocaleString() : "0"}</td>
+            <td>
+              <span class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</span>
+            </td>
+            <td class="action-buttons">
+              <button class="action-btn btn-primary" onclick="showBookingDetails(${booking.id})">Details</button>
+              ${booking.status === "PENDING" ? `
+                <button class="action-btn btn-success" onclick="confirmAction(${booking.id}, 'CONFIRMED')">Confirm</button>
+                <button class="action-btn btn-danger" onclick="confirmAction(${booking.id}, 'CANCELLED')">Cancel</button>
+              ` : ""}
+              ${booking.status !== "CANCELLED" ? `
+                <button class="action-btn btn-danger" onclick="confirmAction(${booking.id}, 'DELETE')">Delete</button>
+              ` : ""}
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Refresh bookings
+      function refreshBookings() {
+        document.getElementById("bookingsTableBody").innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="loading">Loading bookings...</div>
+            </td>
+          </tr>
+        `;
+        fetchBookings();
+      }
+
+      // Show booking details
+      async function showBookingDetails(bookingId) {
+        try {
+          const response = await axiosInstance.get(`/api/bookings/${bookingId}`);
+          const booking = response.data;
+          const property = currentProperties.find(p => p.id === booking.hostelId);
+          const studentName = await fetchStudentName(booking.studentId) || booking.studentName || "Unknown";
+
+          const images = booking.imagesBase64 && booking.imagesBase64.length > 0
+            ? booking.imagesBase64
+            : (property && property.imagesBase64 && property.imagesBase64.length > 0
+                ? property.imagesBase64
+                : ['iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwAB/AL+i4AAAAABJRU5ErkJggg==']);
+
+          const bookingDetailsContent = document.getElementById("bookingDetailsContent");
+          bookingDetailsContent.innerHTML = `
+            <div class="detail-row">
+              <div class="detail-label">Booking ID</div>
+              <div class="detail-value">${booking.id}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Student Name</div>
+              <div class="detail-value">${studentName}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Student Email</div>
+              <div class="detail-value">${booking.studentEmail || "N/A"}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Property</div>
+              <div class="detail-value">${property ? property.name : "Unknown"}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Room Type</div>
+              <div class="detail-value">${booking.roomType || "N/A"}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Check-in Date</div>
+              <div class="detail-value">${new Date(booking.checkInDate).toLocaleDateString()}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Duration</div>
+              <div class="detail-value">${booking.duration || "N/A"} months</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Amount</div>
+              <div class="detail-value">KSH ${booking.amount ? booking.amount.toLocaleString() : "0"}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Status</div>
+              <div class="detail-value">
+                <span class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</span>
+              </div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Images</div>
+              <div class="detail-value">
+                <div class="image-gallery">
+                  ${images.map((img, index) => `
+                    <img src="${base64ToDataUrl(img)}" alt="Booking image ${index + 1}">
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.getElementById("bookingDetailsModal").style.display = "block";
+        } catch (err) {
+          console.error("Error fetching booking details:", err);
+          alert("Error fetching booking details. Please try again.");
+        }
+      }
+
+      // Confirm action (Confirm, Cancel, Delete)
+      function confirmAction(bookingId, action) {
+        const confirmationContent = document.getElementById("confirmationContent");
+        confirmationContent.innerHTML = `
+          <p>Are you sure you want to ${action.toLowerCase()} this booking?</p>
+          <div class="action-buttons" style="margin-top: 1.5rem;">
+            <button class="btn btn-primary" id="confirmBtn" onclick="executeAction(${bookingId}, '${action}')">Confirm</button>
+            <button class="btn btn-secondary" onclick="closeConfirmationModal()">Cancel</button>
+          </div>
+        `;
+        document.getElementById("confirmationModal").style.display = "block";
+      }
+
+      // Execute action
+      async function executeAction(bookingId, action) {
+        try {
+          if (action === "DELETE") {
+            await axiosInstance.delete(`/api/bookings/${bookingId}`);
+          } else {
+            await axiosInstance.patch(`/api/bookings/${bookingId}`, { status: action });
+          }
+          closeConfirmationModal();
+          refreshBookings();
+          alert(`Booking ${action.toLowerCase()} successfully.`);
+        } catch (err) {
+          console.error(`Error performing ${action}:`, err);
+          alert(`Error performing ${action.toLowerCase()}. Please try again.`);
+        }
+      }
+
+      // Close modals
+      function closeBookingDetailsModal() {
+        document.getElementById("bookingDetailsModal").style.display = "none";
+      }
+
+      function closeConfirmationModal() {
+        document.getElementById("confirmationModal").style.display = "none";
+      }
+
+      // Handle clicks outside modals
+      window.onclick = function(event) {
+        const bookingModal = document.getElementById("bookingDetailsModal");
+        const confirmationModal = document.getElementById("confirmationModal");
+        if (event.target === bookingModal) {
+          closeBookingDetailsModal();
+        }
+        if (event.target === confirmationModal) {
+          closeConfirmationModal();
+        }
+      }
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchBookings();
+      });
+    </script>
+  </body>
+</html>
