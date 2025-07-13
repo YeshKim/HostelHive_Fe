@@ -521,7 +521,7 @@
           <input
             type="text"
             class="search-input"
-            placeholder="Enter location or university name"
+            placeholder="Enter location"
           
           />
           <div class="budget-inputs">
@@ -605,24 +605,22 @@
     </div>
 
   <script>
-// Function to get cookie by name
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
-}
-
 document.addEventListener('DOMContentLoaded', function() {
+  // Function to get cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+
   // Check for JWT token in cookie
   const jwtToken = getCookie('jwtToken');
   const authLinks = document.getElementById('auth-links');
 
   if (jwtToken) {
-    // If token exists, show logout option
     authLinks.innerHTML = '<a href="#" class="btn-logout hover:opacity-80">Logout</a>';
   } else {
-    // If no token, show sign-in and sign-up options
     authLinks.innerHTML = `
       <a href="login.html" class="hover:opacity-80">Sign In</a>
       <span class="mx-2">|</span>
@@ -635,7 +633,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      // Clear the JWT token cookie
       document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       alert('You have been logged out.');
       window.location.href = 'login.html';
@@ -645,10 +642,22 @@ document.addEventListener('DOMContentLoaded', function() {
   const hostelList = document.querySelector('.hostel-list');
   const resultsCount = document.querySelector('.results-count');
   const priceRangeDisplay = document.querySelector('.price-range-display');
-  const searchLocation = sessionStorage.getItem('searchLocation') || 'University of Nairobi';
+  const searchInput = document.querySelector('.search-input');
+  const budgetInputs = document.querySelectorAll('.budget-inputs input');
+  let hostels = [];
+
+  // Initialize search inputs from sessionStorage
+  const searchLocation = sessionStorage.getItem('searchLocation') || '';
   const minBudget = sessionStorage.getItem('minBudget') || '5000';
   const maxBudget = sessionStorage.getItem('maxBudget') || '15000';
-  let hostels = [];
+
+  if (searchInput) {
+    searchInput.value = searchLocation;
+  }
+  if (budgetInputs.length === 2) {
+    budgetInputs[0].value = minBudget;
+    budgetInputs[1].value = maxBudget;
+  }
 
   // Load hostels from sessionStorage or fetch from API
   const storedHostels = sessionStorage.getItem('searchResults');
@@ -671,9 +680,19 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update price range display
   updatePriceRangeDisplay(minBudget, maxBudget);
 
-  // Function to fetch hostels by price range
+  // Function to fetch hostels by price range and location
   function fetchHostelsByPriceRange(minPrice, maxPrice) {
-    const url = `http://localhost:8099/api/hostels/price?minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    const location = sessionStorage.getItem('searchLocation') || '';
+    if (!location) {
+      alert('Please enter a location');
+      if (resultsCount) {
+        resultsCount.textContent = 'No hostels found. Please specify a location.';
+      }
+      hostelList.innerHTML = '';
+      return;
+    }
+
+    const url = `http://localhost:8099/api/hostels/search?location=${encodeURIComponent(location)}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
     
     fetch(url)
       .then(response => {
@@ -704,7 +723,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to fetch all hostels
   function fetchAllHostels() {
-    fetch('http://localhost:8099/api/hostels/all')
+    const location = sessionStorage.getItem('searchLocation') || '';
+    const url = location 
+      ? `http://localhost:8099/api/hostels/search?location=${encodeURIComponent(location)}`
+      : 'http://localhost:8099/api/hostels/all';
+    
+    fetch(url)
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -747,19 +771,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     hostelList.innerHTML = ''; // Clear existing content
     
+    const location = sessionStorage.getItem('searchLocation') || '';
+
     if (!Array.isArray(hostelsToDisplay) || hostelsToDisplay.length === 0) {
       if (resultsCount) {
-        resultsCount.textContent = `No hostels found near ${searchLocation}`;
+        resultsCount.textContent = `No hostels found near ${location || 'your location'}`;
       }
       return;
     }
 
     if (resultsCount) {
-      resultsCount.textContent = `${hostelsToDisplay.length} hostels found near ${searchLocation}`;
+      resultsCount.textContent = `${hostelsToDisplay.length} hostels found near ${location || 'your location'}`;
     }
     
     hostelsToDisplay.forEach(hostel => {
-      // Ensure hostel has required properties
       const hostelName = hostel.name || 'Unknown Hostel';
       const hostelLocation = hostel.location || 'Unknown Location';
       const hostelPrice = hostel.pricePerMonth || 0;
@@ -767,19 +792,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const availableRooms = hostel.availableRooms || 0;
       const totalRooms = hostel.totalRooms || 0;
 
-      // Calculate availability status
       const availability = availableRooms > 0 
         ? availableRooms <= 3 
           ? `<div class="availability limited">${availableRooms} rooms left</div>`
           : `<div class="availability">Available</div>`
         : `<div class="availability full">Fully Booked</div>`;
 
-      // Handle amenities array
       let amenitiesHtml = '';
       if (hostel.amenities && Array.isArray(hostel.amenities)) {
         if (hostel.amenities.length > 0) {
           amenitiesHtml = hostel.amenities.map(amenity => {
-            // Handle both string amenities and object amenities
             const amenityName = typeof amenity === 'string' ? amenity : (amenity.name || amenity.toString());
             return `<span class="amenity-tag">${amenityName.trim()}</span>`;
           }).join('');
@@ -845,7 +867,6 @@ document.addEventListener('DOMContentLoaded', function() {
       hostelList.insertAdjacentHTML('beforeend', hostelCard);
     });
 
-    // Add event listeners for booking and view details
     document.querySelectorAll('.btn-book').forEach(button => {
       button.addEventListener('click', function() {
         if (this.disabled) return;
@@ -869,6 +890,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const maxBudget = budgetInputs[1] ? budgetInputs[1].value : '';
 
       // Validate inputs
+      if (location === '') {
+        alert('Please enter a location');
+        return;
+      }
+
       const minPrice = minBudget ? parseFloat(minBudget) : 0;
       const maxPrice = maxBudget ? parseFloat(maxBudget) : 1000000;
 
@@ -883,12 +909,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // Update session storage
-      sessionStorage.setItem('searchLocation', location || 'University of Nairobi');
+      sessionStorage.setItem('searchLocation', location);
       sessionStorage.setItem('minBudget', minPrice.toString());
       sessionStorage.setItem('maxBudget', maxPrice.toString());
 
-      // Update price range display
-      updatePriceRangeDisplay(minPrice, maxPrice);
+      // Update input fields
+      if (searchInput) searchInput.value = location;
+      if (budgetInputs.length === 2) {
+        budgetInputs[0].value = minPrice.toString();
+        budgetInputs[1].value = maxPrice.toString();
+      }
 
       // Fetch hostels with new criteria
       fetchHostelsByPriceRange(minPrice, maxPrice);
@@ -995,13 +1025,9 @@ document.addEventListener('DOMContentLoaded', function() {
       this.textContent = 'Loading...';
       this.disabled = true;
       
-      // Simulate loading more hostels
       setTimeout(() => {
         this.textContent = 'Load More Hostels';
         this.disabled = false;
-        
-        // In a real application, you would fetch more hostels here
-        // For now, we'll just show an alert
         alert('More hostels loaded! (In a real app, this would load additional results via pagination)');
       }, 1500);
     });

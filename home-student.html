@@ -133,87 +133,98 @@
     </footer>
 
     <script>
-      // Function to get cookie by name
-      function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-      }
+   document.addEventListener('DOMContentLoaded', function() {
+  // Function to get cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
 
-      document.addEventListener('DOMContentLoaded', function() {
-        // Check for JWT token in cookie
-        const jwtToken = getCookie('jwtToken');
-        const authLinks = document.getElementById('auth-links');
+  // Check for JWT token in cookie
+  const jwtToken = getCookie('jwtToken');
+  const authLinks = document.getElementById('auth-links');
 
-        if (jwtToken) {
-          // If token exists, show logout option
-          authLinks.innerHTML = '<a href="#" class="btn-logout hover:opacity-80">Logout</a>';
-        } else {
-          // If no token, show sign-in and sign-up options
-          authLinks.innerHTML = `
-            <a href="login.html" class="hover:opacity-80">Sign In</a>
-            <span class="mx-2">|</span>
-            <a href="register-student.html" class="hover:opacity-80">Sign Up</a>
-          `;
+  if (jwtToken) {
+    authLinks.innerHTML = '<a href="#" class="btn-logout hover:opacity-80">Logout</a>';
+  } else {
+    authLinks.innerHTML = `
+      <a href="login.html" class="hover:opacity-80">Sign In</a>
+      <span class="mx-2">|</span>
+      <a href="register-student.html" class="hover:opacity-80">Sign Up</a>
+    `;
+  }
+
+  // Logout functionality
+  const logoutBtn = document.querySelector('.btn-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      alert('You have been logged out.');
+      window.location.href = 'login.html';
+    });
+  }
+
+  // Search functionality with budget range and location
+  document.querySelector('.search-btn').addEventListener('click', function() {
+    const location = document.querySelector('.search-input').value.trim();
+    const minBudget = document.querySelector('.budget-range input:first-child').value;
+    const maxBudget = document.querySelector('.budget-range input:last-child').value;
+
+    if (location === '') {
+      alert('Please enter a location or university name');
+      return;
+    }
+
+    // Validate budget inputs
+    const minPrice = minBudget ? parseFloat(minBudget) : 0;
+    const maxPrice = maxBudget ? parseFloat(maxBudget) : 1000000;
+
+    if (minPrice < 0 || maxPrice < 0) {
+      alert('Please enter valid positive numbers for budget.');
+      return;
+    }
+
+    if (minPrice > maxPrice) {
+      alert('Minimum budget cannot be greater than maximum budget.');
+      return;
+    }
+
+    // Construct the API URL with query parameters including location
+    let apiUrl = `http://localhost:8099/api/hostels/search?location=${encodeURIComponent(location)}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+
+    // Make API call
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch hostels');
         }
-
-        // Logout functionality
-        const logoutBtn = document.querySelector('.btn-logout');
-        if (logoutBtn) {
-          logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Clear the JWT token cookie
-            document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            alert('You have been logged out.');
-            window.location.href = 'login.html';
-          });
-        }
-
-        // Search functionality with budget range
-        document.querySelector('.search-btn').addEventListener('click', function() {
-          const location = document.querySelector('.search-input').value;
-          const minBudget = document.querySelector('.budget-range input:first-child').value;
-          const maxBudget = document.querySelector('.budget-range input:last-child').value;
-
-          if (location.trim() === '') {
-            alert('Please enter a location or university name');
-            return;
-          }
-
-          // Construct the API URL with query parameters
-          let apiUrl = `http://localhost:8099/api/hostels/price?minPrice=${minBudget || 0}&maxPrice=${maxBudget || 1000000}`;
-          
-          // Make API call
-          fetch(apiUrl)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Failed to fetch hostels');
-              }
-              return response.json();
-            })
-            .then(data => {
-              // Store search results and parameters in sessionStorage
-              sessionStorage.setItem('searchResults', JSON.stringify(data));
-              sessionStorage.setItem('searchLocation', location);
-              sessionStorage.setItem('minBudget', minBudget || '0');
-              sessionStorage.setItem('maxBudget', maxBudget || '1000000');
-              // Redirect to hostels-student.html
-              window.location.href = 'hostels-student.html';
-            })
-            .catch(error => {
-              console.error('Error fetching hostels:', error);
-              alert('Error fetching hostels. Please try again later.');
-            });
-        });
-
-        // Mobile menu toggle
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
-        menuToggle.addEventListener('click', function() {
-          navLinks.classList.toggle('active');
-        });
+        return response.json();
+      })
+      .then(data => {
+        // Store search results and parameters in sessionStorage
+        sessionStorage.setItem('searchResults', JSON.stringify(data));
+        sessionStorage.setItem('searchLocation', location);
+        sessionStorage.setItem('minBudget', minPrice.toString());
+        sessionStorage.setItem('maxBudget', maxPrice.toString());
+        // Redirect to hostels-student.html
+        window.location.href = 'hostels-student.html';
+      })
+      .catch(error => {
+        console.error('Error fetching hostels:', error);
+        alert('Error fetching hostels. Please try again later.');
       });
+  });
+
+  // Mobile menu toggle
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  menuToggle.addEventListener('click', function() {
+    navLinks.classList.toggle('active');
+  });
+});
     </script>
   </body>
 </html>

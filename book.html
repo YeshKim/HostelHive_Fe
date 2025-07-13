@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,27 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hostel Hive - Book Your Stay</title>
     <style>
+      /* Same styles as provided */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-
       body {
         font-family: "Arial", sans-serif;
         line-height: 1.6;
         color: #333;
         background: #f8f9fa;
       }
-
-      /* Header Styles */
       header {
         background: linear-gradient(135deg, #8b5cf6, #a855f7);
         color: white;
         padding: 1rem 0;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
-
       nav {
         max-width: 1200px;
         margin: 0 auto;
@@ -35,33 +31,27 @@
         justify-content: space-between;
         align-items: center;
       }
-
       .logo {
         font-size: 1.8rem;
         font-weight: bold;
       }
-
       .nav-links {
         display: flex;
         list-style: none;
         gap: 2rem;
       }
-
       .nav-links a {
         color: white;
         text-decoration: none;
         transition: opacity 0.3s;
       }
-
       .nav-links a:hover {
         opacity: 0.8;
       }
-
       .auth-buttons {
         display: flex;
         gap: 1rem;
       }
-
       .btn {
         padding: 0.5rem 1.5rem;
         border: none;
@@ -72,37 +62,30 @@
         transition: all 0.3s;
         font-size: 0.9rem;
       }
-
       .btn-outline {
         background: transparent;
         color: white;
         border: 2px solid white;
       }
-
       .btn-outline:hover {
         background: white;
         color: #8b5cf6;
       }
-
       .btn-solid {
         background: white;
         color: #8b5cf6;
         border: 2px solid white;
       }
-
-      /* Breadcrumb */
       .breadcrumb {
         background: white;
         padding: 1rem 0;
         border-bottom: 1px solid #e5e7eb;
       }
-
       .breadcrumb-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 2rem;
       }
-
       .breadcrumb-nav {
         display: flex;
         align-items: center;
@@ -110,17 +93,13 @@
         color: #666;
         font-size: 0.9rem;
       }
-
       .breadcrumb-nav a {
         color: #8b5cf6;
         text-decoration: none;
       }
-
       .breadcrumb-nav a:hover {
         text-decoration: underline;
       }
-
-      /* Main Content */
       .main-content {
         max-width: 1200px;
         margin: 0 auto;
@@ -129,37 +108,30 @@
         grid-template-columns: 1fr 400px;
         gap: 2rem;
       }
-
-      /* Booking Form */
       .booking-form {
         background: white;
         border-radius: 10px;
         padding: 2rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
-
       .form-header {
         text-align: center;
         margin-bottom: 2rem;
         padding-bottom: 1rem;
         border-bottom: 2px solid #e5e7eb;
       }
-
       .form-header h1 {
         color: #8b5cf6;
         font-size: 2rem;
         margin-bottom: 0.5rem;
       }
-
       .form-header p {
         color: #666;
         font-size: 1rem;
       }
-
       .form-section {
         margin-bottom: 2rem;
       }
-
       .form-section h3 {
         color: #333;
         margin-bottom: 1rem;
@@ -168,7 +140,6 @@
         align-items: center;
         gap: 0.5rem;
       }
-
       .section-icon {
         width: 24px;
         height: 24px;
@@ -180,28 +151,23 @@
         color: white;
         font-size: 0.8rem;
       }
-
       .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
-
       .form-group {
         margin-bottom: 1rem;
       }
-
       .form-group.full-width {
         grid-column: span 2;
       }
-
       .form-group label {
         display: block;
         margin-bottom: 0.5rem;
         color: #333;
         font-weight: 500;
       }
-
       .form-group input,
       .form-group select,
       .form-group textarea {
@@ -212,31 +178,25 @@
         font-size: 1rem;
         transition: border-color 0.3s;
       }
-
       .form-group input:focus,
       .form-group select:focus,
       .form-group textarea:focus {
         outline: none;
         border-color: #8b5cf6;
       }
-
       .form-group textarea {
         resize: vertical;
         min-height: 100px;
       }
-
       .required {
         color: #ef4444;
       }
-
-      /* Room Selection */
       .room-options {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
       }
-
       .room-option {
         border: 2px solid #e5e7eb;
         border-radius: 10px;
@@ -245,49 +205,40 @@
         transition: all 0.3s;
         position: relative;
       }
-
       .room-option:hover {
         border-color: #8b5cf6;
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1);
       }
-
       .room-option.selected {
         border-color: #8b5cf6;
         background: #f3f4f6;
       }
-
       .room-option input[type="radio"] {
         position: absolute;
         opacity: 0;
         width: 0;
         height: 0;
       }
-
       .room-info h4 {
         color: #333;
         margin-bottom: 0.5rem;
       }
-
       .room-info p {
         color: #666;
         font-size: 0.9rem;
         margin-bottom: 0.5rem;
       }
-
       .room-price {
         font-size: 1.2rem;
         font-weight: bold;
         color: #10b981;
       }
-
-      /* Payment Methods */
       .payment-methods {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
       }
-
       .payment-method {
         border: 2px solid #e5e7eb;
         border-radius: 10px;
@@ -297,40 +248,32 @@
         text-align: center;
         position: relative;
       }
-
       .payment-method:hover {
         border-color: #8b5cf6;
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1);
       }
-
       .payment-method.selected {
         border-color: #8b5cf6;
         background: #f3f4f6;
       }
-
       .payment-method input[type="radio"] {
         position: absolute;
         opacity: 0;
         width: 0;
         height: 0;
       }
-
       .payment-icon {
         font-size: 2rem;
         margin-bottom: 0.5rem;
       }
-
       .payment-method h4 {
         color: #333;
         margin-bottom: 0.3rem;
       }
-
       .payment-method p {
         color: #666;
         font-size: 0.8rem;
       }
-
-      /* Terms and Conditions */
       .terms-checkbox {
         display: flex;
         align-items: flex-start;
@@ -340,35 +283,28 @@
         background: #f8f9fa;
         border-radius: 5px;
       }
-
       .terms-checkbox input[type="checkbox"] {
         margin-top: 0.2rem;
         accent-color: #8b5cf6;
       }
-
       .terms-checkbox label {
         color: #333;
         font-size: 0.9rem;
         line-height: 1.5;
       }
-
       .terms-checkbox a {
         color: #8b5cf6;
         text-decoration: none;
       }
-
       .terms-checkbox a:hover {
         text-decoration: underline;
       }
-
-      /* Submit Button */
       .submit-section {
         text-align: center;
         margin-top: 2rem;
         padding-top: 2rem;
         border-top: 2px solid #e5e7eb;
       }
-
       .btn-submit {
         background: linear-gradient(135deg, #8b5cf6, #a855f7);
         color: white;
@@ -381,21 +317,17 @@
         transition: all 0.3s;
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
       }
-
       .btn-submit:hover {
         background: linear-gradient(135deg, #7c3aed, #9333ea);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
       }
-
       .btn-submit:disabled {
         background: #9ca3af;
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
       }
-
-      /* Booking Summary */
       .booking-summary {
         background: white;
         border-radius: 10px;
@@ -405,7 +337,6 @@
         position: sticky;
         top: 2rem;
       }
-
       .summary-header {
         background: linear-gradient(135deg, #8b5cf6, #a855f7);
         color: white;
@@ -414,28 +345,23 @@
         border-radius: 10px 10px 0 0;
         text-align: center;
       }
-
       .summary-header h2 {
         font-size: 1.5rem;
         margin-bottom: 0.5rem;
       }
-
       .hostel-info {
         margin-bottom: 2rem;
       }
-
       .hostel-info h3 {
         color: #333;
         margin-bottom: 1rem;
         font-size: 1.3rem;
       }
-
       .hostel-details {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
       }
-
       .detail-row {
         display: flex;
         justify-content: space-between;
@@ -443,30 +369,25 @@
         padding: 0.5rem 0;
         border-bottom: 1px solid #f3f4f6;
       }
-
       .detail-label {
         color: #666;
         font-size: 0.9rem;
       }
-
       .detail-value {
         color: #333;
         font-weight: 500;
       }
-
       .price-breakdown {
         margin-top: 1rem;
         padding-top: 1rem;
         border-top: 2px solid #e5e7eb;
       }
-
       .price-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 0.5rem;
       }
-
       .price-row.total {
         font-size: 1.2rem;
         font-weight: bold;
@@ -475,7 +396,6 @@
         padding-top: 1rem;
         margin-top: 1rem;
       }
-
       .security-notice {
         background: #ecfdf5;
         border: 1px solid #10b981;
@@ -483,67 +403,60 @@
         padding: 1rem;
         margin-top: 1rem;
       }
-
       .security-notice h4 {
         color: #10b981;
         margin-bottom: 0.5rem;
         font-size: 1rem;
       }
-
       .security-notice p {
         color: #047857;
         font-size: 0.8rem;
         line-height: 1.4;
       }
-
-      /* Responsive Design */
       @media (max-width: 968px) {
         .main-content {
           grid-template-columns: 1fr;
         }
-        
         .booking-summary {
           position: static;
           order: -1;
         }
       }
-
       @media (max-width: 768px) {
         .nav-links {
           display: none;
         }
-
         .form-grid {
           grid-template-columns: 1fr;
         }
-
         .form-group.full-width {
           grid-column: span 1;
         }
-
         .room-options {
           grid-template-columns: 1fr;
         }
-
         .payment-methods {
           grid-template-columns: 1fr;
         }
       }
-
-      /* Animation for form validation */
       .form-group.error input,
       .form-group.error select,
       .form-group.error textarea {
         border-color: #ef4444;
         animation: shake 0.5s ease-in-out;
       }
-
       @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
       }
-
       .error-message {
         color: #ef4444;
         font-size: 0.8rem;
@@ -562,9 +475,7 @@
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
-        <div class="auth-buttons" id="authButtons">
-          <!-- Dynamically populated based on cookie -->
-        </div>
+        <div class="auth-buttons" id="authButtons"></div>
       </nav>
     </header>
 
@@ -601,28 +512,38 @@
             </h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="firstName">First Name <span class="required">*</span></label>
-                <input type="text" id="firstName" name="firstName" required>
+                <label for="firstName"
+                  >First Name <span class="required">*</span></label
+                >
+                <input type="text" id="firstName" name="firstName" required />
               </div>
               <div class="form-group">
-                <label for="lastName">Last Name <span class="required">*</span></label>
-                <input type="text" id="lastName" name="lastName" required>
+                <label for="lastName"
+                  >Last Name <span class="required">*</span></label
+                >
+                <input type="text" id="lastName" name="lastName" required />
               </div>
               <div class="form-group">
-                <label for="email">Email Address <span class="required">*</span></label>
-                <input type="email" id="email" name="email" required>
+                <label for="email"
+                  >Email Address <span class="required">*</span></label
+                >
+                <input type="email" id="email" name="email" required />
               </div>
               <div class="form-group">
-                <label for="phone">Phone Number <span class="required">*</span></label>
-                <input type="tel" id="phone" name="phone" required>
+                <label for="phone"
+                  >Phone Number <span class="required">*</span></label
+                >
+                <input type="tel" id="phone" name="phone" required />
               </div>
               <div class="form-group">
-                <label for="idNumber">ID/Passport Number <span class="required">*</span></label>
-                <input type="text" id="idNumber" name="idNumber" required>
+                <label for="idNumber"
+                  >ID/Passport Number <span class="required">*</span></label
+                >
+                <input type="text" id="idNumber" name="idNumber" required />
               </div>
               <div class="form-group">
                 <label for="university">University/College</label>
-                <input type="text" id="university" name="university" value="">
+                <input type="text" id="university" name="university" value="" />
               </div>
             </div>
           </div>
@@ -633,26 +554,7 @@
               <div class="section-icon">2</div>
               Select Your Room
             </h3>
-            <div class="room-options" id="roomOptions">
-              <div class="room-option selected">
-                <input type="radio" name="roomType" value="single" id="singleRoom" checked>
-                <div class="room-info">
-                  <h4>Single Room</h4>
-                  <p>Private room with shared bathroom</p>
-                  <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-                  <div class="room-price" id="singleRoomPrice">KSH 8,500/month</div>
-                </div>
-              </div>
-              <div class="room-option">
-                <input type="radio" name="roomType" value="shared" id="sharedRoom">
-                <div class="room-info">
-                  <h4>Shared Room</h4>
-                  <p>Shared room with individual storage</p>
-                  <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-                  <div class="room-price" id="sharedRoomPrice">KSH 6,000/month</div>
-                </div>
-              </div>
-            </div>
+            <div class="room-options" id="roomOptions"></div>
           </div>
 
           <!-- Stay Duration -->
@@ -663,11 +565,15 @@
             </h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="checkIn">Check-in Date <span class="required">*</span></label>
-                <input type="date" id="checkIn" name="checkIn" required>
+                <label for="checkIn"
+                  >Check-in Date <span class="required">*</span></label
+                >
+                <input type="date" id="checkIn" name="checkIn" required />
               </div>
               <div class="form-group">
-                <label for="duration">Duration <span class="required">*</span></label>
+                <label for="duration"
+                  >Duration <span class="required">*</span></label
+                >
                 <select id="duration" name="duration" required>
                   <option value="">Select duration</option>
                   <option value="1">1 Month</option>
@@ -687,12 +593,26 @@
             </h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="emergencyName">Contact Name <span class="required">*</span></label>
-                <input type="text" id="emergencyName" name="emergencyName" required>
+                <label for="emergencyName"
+                  >Contact Name <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  id="emergencyName"
+                  name="emergencyName"
+                  required
+                />
               </div>
               <div class="form-group">
-                <label for="emergencyPhone">Contact Phone <span class="required">*</span></label>
-                <input type="tel" id="emergencyPhone" name="emergencyPhone" required>
+                <label for="emergencyPhone"
+                  >Contact Phone <span class="required">*</span></label
+                >
+                <input
+                  type="tel"
+                  id="emergencyPhone"
+                  name="emergencyPhone"
+                  required
+                />
               </div>
               <div class="form-group">
                 <label for="relationship">Relationship</label>
@@ -716,7 +636,13 @@
             </h3>
             <div class="payment-methods">
               <div class="payment-method selected">
-                <input type="radio" name="paymentMethod" value="mpesa" id="mpesa" checked>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="mpesa"
+                  id="mpesa"
+                  checked
+                />
                 <div class="payment-icon">📱</div>
                 <h4>M-Pesa</h4>
                 <p>Pay via mobile money</p>
@@ -732,17 +658,30 @@
             </h3>
             <div class="form-group full-width">
               <label for="specialRequests">Additional Information</label>
-              <textarea id="specialRequests" name="specialRequests" placeholder="Any special requests or dietary requirements..."></textarea>
+              <textarea
+                id="specialRequests"
+                name="specialRequests"
+                placeholder="Any special requests or dietary requirements..."
+              ></textarea>
             </div>
           </div>
 
           <!-- Terms and Conditions -->
-          <div class="terms-checkbox">
-            <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
-            <label for="termsAccepted">
-              I agree to the <a href="#terms" target="_blank">Terms and Conditions</a> and 
-              <a href="#privacy" target="_blank">Privacy Policy</a>. I confirm that all information provided is accurate.
-            </label>
+          <div class="form-group">
+            <div class="terms-checkbox">
+              <input
+                type="checkbox"
+                id="termsAccepted"
+                name="termsAccepted"
+                required
+              />
+              <label for="termsAccepted">
+                I agree to the
+                <a href="#terms" target="_blank">Terms and Conditions</a> and
+                <a href="#privacy" target="_blank">Privacy Policy</a>. I confirm
+                that all information provided is accurate.
+              </label>
+            </div>
           </div>
 
           <!-- Submit Button -->
@@ -760,7 +699,6 @@
           <h2 id="summaryHostelName">Booking Summary</h2>
           <p>Review your selection</p>
         </div>
-
         <div class="hostel-info">
           <h3 id="hostelName">Hostel Name</h3>
           <div class="hostel-details">
@@ -774,15 +712,21 @@
             </div>
             <div class="detail-row">
               <span class="detail-label">Room Type</span>
-              <span class="detail-value" id="selectedRoomType">Single Room</span>
+              <span class="detail-value" id="selectedRoomType"
+                >Single Room</span
+              >
             </div>
             <div class="detail-row">
               <span class="detail-label">Check-in</span>
-              <span class="detail-value" id="selectedCheckIn">Not selected</span>
+              <span class="detail-value" id="selectedCheckIn"
+                >Not selected</span
+              >
             </div>
             <div class="detail-row">
               <span class="detail-label">Duration</span>
-              <span class="detail-value" id="selectedDuration">Not selected</span>
+              <span class="detail-value" id="selectedDuration"
+                >Not selected</span
+              >
             </div>
             <div class="detail-row">
               <span class="detail-label">Payment Method</span>
@@ -790,7 +734,6 @@
             </div>
           </div>
         </div>
-
         <div class="price-breakdown">
           <div class="price-row">
             <span>Monthly Rent</span>
@@ -809,10 +752,13 @@
             <span id="totalAmount">KSH 18,000</span>
           </div>
         </div>
-
         <div class="security-notice">
           <h4>🔒 Secure Payment</h4>
-          <p>Your payment is protected by our secure payment system. All transactions are encrypted and your personal information is kept safe.</p>
+          <p>
+            Your payment is protected by our secure payment system. All
+            transactions are encrypted and your personal information is kept
+            safe.
+          </p>
         </div>
       </div>
     </div>
@@ -822,30 +768,24 @@
       function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
+        if (parts.length === 2) return parts.pop().split(";").shift();
         return null;
       }
 
       // Function to handle logout
       function handleLogout() {
-        // Clear the JWT token cookie
-        document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        // Refresh the page to update the auth buttons
+        document.cookie =
+          "jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.reload();
       }
 
       // Function to update auth buttons based on cookie
       function updateAuthButtons() {
-        const authButtons = document.getElementById('authButtons');
-        const jwtToken = getCookie('jwtToken');
-
+        const authButtons = document.getElementById("authButtons");
+        const jwtToken = getCookie("jwtToken");
         if (jwtToken) {
-          // User is logged in, show logout button
-          authButtons.innerHTML = `
-            <button class="btn btn-outline" onclick="handleLogout()">Log Out</button>
-          `;
+          authButtons.innerHTML = `<button class="btn btn-outline" onclick="handleLogout()">Log Out</button>`;
         } else {
-          // User is not logged in, show sign-in and register buttons
           authButtons.innerHTML = `
             <a href="login.html" class="btn btn-outline">Sign In</a>
             <a href="register-student.html" class="btn btn-solid">Register</a>
@@ -856,188 +796,294 @@
       // Get hostel ID from URL
       function getHostelId() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('id');
+        return urlParams.get("id");
+      }
+
+      // Fetch student ID from authenticated user
+      async function getStudentId() {
+        const jwtToken = getCookie("jwtToken");
+        if (!jwtToken) {
+          throw new Error("Please log in to complete the booking.");
+        }
+        try {
+          const response = await fetch("http://localhost:8099/users/me", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch student ID: ${response.statusText}`
+            );
+          }
+          const user = await response.json();
+          if (!user.id) {
+            throw new Error("Student ID not found in user data");
+          }
+          return user.id;
+        } catch (error) {
+          console.error("Error fetching student ID:", error);
+          throw error;
+        }
+      }
+
+      // Fetch room ID based on hostelId and roomType
+      async function getRoomId(hostelId, roomType) {
+        if (!hostelId) {
+          throw new Error("Hostel ID is missing");
+        }
+        const jwtToken = getCookie("jwtToken");
+        const headers = { "Content-Type": "application/json" };
+        if (jwtToken) {
+          headers["Authorization"] = `Bearer ${jwtToken}`;
+        }
+        try {
+          const response = await fetch(
+            `http://localhost:8099/api/rooms/by-hostel/${hostelId}?isAvailable=true`,
+            {
+              method: "GET",
+              headers: headers,
+            }
+          );
+          if (!response.ok) {
+            if (response.status === 401) {
+              throw new Error(
+                "Unauthorized: Please log in to fetch room details."
+              );
+            } else if (response.status === 404) {
+              throw new Error(
+                `No available rooms found for hostel ID ${hostelId}.`
+              );
+            }
+            throw new Error(`Failed to fetch rooms: ${response.statusText}`);
+          }
+          const rooms = await response.json();
+          if (!Array.isArray(rooms) || rooms.length === 0) {
+            throw new Error("No available rooms found for this hostel");
+          }
+          const matchingRoom = rooms.find(
+            (room) =>
+              room.roomType.toLowerCase() === roomType.toLowerCase() &&
+              room.isAvailable
+          );
+          if (!matchingRoom) {
+            throw new Error(
+              `No available ${roomType} rooms found for this hostel`
+            );
+          }
+          return matchingRoom.id;
+        } catch (error) {
+          console.error("Error fetching room ID:", error);
+          throw error;
+        }
+      }
+
+      // Calculate end date based on check-in date and duration
+      function calculateEndDate(checkIn, duration) {
+        const startDate = new Date(checkIn);
+        const endDate = new Date(startDate);
+        endDate.setMonth(startDate.getMonth() + parseInt(duration));
+        return endDate.toISOString().split("T")[0];
       }
 
       // Initialize form and fetch hostel data
-      document.addEventListener('DOMContentLoaded', function() {
-        // Update auth buttons on page load
-        updateAuthButtons();
+   document.addEventListener("DOMContentLoaded", async function () {
+  updateAuthButtons();
+  const hostelId = getHostelId();
+  const minBudget = parseFloat(sessionStorage.getItem("minBudget")) || 5000;
+  const maxBudget = parseFloat(sessionStorage.getItem("maxBudget")) || 15000;
 
-        const hostelId = getHostelId();
-        const minBudget = parseFloat(sessionStorage.getItem('minBudget')) || 5000;
-        const maxBudget = parseFloat(sessionStorage.getItem('maxBudget')) || 15000;
+  document.getElementById("priceRange").textContent = `KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("checkIn").min = today;
+  document.getElementById("checkIn").value = "2025-08-01";
+  document.getElementById("duration").value = "3";
 
-        // Update price range in summary
-        document.getElementById('priceRange').textContent = 
-          `KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
+  const moveInDate = sessionStorage.getItem("bookingMoveInDate");
+  const duration = sessionStorage.getItem("bookingDuration");
+  const roomType = sessionStorage.getItem("bookingRoomType");
 
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('checkIn').min = today;
+  if (moveInDate) {
+    document.getElementById("checkIn").value = moveInDate;
+    updateCheckIn();
+  }
+  if (duration) {
+    document.getElementById("duration").value = duration;
+    updateDuration();
+  }
 
-        const moveInDate = sessionStorage.getItem('bookingMoveInDate');
-        const duration = sessionStorage.getItem('bookingDuration');
-        const roomType = sessionStorage.getItem('bookingRoomType');
-
-        if (moveInDate) {
-          document.getElementById('checkIn').value = moveInDate;
-          updateCheckIn();
-        }
-        if (duration) {
-          document.getElementById('duration').value = duration;
-          updateDuration();
-        }
-        if (roomType) {
-          document.querySelector(`input[name="roomType"][value="${roomType}"]`).checked = true;
-          updateRoomSelection();
-        }
-
-        if (hostelId) {
-          fetch(`http://localhost:8099/api/hostels/${hostelId}`)
-            .then(response => {
-              if (!response.ok) throw new Error('Failed to fetch hostel details');
-              return response.json();
-            })
-            .then(hostel => {
-              // Update page title and form header
-              document.title = `${hostel.name} - Book Your Stay | Hostel Hive`;
-              document.getElementById('formHeaderTitle').textContent = `Book ${hostel.name}`;
-              document.getElementById('summaryHostelName').textContent = hostel.name;
-              document.getElementById('hostelName').textContent = hostel.name;
-              document.getElementById('hostelLocation').textContent = hostel.location || 'Unknown Location';
-
-              // Update breadcrumb
-              document.getElementById('hostelDetailsLink').href = `hostel-details.html?id=${hostelId}`;
-              document.getElementById('hostelDetailsLink').textContent = hostel.name;
-
-              // Update room options
-              const monthlyRent = hostel.pricePerMonth || 8500;
-              const sharedRoomPrice = hostel.roomType === 'Shared Room' ? (hostel.pricePerMonth * 0.75) : 6000;
-              const roomOptions = document.getElementById('roomOptions');
-              roomOptions.innerHTML = `
-                <div class="room-option selected">
-                  <input type="radio" name="roomType" value="single" id="singleRoom" checked>
-                  <div class="room-info">
-                    <h4>Single Room</h4>
-                    <p>Private room with shared bathroom</p>
-                    <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-                    <div class="room-price" id="singleRoomPrice">KSH ${monthlyRent.toLocaleString()}/month</div>
-                  </div>
-                </div>
-                ${hostel.roomType === 'Shared Room' ? `
-                  <div class="room-option">
-                    <input type="radio" name="roomType" value="shared" id="sharedRoom">
-                    <div class="room-info">
-                      <h4>Shared Room</h4>
-                      <p>Shared room with individual storage</p>
-                      <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-                      <div class="room-price" id="sharedRoomPrice">KSH ${sharedRoomPrice.toLocaleString()}/month</div>
-                    </div>
-                  </div>
-                ` : ''}
-              `;
-
-              // Update booking summary prices
-              updateBookingSummary(monthlyRent);
-
-              // Initialize event listeners after dynamic content is loaded
-              initializeEventListeners();
-            })
-            .catch(error => {
-              console.error('Error fetching hostel details:', error);
-              alert('Error fetching hostel details. Please try again later.');
-              document.getElementById('submitBtn').disabled = true;
-            });
-        } else {
-          alert('No hostel ID provided.');
-          document.getElementById('submitBtn').disabled = true;
-        }
+  if (hostelId) {
+    try {
+      // Fetch hostel details
+      const hostelResponse = await fetch(`http://localhost:8099/api/hostels/${hostelId}`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getCookie("jwtToken") || ""}` }
       });
+      if (!hostelResponse.ok) throw new Error("Failed to fetch hostel details");
+      const hostel = await hostelResponse.json();
+      console.log("Hostel data:", hostel); // Debug
 
-      function initializeEventListeners() {
-        // Room selection
-        document.querySelectorAll('input[name="roomType"]').forEach(radio => {
-          radio.addEventListener('change', updateRoomSelection);
-        });
+      // Fetch available rooms
+      const roomsResponse = await fetch(`http://localhost:8099/api/rooms/by-hostel/${hostelId}?isAvailable=true`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getCookie("jwtToken") || ""}` }
+      });
+      if (!roomsResponse.ok) throw new Error("Failed to fetch available rooms");
+      const rooms = await roomsResponse.json();
+      console.log("Rooms data:", rooms); // Debug
 
-        // Payment method selection
-        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-          radio.addEventListener('change', updatePaymentMethod);
-        });
+      document.title = `${hostel.name} - Book Your Stay | Hostel Hive`;
+      document.getElementById("formHeaderTitle").textContent = `Book ${hostel.name}`;
+      document.getElementById("summaryHostelName").textContent = hostel.name;
+      document.getElementById("hostelName").textContent = hostel.name;
+      document.getElementById("hostelLocation").textContent = hostel.location || "Unknown Location";
+      document.getElementById("hostelDetailsLink").href = `hostel-details.html?id=${hostelId}`;
+      document.getElementById("hostelDetailsLink").textContent = hostel.name;
 
-        // Duration selection
-        document.getElementById('duration').addEventListener('change', updateDuration);
+      // Populate room options based on available rooms
+      const roomOptions = document.getElementById("roomOptions");
+      const singleRoom = rooms.find(room => room.roomType.toLowerCase() === "single" && room.isAvailable);
+      const sharedRoom = rooms.find(room => room.roomType.toLowerCase() === "shared" && room.isAvailable);
+      let roomOptionsHTML = "";
+      let defaultRoomType = null;
 
-        // Check-in date
-        document.getElementById('checkIn').addEventListener('change', updateCheckIn);
-
-        // Form submission
-        document.getElementById('bookingForm').addEventListener('submit', handleFormSubmission);
-
-        // Real-time validation
-        document.querySelectorAll('input[required], select[required]').forEach(field => {
-          field.addEventListener('blur', validateField);
-        });
-
-        // Enable submit button when required fields are filled
-        document.getElementById('bookingForm').addEventListener('input', checkFormValidity);
+      if (singleRoom) {
+        roomOptionsHTML += `
+          <div class="room-option${roomType === "single" ? " selected" : ""}">
+            <input type="radio" name="roomType" value="single" id="singleRoom"${roomType === "single" || (!roomType && !sharedRoom) ? " checked" : ""}>
+            <div class="room-info">
+              <h4>Single Room</h4>
+              <p>Private room with shared bathroom</p>
+              <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+              <div class="room-price" id="singleRoomPrice">KSH ${singleRoom.price.toLocaleString()}/month</div>
+            </div>
+          </div>
+        `;
+        if (!defaultRoomType) defaultRoomType = "single";
+      }
+      if (sharedRoom) {
+        roomOptionsHTML += `
+          <div class="room-option${roomType === "shared" ? " selected" : ""}">
+            <input type="radio" name="roomType" value="shared" id="sharedRoom"${roomType === "shared" || (!roomType && !singleRoom) ? " checked" : ""}>
+            <div class="room-info">
+              <h4>Shared Room</h4>
+              <p>Shared room with individual storage</p>
+              <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+              <div class="room-price" id="sharedRoomPrice">KSH ${sharedRoom.price.toLocaleString()}/month</div>
+            </div>
+          </div>
+        `;
+        if (!defaultRoomType) defaultRoomType = "shared";
       }
 
-      function updateRoomSelection() {
-        const selectedRoom = document.querySelector('input[name="roomType"]:checked');
-        const roomOptions = document.querySelectorAll('.room-option');
-        
-        // Update visual selection
-        roomOptions.forEach(option => {
-          option.classList.remove('selected');
-        });
-        selectedRoom.closest('.room-option').classList.add('selected');
+      if (!roomOptionsHTML) {
+        roomOptions.innerHTML = `<p>No available rooms for this hostel.</p>`;
+        document.getElementById("submitBtn").disabled = true;
+      } else {
+        roomOptions.innerHTML = roomOptionsHTML;
+        // Ensure a room is selected
+        if (!document.querySelector('input[name="roomType"]:checked')) {
+          const fallbackRoom = document.querySelector(`input[name="roomType"][value="${defaultRoomType}"]`);
+          if (fallbackRoom) {
+            fallbackRoom.checked = true;
+            updateRoomSelection();
+          }
+        } else {
+          updateRoomSelection();
+        }
+        updateBookingSummary(singleRoom?.price || sharedRoom?.price || 8500);
+        checkFormValidity(); // Explicitly check validity after loading
+      }
 
-        // Update summary
-        const roomType = selectedRoom.value === 'single' ? 'Single Room' : 'Shared Room';
-        const price = selectedRoom.value === 'single' ? 
-          parseFloat(document.getElementById('singleRoomPrice').textContent.replace('KSH ', '').replace('/month', '').replace(',', '')) :
-          parseFloat(document.getElementById('sharedRoomPrice').textContent.replace('KSH ', '').replace('/month', '').replace(',', ''));
-        
-        document.getElementById('selectedRoomType').textContent = roomType;
+      initializeEventListeners();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      alert("Error fetching hostel or room details. Please try again later.");
+      document.getElementById("submitBtn").disabled = true;
+    }
+  } else {
+    alert("No hostel ID provided.");
+    document.getElementById("submitBtn").disabled = true;
+  }
+});
+     function initializeEventListeners() {
+  document.querySelectorAll('input[name="roomType"]').forEach((radio) => {
+    radio.addEventListener("change", updateRoomSelection);
+  });
+  document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
+    radio.addEventListener("change", updatePaymentMethod);
+  });
+  document.getElementById("duration").addEventListener("change", updateDuration);
+  document.getElementById("checkIn").addEventListener("change", updateCheckIn);
+  document.getElementById("bookingForm").addEventListener("submit", handleFormSubmission);
+  document.querySelectorAll("input[required], select[required]").forEach((field) => {
+    field.addEventListener("blur", validateField);
+    field.addEventListener("input", checkFormValidity); // Ensure input events trigger
+  });
+  // Add change event for select and checkbox
+  document.querySelectorAll("select[required], input[type='checkbox']").forEach((field) => {
+    field.addEventListener("change", checkFormValidity);
+  });
+}
+      function updateRoomSelection() {
+        const selectedRoom = document.querySelector(
+          'input[name="roomType"]:checked'
+        );
+        if (!selectedRoom) return;
+        const roomOptions = document.querySelectorAll(".room-option");
+        roomOptions.forEach((option) => option.classList.remove("selected"));
+        selectedRoom.closest(".room-option").classList.add("selected");
+        const roomType =
+          selectedRoom.value === "single" ? "Single Room" : "Shared Room";
+        const price = parseFloat(
+          document
+            .getElementById(`${selectedRoom.value}RoomPrice`)
+            .textContent.replace("KSH ", "")
+            .replace("/month", "")
+            .replace(",", "")
+        );
+        document.getElementById("selectedRoomType").textContent = roomType;
         updateBookingSummary(price);
       }
 
       function updatePaymentMethod() {
-        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
-        const paymentMethods = document.querySelectorAll('.payment-method');
-        
-        // Update visual selection
-        paymentMethods.forEach(method => {
-          method.classList.remove('selected');
-        });
-        selectedPayment.closest('.payment-method').classList.add('selected');
-
-        // Update summary
-        const paymentText = selectedPayment.value === 'mpesa' ? 'M-Pesa' : 
-                           selectedPayment.value === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card';
-        document.getElementById('selectedPayment').textContent = paymentText;
+        const selectedPayment = document.querySelector(
+          'input[name="paymentMethod"]:checked'
+        );
+        const paymentMethods = document.querySelectorAll(".payment-method");
+        paymentMethods.forEach((method) => method.classList.remove("selected"));
+        selectedPayment.closest(".payment-method").classList.add("selected");
+        const paymentText =
+          selectedPayment.value === "mpesa"
+            ? "M-Pesa"
+            : selectedPayment.value === "bank"
+            ? "Bank Transfer"
+            : "Credit/Debit Card";
+        document.getElementById("selectedPayment").textContent = paymentText;
       }
 
       function updateDuration() {
-        const duration = document.getElementById('duration').value;
-        const durationText = duration ? `${duration} Month${duration > 1 ? 's' : ''}` : 'Not selected';
-        document.getElementById('selectedDuration').textContent = durationText;
+        const duration = document.getElementById("duration").value;
+        const durationText = duration
+          ? `${duration} Month${duration > 1 ? "s" : ""}`
+          : "Not selected";
+        document.getElementById("selectedDuration").textContent = durationText;
       }
 
       function updateCheckIn() {
-        const checkIn = document.getElementById('checkIn').value;
+        const checkIn = document.getElementById("checkIn").value;
         if (checkIn) {
           const date = new Date(checkIn);
-          const formattedDate = date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+          const formattedDate = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
           });
-          document.getElementById('selectedCheckIn').textContent = formattedDate;
+          document.getElementById("selectedCheckIn").textContent =
+            formattedDate;
         } else {
-          document.getElementById('selectedCheckIn').textContent = 'Not selected';
+          document.getElementById("selectedCheckIn").textContent =
+            "Not selected";
         }
       }
 
@@ -1045,167 +1091,332 @@
         const securityDeposit = monthlyRent;
         const registrationFee = 1000;
         const total = monthlyRent + securityDeposit + registrationFee;
-
-        document.getElementById('monthlyRent').textContent = `KSH ${monthlyRent.toLocaleString()}`;
-        document.getElementById('securityDeposit').textContent = `KSH ${securityDeposit.toLocaleString()}`;
-        document.getElementById('registrationFee').textContent = `KSH ${registrationFee.toLocaleString()}`;
-        document.getElementById('totalAmount').textContent = `KSH ${total.toLocaleString()}`;
+        document.getElementById(
+          "monthlyRent"
+        ).textContent = `KSH ${monthlyRent.toLocaleString()}`;
+        document.getElementById(
+          "securityDeposit"
+        ).textContent = `KSH ${securityDeposit.toLocaleString()}`;
+        document.getElementById(
+          "registrationFee"
+        ).textContent = `KSH ${registrationFee.toLocaleString()}`;
+        document.getElementById(
+          "totalAmount"
+        ).textContent = `KSH ${total.toLocaleString()}`;
       }
 
       function validateField(event) {
         const field = event.target;
-        const formGroup = field.closest('.form-group');
-        
-        // Remove previous error state
-        formGroup.classList.remove('error');
-        const existingError = formGroup.querySelector('.error-message');
-        if (existingError) {
-          existingError.remove();
-        }
-
-        // Validate field
-        if (field.hasAttribute('required') && !field.value.trim()) {
-          showFieldError(formGroup, 'This field is required');
+        const formGroup = field.closest(".form-group");
+        formGroup.classList.remove("error");
+        const existingError = formGroup.querySelector(".error-message");
+        if (existingError) existingError.remove();
+        if (field.hasAttribute("required") && !field.value.trim()) {
+          showFieldError(formGroup, "This field is required");
           return false;
         }
-
-        // Email validation
-        if (field.type === 'email' && field.value) {
+        if (field.type === "email" && field.value) {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(field.value)) {
-            showFieldError(formGroup, 'Please enter a valid email address');
+            showFieldError(formGroup, "Please enter a valid email address");
             return false;
           }
         }
-
-        // Phone number validation
-        if (field.type === 'tel' && field.value) {
+        if (field.type === "tel" && field.value) {
           const phoneRegex = /^\+?\d{10,12}$/;
           if (!phoneRegex.test(field.value)) {
-            showFieldError(formGroup, 'Please enter a valid phone number (10-12 digits)');
+            showFieldError(
+              formGroup,
+              "Please enter a valid phone number (10-12 digits)"
+            );
             return false;
           }
         }
-
         return true;
       }
 
-      function showFieldError(formGroup, message) {
-        formGroup.classList.add('error');
-        const errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
+      function showFieldError(element, message) {
+        element.classList.add("error");
+        const errorElement = document.createElement("div");
+        errorElement.className = "error-message";
         errorElement.textContent = message;
-        formGroup.appendChild(errorElement);
+        element.appendChild(errorElement);
       }
 
-      function checkFormValidity() {
-        const requiredFields = document.querySelectorAll('input[required], select[required]');
-        const termsCheckbox = document.getElementById('termsAccepted');
-        let isValid = true;
+     function checkFormValidity() {
+  const requiredFields = document.querySelectorAll("input[required], select[required]");
+  const termsCheckbox = document.getElementById("termsAccepted");
+  const selectedRoom = document.querySelector('input[name="roomType"]:checked');
+  let isValid = true;
 
-        requiredFields.forEach(field => {
-          if (!field.value.trim()) {
-            isValid = false;
-          }
-        });
+  // Debug: Log required fields' values
+  requiredFields.forEach((field) => {
+    if (!field.value.trim()) {
+      console.log(`Field ${field.id} is empty or invalid: "${field.value}"`);
+      isValid = false;
+    }
+  });
 
-        if (!termsCheckbox.checked) {
-          isValid = false;
-        }
+  if (!termsCheckbox.checked) {
+    console.log("Terms checkbox is not checked");
+    isValid = false;
+  }
 
-        document.getElementById('submitBtn').disabled = !isValid;
-      }
+  if (!selectedRoom) {
+    console.log("No room type selected");
+    isValid = false;
+  } else {
+    console.log("Selected room type:", selectedRoom.value);
+  }
 
-      function handleFormSubmission(event) {
+  console.log("Form isValid:", isValid);
+  document.getElementById("submitBtn").disabled = !isValid;
+}
+      async function handleFormSubmission(event) {
         event.preventDefault();
         const form = event.target;
         let isValid = true;
 
-        // Validate all required fields
-        form.querySelectorAll('input[required], select[required]').forEach(field => {
-          if (!validateField({ target: field })) {
-            isValid = false;
-          }
-        });
+        form
+          .querySelectorAll("input[required], select[required]")
+          .forEach((field) => {
+            if (!validateField({ target: field })) isValid = false;
+          });
 
-        // Validate terms checkbox
-        const termsCheckbox = document.getElementById('termsAccepted');
-        const termsFormGroup = termsCheckbox.closest('.terms-checkbox');
-        const existingError = termsFormGroup.querySelector('.error-message');
-        if (existingError) {
-          existingError.remove();
-        }
-
+        const termsCheckbox = document.getElementById("termsAccepted");
+        const termsFormGroup = termsCheckbox.closest(".form-group");
+        const existingError = termsFormGroup.querySelector(".error-message");
+        if (existingError) existingError.remove();
         if (!termsCheckbox.checked) {
-          const errorElement = document.createElement('div');
-          errorElement.className = 'error-message';
-          errorElement.textContent = 'You must agree to the terms and conditions';
-          termsFormGroup.appendChild(errorElement);
+          showFieldError(
+            termsFormGroup,
+            "You must agree to the terms and conditions"
+          );
           isValid = false;
         }
 
-        if (!isValid) {
-          return;
+        const selectedRoom = document.querySelector(
+          'input[name="roomType"]:checked'
+        );
+        const roomOptionsContainer = document.getElementById("roomOptions");
+        if (!selectedRoom) {
+          showFieldError(
+            roomOptionsContainer.closest(".form-section"),
+            "Please select a room type"
+          );
+          isValid = false;
         }
 
-        // Collect form data
-        const formData = {
-          hostelId: getHostelId(),
-          firstName: document.getElementById('firstName').value,
-          lastName: document.getElementById('lastName').value,
-          email: document.getElementById('email').value,
-          phone: document.getElementById('phone').value,
-          idNumber: document.getElementById('idNumber').value,
-          university: document.getElementById('university').value,
-          roomType: document.querySelector('input[name="roomType"]:checked').value,
-          checkIn: document.getElementById('checkIn').value,
-          duration: parseInt(document.getElementById('duration').value),
-          emergencyName: document.getElementById('emergencyName').value,
-          emergencyPhone: document.getElementById('emergencyPhone').value,
-          relationship: document.getElementById('relationship').value,
-          paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
-          specialRequests: document.getElementById('specialRequests').value,
-          monthlyRent: parseFloat(document.getElementById('monthlyRent').textContent.replace('KSH ', '').replace(',', '')),
-          securityDeposit: parseFloat(document.getElementById('securityDeposit').textContent.replace('KSH ', '').replace(',', '')),
-          registrationFee: parseFloat(document.getElementById('registrationFee').textContent.replace('KSH ', '').replace(',', '')),
-          totalAmount: parseFloat(document.getElementById('totalAmount').textContent.replace('KSH ', '').replace(',', ''))
-        };
+        if (!isValid) return;
 
-        // Submit booking to API
-        fetch('http://localhost:8099/api/bookings', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        })
-        .then(response => {
-          if (!response.ok) throw new Error('Failed to submit booking');
-          return response.json();
-        })
-        .then(data => {
-          alert('Booking submitted successfully!\n\n' + 
-                `Name: ${formData.firstName} ${formData.lastName}\n` +
-                `Email: ${formData.email}\n` +
-                `Phone: ${formData.phone}\n` +
-                `Room Type: ${formData.roomType === 'single' ? 'Single Room' : 'Shared Room'}\n` +
-                `Check-in: ${new Date(formData.checkIn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n` +
-                `Duration: ${formData.duration} Month${formData.duration > 1 ? 's' : ''}\n` +
-                `Payment Method: ${formData.paymentMethod === 'mpesa' ? 'M-Pesa' : formData.paymentMethod === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card'}\n` +
-                `Total: KSH ${formData.totalAmount.toLocaleString()}`);
-          
-          // Reset form
-          form.reset();
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Processing...";
+
+        try {
+          const hostelId = getHostelId();
+          const checkIn = document.getElementById("checkIn").value;
+          const duration = document.getElementById("duration").value;
+          const roomType = selectedRoom.value; // Safe to access now
+          const endDate = calculateEndDate(checkIn, duration);
+
+          let studentId, roomId;
+          try {
+            studentId = await getStudentId();
+          } catch (error) {
+            throw new Error("Failed to retrieve student ID: " + error.message);
+          }
+          try {
+            roomId = await getRoomId(hostelId, roomType);
+          } catch (error) {
+            throw new Error("Failed to retrieve room ID: " + error.message);
+          }
+
+          const bookingData = {
+            studentId: studentId,
+            roomId: roomId,
+            startDate: checkIn,
+            endDate: endDate,
+            status: "pending",
+          };
+
+          const jwtToken = getCookie("jwtToken");
+          const headers = { "Content-Type": "application/json" };
+          if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+
+          const response = await fetch("http://localhost:8099/api/bookings", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(bookingData),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to submit booking: ${errorText}`);
+          }
+
+          const bookingResult = await response.json();
+          console.log("Booking created successfully:", bookingResult);
+
+          const additionalData = {
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            idNumber: document.getElementById("idNumber").value,
+            university: document.getElementById("university").value,
+            roomType: roomType,
+            checkIn: checkIn,
+            duration: parseInt(duration),
+            emergencyName: document.getElementById("emergencyName").value,
+            emergencyPhone: document.getElementById("emergencyPhone").value,
+            relationship: document.getElementById("relationship").value,
+            paymentMethod: document.querySelector(
+              'input[name="paymentMethod"]:checked'
+            ).value,
+            specialRequests: document.getElementById("specialRequests").value,
+            monthlyRent: parseFloat(
+              document
+                .getElementById("monthlyRent")
+                .textContent.replace("KSH ", "")
+                .replace(",", "")
+            ),
+            securityDeposit: parseFloat(
+              document
+                .getElementById("securityDeposit")
+                .textContent.replace("KSH ", "")
+                .replace(",", "")
+            ),
+            registrationFee: parseFloat(
+              document
+                .getElementById("registrationFee")
+                .textContent.replace("KSH ", "")
+                .replace(",", "")
+            ),
+            totalAmount: parseFloat(
+              document
+                .getElementById("totalAmount")
+                .textContent.replace("KSH ", "")
+                .replace(",", "")
+            ),
+          };
+
+          alert(
+            "Booking submitted successfully!\n\n" +
+              `Name: ${additionalData.firstName} ${additionalData.lastName}\n` +
+              `Email: ${additionalData.email}\n` +
+              `Phone: ${additionalData.phone}\n` +
+              `Room Type: ${
+                additionalData.roomType === "single"
+                  ? "Single Room"
+                  : "Shared Room"
+              }\n` +
+              `Check-in: ${new Date(additionalData.checkIn).toLocaleDateString(
+                "en-US",
+                { year: "numeric", month: "long", day: "numeric" }
+              )}\n` +
+              `Duration: ${additionalData.duration} Month${
+                additionalData.duration > 1 ? "s" : ""
+              }\n` +
+              `Payment Method: ${
+                additionalData.paymentMethod === "mpesa"
+                  ? "M-Pesa"
+                  : additionalData.paymentMethod === "bank"
+                  ? "Bank Transfer"
+                  : "Credit/Debit Card"
+              }\n` +
+              `Total: KSH ${additionalData.totalAmount.toLocaleString()}\n\n` +
+              "Proceeding to payment..."
+          );
+
+          if (additionalData.paymentMethod === "mpesa") {
+            await initiatePayment(
+              bookingResult.id || bookingResult.bookingId,
+              additionalData.phone,
+              additionalData.totalAmount
+            );
+          } else {
+            showPaymentSuccess(bookingResult);
+          }
+        } catch (error) {
+          console.error("Error submitting booking:", error);
+          alert(
+            error.message || "Error submitting booking. Please try again later."
+          );
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Complete Booking & Pay";
+        }
+      }
+      async function initiatePayment(bookingId, phoneNumber, amount) {
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.textContent = "Processing Payment...";
+        let formattedPhone = phoneNumber;
+        if (formattedPhone.startsWith("0")) {
+          formattedPhone = "254" + formattedPhone.substring(1);
+        } else if (formattedPhone.startsWith("+254")) {
+          formattedPhone = formattedPhone.substring(1);
+        } else if (!formattedPhone.startsWith("254")) {
+          formattedPhone = "254" + formattedPhone;
+        }
+        const paymentData = {
+          bookingId: bookingId,
+          phoneNumber: formattedPhone,
+          amount: parseFloat(amount),
+        };
+        const jwtToken = getCookie("jwtToken");
+        const headers = { "Content-Type": "application/json" };
+        if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+        try {
+          const response = await fetch(
+            "http://localhost:8099/api/payments/initiate",
+            {
+              method: "POST",
+              headers: headers,
+              body: JSON.stringify(paymentData),
+            }
+          );
+          if (!response.ok) throw new Error("Failed to initiate payment");
+          const paymentResponse = await response.json();
+          console.log("Payment initiated successfully:", paymentResponse);
+          alert(
+            "Payment initiated successfully!\n\n" +
+              "Please check your phone for the M-Pesa payment prompt.\n" +
+              `Amount: KSH ${amount.toLocaleString()}\n` +
+              `Phone: ${formattedPhone}\n\n` +
+              "Complete the payment on your phone to confirm your booking."
+          );
+          document.getElementById("bookingForm").reset();
           updateRoomSelection();
           updatePaymentMethod();
           updateDuration();
           updateCheckIn();
-          document.getElementById('submitBtn').disabled = true;
-        })
-        .catch(error => {
-          console.error('Error submitting booking:', error);
-          alert('Error submitting booking. Please try again later.');
-        });
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Complete Booking & Pay";
+        } catch (error) {
+          console.error("Error initiating payment:", error);
+          alert(
+            "Error initiating payment. Please try again later.\n\n" +
+              "Your booking has been saved, but payment could not be processed."
+          );
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Complete Booking & Pay";
+        }
+      }
+
+      function showPaymentSuccess(bookingData) {
+        const submitBtn = document.getElementById("submitBtn");
+        alert(
+          "Booking completed successfully!\n\n" +
+            "You will receive further payment instructions via email or phone.\n" +
+            `Booking ID: ${bookingData.id || bookingData.bookingId}`
+        );
+        document.getElementById("bookingForm").reset();
+        updateRoomSelection();
+        updatePaymentMethod();
+        updateDuration();
+        updateCheckIn();
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Complete Booking & Pay";
       }
     </script>
   </body>
