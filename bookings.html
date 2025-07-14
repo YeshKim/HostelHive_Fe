@@ -321,7 +321,7 @@
         background: linear-gradient(
           135deg,
           var(--warning-500),
-          var(--warning-600)
+		        --warning-600
         );
         color: white;
       }
@@ -435,7 +435,7 @@
 
       .status-expired {
         background: var(--gray-100);
-        color: var(--gray-binding);
+        color: var(--gray-600);
       }
 
       /* Payment Badges */
@@ -444,7 +444,7 @@
         border-radius: 0.25rem;
         font-size: 0.75rem;
         font-weight: 500;
-        text-transformed: uppercase;
+        text-transform: uppercase;
         display: inline-block;
         white-space: nowrap;
         margin-bottom: 0.25rem;
@@ -574,7 +574,7 @@
         color: var(--gray-900);
       }
 
-      /* Image Gallery in Modal */
+      /* Image障allery in Modal */
       .image-gallery {
         margin-top: 1rem;
         display: grid;
@@ -693,7 +693,7 @@
           <li><a href="home-manager.html">Dashboard</a></li>
           <li><a href="addproperty.html">Properties</a></li>
           <li><a href="bookings.html" class="active">Bookings</a></li>
-          <li><a href="#payments">Payments</a></li>
+         
         </ul>
         <div class="user-profile">
           <div class="user-info">
@@ -729,15 +729,14 @@
                 <th>Booking ID</th>
                 <th>Student Info</th>
                 <th>Property</th>
-                <th>Room</th>
                 <th>Amount</th>
-                <th>Status</th>
+                <th>Payment Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="bookingsTableBody">
               <tr>
-                <td colspan="7">
+                <td colspan="6">
                   <div class="loading">Loading bookings...</div>
                 </td>
               </tr>
@@ -864,14 +863,26 @@
         }
       }
 
-      // Fetch student name by studentId
-      async function fetchStudentName(studentId) {
+      // Fetch student data by studentId
+      async function fetchStudentData(studentId) {
         if (!studentId) return null;
         try {
           const response = await axiosInstance.get(`/users/${studentId}`);
-          return response.data.fullName || null;
+          return response.data || null;
         } catch (err) {
           console.error(`Error fetching student with ID ${studentId}:`, err);
+          return null;
+        }
+      }
+
+      // Fetch hostel by ID
+      async function fetchHostelById(hostelId) {
+        if (!hostelId) return null;
+        try {
+          const response = await axiosInstance.get(`/api/hostels/${hostelId}`);
+          return response.data || null;
+        } catch (err) {
+          console.error(`Error fetching hostel with ID ${hostelId}:`, err);
           return null;
         }
       }
@@ -882,7 +893,6 @@
         try {
           const response = await axiosInstance.get(`/api/payments/by-booking/${bookingId}`);
           const payments = response.data || [];
-          // Return the most recent payment or the first one if available
           return payments.length > 0 ? payments[0] : null;
         } catch (err) {
           console.error(`Error fetching payment for booking ${bookingId}:`, err);
@@ -914,17 +924,19 @@
           // Wait for all requests to complete
           let allBookings = (await Promise.all(allBookingsPromises)).flat();
 
-          // Fetch student names and payment status for each booking
+          // Fetch student data and payment status for each booking
           const enrichedBookingsPromises = allBookings.map(async booking => {
-            const [studentName, paymentInfo] = await Promise.all([
-              fetchStudentName(booking.studentId),
-              fetchPaymentStatus(booking.id)
+            const [studentData, paymentInfo, hostelData] = await Promise.all([
+              fetchStudentData(booking.studentId),
+              fetchPaymentStatus(booking.id),
+              fetchHostelById(booking.hostelId)
             ]);
             
             return { 
               ...booking, 
-              fetchedStudentName: studentName,
-              paymentInfo: paymentInfo
+              fetchedStudentData: studentData,
+              paymentInfo: paymentInfo,
+              hostelData: hostelData
             };
           });
 
@@ -954,7 +966,7 @@
         if (bookings.length === 0) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="7">
+              <td colspan="6">
                 <div class="empty-state">
                   <h3>No bookings found</h3>
                   <p>Check back later for new bookings.</p>
@@ -967,7 +979,7 @@
 
         bookings.forEach(booking => {
           const property = currentProperties.find(p => p.id === booking.hostelId);
-          const studentName = booking.fetchedStudentName || booking.studentName || "Unknown";
+          const studentName = booking.fetchedStudentData?.fullName || booking.studentName || "Unknown";
           const paymentStatus = booking.paymentInfo ? booking.paymentInfo.status : "NO_PAYMENT";
           const paymentAmount = booking.paymentInfo ? booking.paymentInfo.amount : 0;
           
@@ -985,16 +997,9 @@
               </div>
             </td>
             <td>
-              <div>
-                <strong>Room ${booking.roomNumber || 'N/A'}</strong>
-              </div>
-            </td>
-            <td>
               <strong>KES ${paymentAmount ? paymentAmount.toLocaleString() : 'N/A'}</strong>
             </td>
             <td>
-             
-              <br>
               <span class="payment-badge payment-${paymentStatus.toLowerCase()}">
                 ${paymentStatus.replace('_', ' ')}
               </span>
@@ -1004,14 +1009,6 @@
                 <button class="action-btn btn-primary" onclick="viewBookingDetails(${booking.id})">
                   📋 View Details
                 </button>
-                ${booking.status === 'PENDING' ? `
-                  <button class="action-btn btn-success" onclick="confirmBooking(${booking.id})">
-                    ✅ Approve
-                  </button>
-                  <button class="action-btn btn-danger" onclick="rejectBooking(${booking.id})">
-                    ❌ Reject
-                  </button>
-                ` : ''}
                 ${booking.status === 'CONFIRMED' ? `
                   <button class="action-btn btn-warning" onclick="cancelBooking(${booking.id})">
                     🚫 Cancel
@@ -1034,10 +1031,15 @@
           }
 
           const property = currentProperties.find(p => p.id === booking.hostelId);
-          const studentName = booking.fetchedStudentName || "Unknown";
+          const studentData = booking.fetchedStudentData || {};
+          const studentName = studentData.fullName || "Unknown";
+          const studentPhone = studentData.phoneNumber || "N/A";
           const paymentStatus = booking.paymentInfo ? booking.paymentInfo.status : "NO_PAYMENT";
           const paymentAmount = booking.paymentInfo ? booking.paymentInfo.amount : 0;
           const paymentDate = booking.paymentInfo ? new Date(booking.paymentInfo.createdAt).toLocaleDateString() : 'N/A';
+          const hostelData = booking.hostelData || {};
+          const hostelLocation = hostelData.location || "N/A";
+          const roomType = hostelData.roomType || booking.roomType || "N/A";
 
           const modal = document.getElementById("bookingDetailsModal");
           const content = document.getElementById("bookingDetailsContent");
@@ -1056,32 +1058,24 @@
               <div class="detail-value">${booking.studentId}</div>
             </div>
             <div class="detail-row">
+              <div class="detail-label">Student Phone:</div>
+              <div class="detail-value">${studentPhone}</div>
+            </div>
+            <div class="detail-row">
               <div class="detail-label">Property:</div>
               <div class="detail-value">${property ? property.name : 'Unknown Property'}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Property Address:</div>
-              <div class="detail-value">${property ? property.address : 'N/A'}</div>
-            </div>
-            <div class="detail-row">
-              <div class="detail-label">Room Number:</div>
-              <div class="detail-value">${booking.roomNumber || 'N/A'}</div>
+              <div class="detail-label">Property Location:</div>
+              <div class="detail-value">${hostelLocation}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Room Type:</div>
-              <div class="detail-value">${booking.roomType || 'N/A'}</div>
+              <div class="detail-value">${roomType}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Total Amount:</div>
               <div class="detail-value">KES ${paymentAmount ? paymentAmount.toLocaleString() : 'N/A'}</div>
-            </div>
-            <div class="detail-row">
-              <div class="detail-label">Booking Status:</div>
-              <div class="detail-value">
-                <span class="status-badge status-${booking.status ? booking.status.toLowerCase() : 'pending'}">
-                  ${booking.status || 'PENDING'}
-                </span>
-              </div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Payment Status:</div>
@@ -1101,11 +1095,19 @@
             </div>
             <div class="detail-row">
               <div class="detail-label">Check-in Date:</div>
-              <div class="detail-value">${booking.checkInDate ? new Date(booking.checkInDate).toLocaleDateString() : 'N/A'}</div>
+              <div class="detail-value">${booking.startDate ? new Date(booking.startDate).toLocaleDateString() : 'N/A'}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Check-out Date:</div>
-              <div class="detail-value">${booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString() : 'N/A'}</div>
+              <div class="detail-value">${booking.endDate ? new Date(booking.endDate).toLocaleDateString() : 'N/A'}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Actual Check-in:</div>
+              <div class="detail-value">${booking.checkIn ? new Date(booking.checkIn).toLocaleString() : 'N/A'}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Actual Check-out:</div>
+              <div class="detail-value">${booking.checkOut ? new Date(booking.checkOut).toLocaleString() : 'N/A'}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Booking Date:</div>
@@ -1127,48 +1129,6 @@
       // Close booking details modal
       function closeBookingDetailsModal() {
         document.getElementById("bookingDetailsModal").style.display = "none";
-      }
-
-      // Confirm booking
-      async function confirmBooking(bookingId) {
-        showConfirmationModal(
-          "Confirm Booking",
-          "Are you sure you want to approve this booking?",
-          async () => {
-            try {
-              await axiosInstance.put(`/api/bookings/${bookingId}/status`, {
-                status: "CONFIRMED"
-              });
-              alert("Booking confirmed successfully!");
-              await fetchBookings(); // Refresh the table
-              closeConfirmationModal();
-            } catch (err) {
-              console.error("Error confirming booking:", err);
-              alert("Error confirming booking. Please try again.");
-            }
-          }
-        );
-      }
-
-      // Reject booking
-      async function rejectBooking(bookingId) {
-        showConfirmationModal(
-          "Reject Booking",
-          "Are you sure you want to reject this booking? This action cannot be undone.",
-          async () => {
-            try {
-              await axiosInstance.put(`/api/bookings/${bookingId}/status`, {
-                status: "CANCELLED"
-              });
-              alert("Booking rejected successfully!");
-              await fetchBookings(); // Refresh the table
-              closeConfirmationModal();
-            } catch (err) {
-              console.error("Error rejecting booking:", err);
-              alert("Error rejecting booking. Please try again.");
-            }
-          }
-        );
       }
 
       // Cancel booking
