@@ -1231,422 +1231,438 @@
       </div>
     </div>
 
-    <script>
-      const API_BASE_URL = "http://localhost:8099";
+<script>
+  const API_BASE_URL = "http://localhost:8099";
 
-      // Helper to get JWT token from cookie
-      function getToken() {
-        const cookies = document.cookie.split(";");
-        for (let cookie of cookies) {
-          const [name, value] = cookie.trim().split("=");
-          if (name === "jwtToken") {
-            return value;
-          }
-        }
-        return null;
+  // Helper to get JWT token from cookie
+  function getToken() {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      const [name, value] = cookie.trim().split("=");
+      if (name === "jwtToken") {
+        return value;
       }
+    }
+    return null;
+  }
 
-      // Axios instance with auth header
-      const axiosInstance = axios.create({
-        baseURL: API_BASE_URL,
-        headers: { "Content-Type": "application/json" },
-      });
+  // Axios instance with auth header
+  const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    headers: { "Content-Type": "application/json" },
+  });
 
-      axiosInstance.interceptors.request.use((config) => {
-        const token = getToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      });
+  axiosInstance.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
 
-      // Logout handler
-      function logout() {
-        document.cookie =
-          "jwtToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-        window.location.href = "/login.html";
-      }
+  // Logout handler
+  function logout() {
+    document.cookie =
+      "jwtToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+    window.location.href = "/login.html";
+  }
 
-      // Fetch user data
-      async function fetchUserData() {
-        try {
-          const response = await axiosInstance.get("/users/me");
-          const user = response.data;
-          const userName = document.getElementById("userName");
-          const welcomeMessage = document.getElementById("welcomeMessage");
-          const profilePic = document.getElementById("profilePic");
+  // Fetch user data
+  async function fetchUserData() {
+    try {
+      const response = await axiosInstance.get("/users/me");
+      const user = response.data;
+      const userName = document.getElementById("userName");
+      const welcomeMessage = document.getElementById("welcomeMessage");
+      const profilePic = document.getElementById("profilePic");
 
-          userName.textContent = user.fullName || "Manager";
-          welcomeMessage.textContent = `Welcome back, ${
-            user.fullName ? user.fullName.split(" ")[0] : "Manager"
-          }!`;
-          const initials = user.fullName
-            ? user.fullName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .substring(0, 2)
-            : "M";
-          profilePic.textContent = initials;
-          return user;
-        } catch (err) {
-          console.error("Error fetching user:", err);
-          alert("Session expired. Please log in again.");
-          logout();
-        }
-      }
+      userName.textContent = user.fullName || "Manager";
+      welcomeMessage.textContent = `Welcome back, ${
+        user.fullName ? user.fullName.split(" ")[0] : "Manager"
+      }!`;
+      const initials = user.fullName
+        ? user.fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .substring(0, 2)
+        : "M";
+      profilePic.textContent = initials;
+      return user;
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      alert("Session expired. Please log in again.");
+      logout();
+    }
+  }
 
-      // Fetch hostels and bookings
-      async function fetchData() {
-        try {
-          const user = await fetchUserData();
-          const managerId = user.id;
-          const [hostelsResponse, bookingsResponse] = await Promise.all([
-            axiosInstance.get(`/api/hostels/manager/${managerId}`),
-            axiosInstance.get("/api/bookings/active"),
-          ]);
-          const hostels = hostelsResponse.data;
-          const bookings = bookingsResponse.data;
+  // Fetch hostels and bookings
+  async function fetchData() {
+    try {
+      const user = await fetchUserData();
+      const managerId = user.id;
 
-          // Update property table
-          const tableBody = document.getElementById("propertyTableBody");
-          tableBody.innerHTML = "";
-          if (hostels.length === 0) {
-            tableBody.innerHTML =
-              '<tr><td colspan="7">No properties found</td></tr>';
-          } else {
-            hostels.forEach((hostel) => {
-              const row = document.createElement("tr");
-              const occupancy = hostel.totalRooms
-                ? Math.round(
-                    ((hostel.totalRooms - hostel.availableRooms) /
-                      hostel.totalRooms) *
-                      100
-                  )
-                : 0;
-              const monthlyRevenue = (
-                hostel.pricePerMonth *
-                (hostel.totalRooms - hostel.availableRooms)
-              ).toLocaleString("en-KE", { style: "currency", currency: "KES" });
-              row.innerHTML = `
-                <td>${hostel.name}</td>
-                <td>${hostel.location}</td>
-                <td>${hostel.availableRooms}/${hostel.totalRooms}</td>
-                <td>${occupancy}%</td>
-                <td>${monthlyRevenue}</td>
-                <td>
-                  <span class="status-badge ${
-                    hostel.isVerified ? "status-active" : "status-pending"
-                  }">
-                    ${hostel.isVerified ? "Active" : "Pending Review"}
-                  </span>
-                </td>
-                <td>
-                  <button class="btn btn-secondary" style="padding: 0.5rem; margin-right: 0.5rem" onclick="editHostel(${
-                    hostel.id
-                  })">
-                    Edit
-                  </button>
-                  <button class="btn btn-danger" style="padding: 0.5rem" onclick="deleteHostel(${
-                    hostel.id
-                  })">
-                    Delete
-                  </button>
-                </td>
-              `;
-              tableBody.appendChild(row);
-            });
-          }
+      // Fetch hostels for the manager
+      const hostelsResponse = await axiosInstance.get(
+        `/api/hostels/manager/${managerId}`
+      );
+      const hostels = hostelsResponse.data;
 
-          // Update bookings
-          const bookingsDiv = document.getElementById("recentBookings");
-          bookingsDiv.innerHTML = "";
-          if (bookings.length === 0) {
-            bookingsDiv.innerHTML = "<p>No recent bookings</p>";
-          } else {
-            bookings.forEach((booking) => {
-              const hostel = hostels.find((h) => h.id === booking.roomId);
-              const item = document.createElement("div");
-              item.className = "recent-item";
-              item.innerHTML = `
-                <div class="recent-item-info">
-                  <h4>Student ID: ${booking.studentId}</h4>
-                  <p>${hostel ? hostel.name : "Unknown"} - Room ${
-                booking.roomId
-              }</p>
-                </div>
-                <div class="recent-item-amount">${
-                  hostel
-                    ? hostel.pricePerMonth.toLocaleString("en-KE", {
-                        style: "currency",
-                        currency: "KES",
-                      })
-                    : "N/A"
-                }</div>
-              `;
-              bookingsDiv.appendChild(item);
-            });
-          }
+      // Fetch bookings for all hostels owned by the manager
+      const bookingsPromises = hostels.map((hostel) =>
+        axiosInstance
+          .get(`/api/bookings/hostel/${hostel.id}`)
+          .then((response) => response.data || [])
+          .catch((err) => {
+            console.error(
+              `Error fetching bookings for hostel ${hostel.id}:`,
+              err
+            );
+            return [];
+          })
+      );
+      const bookingsArrays = await Promise.all(bookingsPromises);
+      const bookings = bookingsArrays.flat();
 
-          // Update stats
-          const activeProperties = hostels.filter((h) => h.isVerified).length;
-          const totalBookings = bookings.length;
-          const monthlyRevenue = hostels.reduce(
-            (sum, h) =>
-              sum + h.pricePerMonth * (h.totalRooms - h.availableRooms),
-            0
-          );
-          const totalRooms = hostels.reduce((sum, h) => sum + h.totalRooms, 0);
-          const occupiedRooms = hostels.reduce(
-            (sum, h) => sum + (h.totalRooms - h.availableRooms),
-            0
-          );
-          const occupancyRate = totalRooms
-            ? Math.round((occupiedRooms / totalRooms) * 100)
+      // Update property table
+      const tableBody = document.getElementById("propertyTableBody");
+      tableBody.innerHTML = "";
+      if (hostels.length === 0) {
+        tableBody.innerHTML =
+          '<tr><td colspan="7">No properties found</td></tr>';
+      } else {
+        hostels.forEach((hostel) => {
+          const row = document.createElement("tr");
+          const occupancy = hostel.totalRooms
+            ? Math.round(
+                ((hostel.totalRooms - hostel.availableRooms) /
+                  hostel.totalRooms) *
+                  100
+              )
             : 0;
-
-          document.getElementById("activeProperties").textContent =
-            activeProperties;
-          document.getElementById("totalBookings").textContent = totalBookings;
-          document.getElementById("monthlyRevenue").textContent =
-            monthlyRevenue.toLocaleString("en-KE", {
-              style: "currency",
-              currency: "KES",
-            });
-          document.getElementById(
-            "occupancyRate"
-          ).textContent = `${occupancyRate}%`;
-        } catch (err) {
-          console.error("Error fetching data:", err);
-          document.getElementById("propertyTableBody").innerHTML =
-            '<tr><td colspan="7">Error loading properties</td></tr>';
-          document.getElementById("recentBookings").innerHTML =
-            "<p>Error loading bookings</p>";
-        }
-      }
-
-      // Modal Functions
-      function openAddPropertyModal() {
-        document.getElementById("addPropertyModal").style.display = "block";
-      }
-
-      function closeAddPropertyModal() {
-        document.getElementById("addPropertyModal").style.display = "none";
-        document.getElementById("addPropertyForm").reset();
-      }
-
-      function openEditPropertyModal() {
-        document.getElementById("editPropertyModal").style.display = "block";
-      }
-
-      function closeEditPropertyModal() {
-        document.getElementById("editPropertyModal").style.display = "none";
-        document.getElementById("editPropertyForm").reset();
-      }
-
-      // Form Submission for Adding Property
-      document
-        .getElementById("addPropertyForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          const formData = new FormData(this);
-          const amenities = formData
-            .get("amenities")
-            .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item);
-          if (amenities.length === 0) {
-            alert("At least one amenity is required");
-            return;
-          }
-          const propertyData = {
-            name: formData.get("name"),
-            address: formData.get("address"),
-            location: formData.get("location"),
-            pricePerMonth: parseFloat(formData.get("pricePerMonth")),
-            totalRooms: parseInt(formData.get("totalRooms")),
-            availableRooms: parseInt(formData.get("availableRooms")),
-            roomType: formData.get("roomType"),
-            depositAmount: parseFloat(formData.get("depositAmount")) || null,
-            contactPhone: formData.get("contactPhone"),
-            contactEmail: formData.get("contactEmail") || null,
-            description: formData.get("description") || null,
-            amenities: amenities,
-            managerId: (await fetchUserData())?.id,
-            isVerified: false,
-            imagesBase64: [],
-            propertyType: "hostel", // Default value as per HostelDTO
-            distance: 0.0, // Default value as per HostelDTO
-          };
-
-          // Client-side validation
-          if (propertyData.availableRooms > propertyData.totalRooms) {
-            alert("Available rooms cannot exceed total rooms");
-            return;
-          }
-
-          try {
-            await axiosInstance.post("/api/hostels/post-hostel", propertyData);
-            alert(
-              "Property added successfully! It will be reviewed and activated within 24 hours."
-            );
-            closeAddPropertyModal();
-            this.reset();
-            fetchData();
-          } catch (err) {
-            alert(
-              "Error adding property: " + (err.response?.data || err.message)
-            );
-          }
+          const monthlyRevenue = (
+            hostel.pricePerMonth *
+            (hostel.totalRooms - hostel.availableRooms)
+          ).toLocaleString("en-KE", { style: "currency", currency: "KES" });
+          row.innerHTML = `
+            <td>${hostel.name}</td>
+            <td>${hostel.location}</td>
+            <td>${hostel.availableRooms}/${hostel.totalRooms}</td>
+            <td>${occupancy}%</td>
+            <td>${monthlyRevenue}</td>
+            <td>
+              <span class="status-badge ${
+                hostel.isVerified ? "status-active" : "status-pending"
+              }">
+                ${hostel.isVerified ? "Active" : "Pending Review"}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-secondary" style="padding: 0.5rem; margin-right: 0.5rem" onclick="editHostel(${
+                hostel.id
+              })">
+                Edit
+              </button>
+              <button class="btn btn-danger" style="padding: 0.5rem" onclick="deleteHostel(${
+                hostel.id
+              })">
+                Delete
+              </button>
+            </td>
+          `;
+          tableBody.appendChild(row);
         });
+      }
 
-      // Form Submission for Editing Property
-      document
-        .getElementById("editPropertyForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          const formData = new FormData(this);
-          const amenities = formData
-            .get("amenities")
-            .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item);
-          if (amenities.length === 0) {
-            alert("At least one amenity is required");
-            return;
-          }
-          const propertyData = {
-            name: formData.get("name"),
-            address: formData.get("address"),
-            location: formData.get("location"),
-            pricePerMonth: parseFloat(formData.get("pricePerMonth")),
-            totalRooms: parseInt(formData.get("totalRooms")),
-            availableRooms: parseInt(formData.get("availableRooms")),
-            roomType: formData.get("roomType"),
-            depositAmount: parseFloat(formData.get("depositAmount")) || null,
-            contactPhone: formData.get("contactPhone"),
-            contactEmail: formData.get("contactEmail") || null,
-            description: formData.get("description") || null,
-            amenities: amenities,
-            managerId: (await fetchUserData())?.id,
-            isVerified: false, // Preserve backend logic for verification
-            imagesBase64: [],
-            propertyType: "hostel", // Default value
-            distance: 0.0, // Default value
-          };
-
-          // Client-side validation
-          if (propertyData.availableRooms > propertyData.totalRooms) {
-            alert("Available rooms cannot exceed total rooms");
-            return;
-          }
-
-          const hostelId = formData.get("id");
-          try {
-            await axiosInstance.put(`/api/hostels/${hostelId}`, propertyData);
-            alert("Property updated successfully!");
-            closeEditPropertyModal();
-            this.reset();
-            fetchData();
-          } catch (err) {
-            alert(
-              "Error updating property: " + (err.response?.data || err.message)
-            );
-          }
+      // Update bookings
+      const bookingsDiv = document.getElementById("recentBookings");
+      bookingsDiv.innerHTML = "";
+      if (bookings.length === 0) {
+        bookingsDiv.innerHTML = "<p>No recent bookings</p>";
+      } else {
+        bookings.forEach((booking) => {
+          const hostel = hostels.find((h) => h.id === booking.hostelId);
+          const item = document.createElement("div");
+          item.className = "recent-item";
+          item.innerHTML = `
+            <div class="recent-item-info">
+              <h4>Student ID: ${booking.studentId}</h4>
+              <p>${hostel ? hostel.name : "Unknown"} - Room ${
+            booking.roomId
+          }</p>
+            </div>
+            <div class="recent-item-amount">${
+              hostel
+                ? hostel.pricePerMonth.toLocaleString("en-KE", {
+                    style: "currency",
+                    currency: "KES",
+                  })
+                : "N/A"
+            }</div>
+          `;
+          bookingsDiv.appendChild(item);
         });
-
-      // Edit Hostel
-      async function editHostel(id) {
-        try {
-          const response = await axiosInstance.get(`/api/hostels/${id}`);
-          const hostel = response.data;
-          document.getElementById("editPropertyId").value = hostel.id;
-          document.getElementById("editPropertyName").value = hostel.name;
-          document.getElementById("editAddress").value = hostel.address;
-          document.getElementById("editLocation").value = hostel.location;
-          document.getElementById("editTotalRooms").value = hostel.totalRooms;
-          document.getElementById("editAvailableRooms").value =
-            hostel.availableRooms;
-          document.getElementById("editPricePerMonth").value =
-            hostel.pricePerMonth;
-          document.getElementById("editRoomType").value = hostel.roomType;
-          document.getElementById("editDepositAmount").value =
-            hostel.depositAmount || "";
-          document.getElementById("editContactPhone").value =
-            hostel.contactPhone;
-          document.getElementById("editContactEmail").value =
-            hostel.contactEmail || "";
-          document.getElementById("editAmenities").value = hostel.amenities.map(amenity => amenity.name).join(", ");
-          document.getElementById("editDescription").value =
-            hostel.description || "";
-          openEditPropertyModal();
-        } catch (err) {
-          alert(
-            "Error fetching property details: " +
-              (err.response?.data || err.message)
-          );
-        }
       }
 
-      // Delete Hostel
-      async function deleteHostel(id) {
-        if (confirm("Are you sure you want to delete this property?")) {
-          try {
-            await axiosInstance.delete(`/api/hostels/${id}`);
-            alert("Property deleted successfully!");
-            fetchData();
-          } catch (err) {
-            alert(
-              "Error deleting property: " + (err.response?.data || err.message)
-            );
-          }
-        }
-      }
+      // Update stats
+      const activeProperties = hostels.filter((h) => h.isVerified).length;
+      const totalBookings = bookings.length;
+      const monthlyRevenue = hostels.reduce(
+        (sum, h) =>
+          sum + h.pricePerMonth * (h.totalRooms - h.availableRooms),
+        0
+      );
+      const totalRooms = hostels.reduce((sum, h) => sum + h.totalRooms, 0);
+      const occupiedRooms = hostels.reduce(
+        (sum, h) => sum + (h.totalRooms - h.availableRooms),
+        0
+      );
+      const occupancyRate = totalRooms
+        ? Math.round((occupiedRooms / totalRooms) * 100)
+        : 0;
 
-      // Quick Actions
-      function viewReports() {
-        alert(
-          "Reports feature coming soon! You will be able to view detailed analytics about your properties."
-        );
-      }
+      document.getElementById("activeProperties").textContent = activeProperties;
+      document.getElementById("totalBookings").textContent = totalBookings;
+      document.getElementById("monthlyRevenue").textContent =
+        monthlyRevenue.toLocaleString("en-KE", {
+          style: "currency",
+          currency: "KES",
+        });
+      document.getElementById(
+        "occupancyRate"
+      ).textContent = `${occupancyRate}%`;
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      document.getElementById("propertyTableBody").innerHTML =
+        '<tr><td colspan="7">Error loading properties</td></tr>';
+      document.getElementById("recentBookings").innerHTML =
+        "<p>Error loading bookings</p>";
+    }
+  }
 
-      function manageBookings() {
-        alert(
-          "Bookings management feature coming soon! You will be able to view and manage all your bookings."
-        );
-      }
+  // Modal Functions
+  function openAddPropertyModal() {
+    document.getElementById("addPropertyModal").style.display = "block";
+  }
 
-      function updateAvailability() {
-        alert("Update availability feature coming soon!");
-      }
+  function closeAddPropertyModal() {
+    document.getElementById("addPropertyModal").style.display = "none";
+    document.getElementById("addPropertyForm").reset();
+  }
 
-      function exportData() {
-        alert(
-          "Export data feature coming soon! You will be able to export your properties and bookings data."
-        );
-      }
+  function openEditPropertyModal() {
+    document.getElementById("editPropertyModal").style.display = "block";
+  }
 
-      // Close modal when clicking outside
-      window.onclick = function (event) {
-        const addModal = document.getElementById("addPropertyModal");
-        const editModal = document.getElementById("editPropertyModal");
-        if (event.target === addModal) {
-          closeAddPropertyModal();
-        }
-        if (event.target === editModal) {
-          closeEditPropertyModal();
-        }
+  function closeEditPropertyModal() {
+    document.getElementById("editPropertyModal").style.display = "none";
+    document.getElementById("editPropertyForm").reset();
+  }
+
+  // Form Submission for Adding Property
+  document
+    .getElementById("addPropertyForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const amenities = formData
+        .get("amenities")
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+      if (amenities.length === 0) {
+        alert("At least one amenity is required");
+        return;
+      }
+      const propertyData = {
+        name: formData.get("name"),
+        address: formData.get("address"),
+        location: formData.get("location"),
+        pricePerMonth: parseFloat(formData.get("pricePerMonth")),
+        totalRooms: parseInt(formData.get("totalRooms")),
+        availableRooms: parseInt(formData.get("availableRooms")),
+        roomType: formData.get("roomType"),
+        depositAmount: parseFloat(formData.get("depositAmount")) || null,
+        contactPhone: formData.get("contactPhone"),
+        contactEmail: formData.get("contactEmail") || null,
+        description: formData.get("description") || null,
+        amenities: amenities,
+        managerId: (await fetchUserData())?.id,
+        isVerified: false,
+        imagesBase64: [],
+        propertyType: "hostel",
+        distance: 0.0,
       };
 
-      // Initialize
-      if (getToken()) {
-        fetchUserData();
-        fetchData();
-        setInterval(fetchData, 30000); // Poll every 30 seconds
-      } else {
-        alert("No session found. Please log in.");
-        window.location.href = "/login.html";
+      // Client-side validation
+      if (propertyData.availableRooms > propertyData.totalRooms) {
+        alert("Available rooms cannot exceed total rooms");
+        return;
       }
-    </script>
+
+      try {
+        await axiosInstance.post("/api/hostels/post-hostel", propertyData);
+        alert(
+          "Property added successfully! It will be reviewed and activated within 24 hours."
+        );
+        closeAddPropertyModal();
+        this.reset();
+        fetchData();
+      } catch (err) {
+        alert(
+          "Error adding property: " + (err.response?.data || err.message)
+        );
+      }
+    });
+
+  // Form Submission for Editing Property
+  document
+    .getElementById("editPropertyForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const amenities = formData
+        .get("amenities")
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+      if (amenities.length === 0) {
+        alert("At least one amenity is required");
+        return;
+      }
+      const propertyData = {
+        name: formData.get("name"),
+        address: formData.get("address"),
+        location: formData.get("location"),
+        pricePerMONTH: parseFloat(formData.get("pricePerMonth")),
+        totalRooms: parseInt(formData.get("totalRooms")),
+        availableRooms: parseInt(formData.get("availableRooms")),
+        roomType: formData.get("roomType"),
+        depositAmount: parseFloat(formData.get("depositAmount")) || null,
+        contactPhone: formData.get("contactPhone"),
+        contactEmail: formData.get("contactEmail") || null,
+        description: formData.get("description") || null,
+        amenities: amenities,
+        managerId: (await fetchUserData())?.id,
+        isVerified: false,
+        imagesBase64: [],
+        propertyType: "hostel",
+        distance: 0.0,
+      };
+
+      // Client-side validation
+      if (propertyData.availableRooms > propertyData.totalRooms) {
+        alert("Available rooms cannot exceed total rooms");
+        return;
+      }
+
+      const hostelId = formData.get("id");
+      try {
+        await axiosInstance.put(`/api/hostels/${hostelId}`, propertyData);
+        alert("Property updated successfully!");
+        closeEditPropertyModal();
+        this.reset();
+        fetchData();
+      } catch (err) {
+        alert(
+          "Error updating property: " + (err.response?.data || err.message)
+        );
+      }
+    });
+
+  // Edit Hostel
+  async function editHostel(id) {
+    try {
+      const response = await axiosInstance.get(`/api/hostels/${id}`);
+      const hostel = response.data;
+      document.getElementById("editPropertyId").value = hostel.id;
+      document.getElementById("editPropertyName").value = hostel.name;
+      document.getElementById("editAddress").value = hostel.address;
+      document.getElementById("editLocation").value = hostel.location;
+      document.getElementById("editTotalRooms").value = hostel.totalRooms;
+      document.getElementById("editAvailableRooms").value =
+        hostel.availableRooms;
+      document.getElementById("editPricePerMonth").value =
+        hostel.pricePerMonth;
+      document.getElementById("editRoomType").value = hostel.roomType;
+      document.getElementById("editDepositAmount").value =
+        hostel.depositAmount || "";
+      document.getElementById("editContactPhone").value = hostel.contactPhone;
+      document.getElementById("editContactEmail").value =
+        hostel.contactEmail || "";
+      document.getElementById("editAmenities").value = hostel.amenities
+        .map((amenity) => amenity.name)
+        .join(", ");
+      document.getElementById("editDescription").value =
+        hostel.description || "";
+      openEditPropertyModal();
+    } catch (err) {
+      alert(
+        "Error fetching property details: " +
+          (err.response?.data || err.message)
+      );
+    }
+  }
+
+  // Delete Hostel
+  async function deleteHostel(id) {
+    if (confirm("Are you sure you want to delete this property?")) {
+      try {
+        await axiosInstance.delete(`/api/hostels/${id}`);
+        alert("Property deleted successfully!");
+        fetchData();
+      } catch (err) {
+        alert(
+          "Error deleting property: " + (err.response?.data || err.message)
+        );
+      }
+    }
+  }
+
+  // Quick Actions
+  function viewReports() {
+    alert(
+      "Reports feature coming soon! You will be able to view detailed analytics about your properties."
+    );
+  }
+
+  function manageBookings() {
+    alert(
+      "Bookings management feature coming soon! You will be able to view and manage all your bookings."
+    );
+  }
+
+  function updateAvailability() {
+    alert("Update availability feature coming soon!");
+  }
+
+  function exportData() {
+    alert(
+      "Export data feature coming soon! You will be able to export your properties and bookings data."
+    );
+  }
+
+  // Close modal when clicking outside
+  window.onclick = function (event) {
+    const addModal = document.getElementById("addPropertyModal");
+    const editModal = document.getElementById("editPropertyModal");
+    if (event.target === addModal) {
+      closeAddPropertyModal();
+    }
+    if (event.target === editModal) {
+      closeEditPropertyModal();
+    }
+  };
+
+  // Initialize
+  if (getToken()) {
+    fetchUserData();
+    fetchData();
+    setInterval(fetchData, 30000); // Poll every 30 seconds
+  } else {
+    alert("No session found. Please log in.");
+    window.location.href = "/login.html";
+  }
+</script>
   </body>
 </html>

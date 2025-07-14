@@ -763,7 +763,7 @@
         <nav>
             <div class="logo">Hostel Hive</div>
             <ul class="nav-links">
-               
+                <!-- Add navigation links if needed -->
             </ul>
             <a href="hostels-student.html" class="back-btn">← Back to Results</a>
         </nav>
@@ -931,7 +931,7 @@
                             </div>
                             <div class="summary-row">
                                 <span>Registration fee:</span>
-                                <span id="registrationFee">KSH 1,000</span>
+                                <span id="registrationFee">KSH 0</span>
                             </div>
                             <div class="summary-row summary-total">
                                 <span>Total (First month):</span>
@@ -939,7 +939,7 @@
                             </div>
                         </div>
                         
-                        <button class="book-btn" id="bookBtn">Book Now</button>
+                        <a href="#" id="bookBtn" class="book-btn" onclick="return handleBookClick()">Book Now</a>
                     </div>
                 </div>
 
@@ -972,8 +972,6 @@
                 </div>
             </div>
         </div>
-
-    
 
         <!-- Reviews Section -->
         <div class="reviews-section">
@@ -1064,7 +1062,6 @@
     const baseUrl = "http://172.23.51.39:8099";
     const hostelDetailsUrl = (hostelId) => `${baseUrl}/api/hostels/${hostelId}`;
     const userMeUrl = `${baseUrl}/users/me`;
-    const initiateBookingUrl = `${baseUrl}/booking/initiateBooking`;
 
     // Helper function to get a cookie by name
     function getCookie(name) {
@@ -1082,73 +1079,48 @@
 
     // Convert base64 string to data URL with MIME type detection
     function base64ToDataUrl(base64String) {
-    console.log("🔄 Processing base64 string:", base64String?.substring(0, 20) + "...");
-    if (!base64String || typeof base64String !== 'string') {
-        console.warn("❌ Invalid or missing base64 string");
-        return '/images/no-image.jpg';
-    }
-
-    let cleanBase64 = base64String;
-    let mimeType = 'image/jpeg'; // Default MIME type
-
-    // Check if the string is a full data URL
-    if (base64String.startsWith('data:image/')) {
-        console.log("🔄 Detected data URL, extracting base64");
-        const match = base64String.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
-        if (!match) {
-            console.error("❌ Invalid data URL format");
+        console.log("🔄 Processing base64 string:", base64String?.substring(0, 20) + "...");
+        if (!base64String || typeof base64String !== 'string') {
+            console.warn("❌ Invalid or missing base64 string");
             return '/images/no-image.jpg';
         }
-        mimeType = `image/${match[1]}`;
-        cleanBase64 = match[2];
-    } else {
-        // Determine MIME type for raw base64
-        if (cleanBase64.startsWith('/9j/')) {
-            mimeType = 'image/jpeg';
-        } else if (cleanBase64.startsWith('iVBORw0KGgo')) {
-            mimeType = 'image/png';
-        } else if (cleanBase64.startsWith('R0lGODlh')) {
-            mimeType = 'image/gif';
-        } else if (cleanBase64.startsWith('UklGR')) {
-            mimeType = 'image/webp';
-        } else {
-            console.warn('⚠️ Unknown image format, defaulting to JPEG');
-        }
-    }
 
-    try {
-        // Validate base64 string
-        atob(cleanBase64);
-        console.log("✅ Base64 string valid, MIME type:", mimeType);
-        return `data:${mimeType};base64,${cleanBase64}`;
-    } catch (e) {
-        console.error('❌ Invalid base64 string:', e.message);
-        return '/images/no-image.jpg';
-    }
-}
+        let cleanBase64 = base64String;
+        let mimeType = 'image/jpeg'; // Default MIME type
 
-    // Fetch logged-in user's ID
-    async function getUserId() {
-        try {
-            const token = getCookie("token");
-            if (!token) throw new Error("No auth token found in cookies");
-            console.log("🔄 Fetching user ID from:", userMeUrl);
-            const response = await fetch(userMeUrl, {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to fetch user info: ${response.statusText}`);
+        // Check if the string is a full data URL
+        if (base64String.startsWith('data:image/')) {
+            console.log("🔄 Detected data URL, extracting base64");
+            const match = base64String.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+            if (!match) {
+                console.error("❌ Invalid data URL format");
+                return '/images/no-image.jpg';
             }
-            const userData = await response.json();
-            const userId = userData.id || userData.userId;
-            if (!userId) throw new Error("No valid user ID found in response");
-            console.log("✅ User ID fetched:", userId);
-            return userId;
-        } catch (error) {
-            console.error("❌ Error fetching user ID:", error);
-            alert("Please log in to view hostel details or book a room.");
-            return null;
+            mimeType = `image/${match[1]}`;
+            cleanBase64 = match[2];
+        } else {
+            // Determine MIME type for raw base64
+            if (cleanBase64.startsWith('/9j/')) {
+                mimeType = 'image/jpeg';
+            } else if (cleanBase64.startsWith('iVBORw0KGgo')) {
+                mimeType = 'image/png';
+            } else if (cleanBase64.startsWith('R0lGODlh')) {
+                mimeType = 'image/gif';
+            } else if (cleanBase64.startsWith('UklGR')) {
+                mimeType = 'image/webp';
+            } else {
+                console.warn('⚠️ Unknown image format, defaulting to JPEG');
+            }
+        }
+
+        try {
+            // Validate base64 string
+            atob(cleanBase64);
+            console.log("✅ Base64 string valid, MIME type:", mimeType);
+            return `data:${mimeType};base64,${cleanBase64}`;
+        } catch (e) {
+            console.error('❌ Invalid base64 string:', e.message);
+            return '/images/no-image.jpg';
         }
     }
 
@@ -1173,7 +1145,7 @@
 
         try {
             console.log("🔄 Fetching hostel details from:", hostelDetailsUrl(hostelId));
-            const token = getCookie("token");
+            const token = getCookie("jwtToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const response = await fetch(hostelDetailsUrl(hostelId), {
                 method: "GET",
@@ -1455,84 +1427,38 @@
     }
 
     // Booking Form Functionality
-    async function bookRoom() {
+    function handleBookClick() {
         const moveInDate = document.getElementById('moveInDate');
         const duration = document.getElementById('duration');
         const roomType = document.getElementById('roomType');
         const hostelId = getHostelId();
-        const bookBtn = document.getElementById('bookBtn');
+
+        if (!hostelId) {
+            console.error("❌ No hostel ID provided in URL");
+            alert('No hostel ID provided.');
+            return false; // Prevent navigation
+        }
 
         if (!moveInDate || !moveInDate.value) {
             console.error("❌ No move-in date provided");
             alert('Please select a move-in date.');
-            return;
+            return false; // Prevent navigation
         }
 
-        const userId = await getUserId();
-        if (!userId) return;
+        // Store booking details for confirmation
+        sessionStorage.setItem('bookingMoveInDate', moveInDate.value);
+        sessionStorage.setItem('bookingDuration', duration ? duration.value : '1');
+        sessionStorage.setItem('bookingRoomType', roomType ? roomType.value : 'single');
 
-        const bookingPayload = {
-            userId: userId,
-            hostelId: parseInt(hostelId),
-            moveInDate: moveInDate.value,
-            duration: parseInt(duration ? duration.value : '1'),
-            roomType: roomType ? roomType.value : 'single',
-            paymentStatus: "PENDING"
-        };
-
-        console.log("=== BOOKING PAYLOAD ===");
-        console.log("Payload:", JSON.stringify(bookingPayload, null, 2));
-
-        try {
-            const token = getCookie("token");
-            if (!token) {
-                throw new Error("No auth token found");
-            }
-
-            console.log("🔄 Initiating booking request to:", initiateBookingUrl);
-            bookBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...';
-            bookBtn.disabled = true;
-
-            const response = await fetch(initiateBookingUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(bookingPayload)
-            });
-
-            const bookingData = await response.json();
-            console.log("=== BOOKING RESPONSE ===");
-            console.log("Response status:", response.status);
-            console.log("Response data:", bookingData);
-
-            if (!response.ok) {
-                throw new Error(`Booking failed: ${bookingData.message || response.statusText}`);
-            }
-
-            console.log("✅ Booking initiated successfully, booking ID:", bookingData.bookingId);
-            alert("Booking request sent! Please complete the payment to confirm.");
-
-            // Store booking details for confirmation
-            sessionStorage.setItem('bookingMoveInDate', moveInDate.value);
-            sessionStorage.setItem('bookingDuration', duration ? duration.value : '1');
-            sessionStorage.setItem('bookingRoomType', roomType ? roomType.value : 'single');
-            sessionStorage.setItem('bookingId', bookingData.bookingId);
-
-            // Optionally redirect to a confirmation page
-            window.location.href = `book.html?id=${hostelId}&bookingId=${bookingData.bookingId}`;
-        } catch (error) {
-            console.error("❌ Error initiating booking:", error);
-            alert(`Failed to initiate booking: ${error.message}`);
-            bookBtn.innerHTML = "Book Now";
-            bookBtn.disabled = false;
-        }
+        console.log("🔄 Redirecting to book.html with hostelId:", hostelId);
+        // Update href dynamically
+        document.getElementById('bookBtn').href = `book.html?id=${hostelId}`;
+        return true; // Allow navigation
     }
 
     function updateBookingSummary(monthlyRent) {
         const securityDeposit = monthlyRent;
-        const registrationFee = 1000;
+        const registrationFee = 0; // Updated to match HTML default
         const total = monthlyRent + securityDeposit + registrationFee;
 
         const monthlyRentElement = document.getElementById('monthlyRent');
@@ -1557,7 +1483,6 @@
     // Event listener for room type changes
     document.addEventListener('DOMContentLoaded', function() {
         const roomTypeSelect = document.getElementById('roomType');
-        const bookBtn = document.getElementById('bookBtn');
         if (roomTypeSelect) {
             roomTypeSelect.addEventListener('change', function() {
                 const roomType = this.value;
@@ -1566,12 +1491,6 @@
                     parseFloat(this.options[1].text.split(' - KSH ')[1].replace(/,/g, ''));
                 console.log("🔄 Room type changed to:", roomType, "Monthly rent:", monthlyRent);
                 updateBookingSummary(monthlyRent);
-            });
-        }
-        if (bookBtn) {
-            bookBtn.addEventListener('click', async () => {
-                console.log("🔄 Book button clicked");
-                await bookRoom();
             });
         }
     });
