@@ -367,6 +367,7 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 0.9rem;
+        min-width: 800px;
       }
 
       .bookings-table th,
@@ -374,6 +375,7 @@
         padding: 1rem;
         text-align: left;
         border-bottom: 1px solid var(--gray-200);
+        vertical-align: middle;
       }
 
       .bookings-table th {
@@ -383,6 +385,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-size: 0.8rem;
+        white-space: nowrap;
       }
 
       .bookings-table tr:hover {
@@ -404,6 +407,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
+        white-space: nowrap;
       }
 
       .status-badge::before {
@@ -431,7 +435,39 @@
 
       .status-expired {
         background: var(--gray-100);
-        color: var(--gray-600);
+        color: var(--gray-binding);
+      }
+
+      /* Payment Badges */
+      .payment-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transformed: uppercase;
+        display: inline-block;
+        white-space: nowrap;
+        margin-bottom: 0.25rem;
+      }
+
+      .payment-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .payment-completed {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+
+      .payment-failed {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .payment-no_payment {
+        background-color: #f3f4f6;
+        color: #6b7280;
       }
 
       /* Action Buttons */
@@ -452,6 +488,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
+        white-space: nowrap;
       }
 
       /* Modal */
@@ -602,6 +639,14 @@
         main {
           padding: 1rem;
         }
+        
+        .table-wrapper {
+          overflow-x: scroll;
+        }
+        
+        .bookings-table {
+          min-width: 900px;
+        }
       }
 
       @media (max-width: 768px) {
@@ -627,6 +672,10 @@
 
         .table-wrapper {
           font-size: 0.8rem;
+        }
+
+        .bookings-table {
+          min-width: 1000px;
         }
 
         .action-buttons {
@@ -681,7 +730,6 @@
                 <th>Student Info</th>
                 <th>Property</th>
                 <th>Room</th>
-        
                 <th>Amount</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -689,7 +737,7 @@
             </thead>
             <tbody id="bookingsTableBody">
               <tr>
-                <td colspan="8">
+                <td colspan="7">
                   <div class="loading">Loading bookings...</div>
                 </td>
               </tr>
@@ -828,6 +876,20 @@
         }
       }
 
+      // Fetch payment status by booking ID
+      async function fetchPaymentStatus(bookingId) {
+        if (!bookingId) return null;
+        try {
+          const response = await axiosInstance.get(`/api/payments/by-booking/${bookingId}`);
+          const payments = response.data || [];
+          // Return the most recent payment or the first one if available
+          return payments.length > 0 ? payments[0] : null;
+        } catch (err) {
+          console.error(`Error fetching payment for booking ${bookingId}:`, err);
+          return null;
+        }
+      }
+
       // Fetch bookings for hostels
       async function fetchBookings() {
         try {
@@ -852,13 +914,21 @@
           // Wait for all requests to complete
           let allBookings = (await Promise.all(allBookingsPromises)).flat();
 
-          // Fetch student names for each booking
-          const studentNamePromises = allBookings.map(async booking => {
-            const studentName = await fetchStudentName(booking.studentId);
-            return { ...booking, fetchedStudentName: studentName };
+          // Fetch student names and payment status for each booking
+          const enrichedBookingsPromises = allBookings.map(async booking => {
+            const [studentName, paymentInfo] = await Promise.all([
+              fetchStudentName(booking.studentId),
+              fetchPaymentStatus(booking.id)
+            ]);
+            
+            return { 
+              ...booking, 
+              fetchedStudentName: studentName,
+              paymentInfo: paymentInfo
+            };
           });
 
-          allBookings = await Promise.all(studentNamePromises);
+          allBookings = await Promise.all(enrichedBookingsPromises);
 
           // Update currentBookings for table
           currentBookings = allBookings;
@@ -884,7 +954,7 @@
         if (bookings.length === 0) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="8">
+              <td colspan="7">
                 <div class="empty-state">
                   <h3>No bookings found</h3>
                   <p>Check back later for new bookings.</p>
@@ -898,171 +968,279 @@
         bookings.forEach(booking => {
           const property = currentProperties.find(p => p.id === booking.hostelId);
           const studentName = booking.fetchedStudentName || booking.studentName || "Unknown";
+          const paymentStatus = booking.paymentInfo ? booking.paymentInfo.status : "NO_PAYMENT";
+          const paymentAmount = booking.paymentInfo ? booking.paymentInfo.amount : 0;
+          
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${booking.id}</td>
-            <td>${studentName}<br>${booking.studentEmail || ""}</td>
-            <td>${property ? property.name : "Unknown"}</td>
-            <td>${booking.roomType || "N/A"}</td>
-           
-            <td>KSH ${booking.amount ? booking.amount.toLocaleString() : "0"}</td>
+            <td><strong>#${booking.id}</strong></td>
             <td>
-              <span class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</span>
+              <div>
+                <strong>${studentName}</strong>
+              </div>
             </td>
-            <td class="action-buttons">
-              <button class="action-btn btn-primary" onclick="showBookingDetails(${booking.id})">Details</button>
-              ${booking.status === "PENDING" ? `
-                <button class="action-btn btn-success" onclick="confirmAction(${booking.id}, 'CONFIRMED')">Confirm</button>
-                <button class="action-btn btn-danger" onclick="confirmAction(${booking.id}, 'CANCELLED')">Cancel</button>
-              ` : ""}
-              ${booking.status !== "CANCELLED" ? `
-                <button class="action-btn btn-danger" onclick="confirmAction(${booking.id}, 'DELETE')">Delete</button>
-              ` : ""}
+            <td>
+              <div>
+                <strong>${property ? property.name : 'Unknown Property'}</strong>
+              </div>
+            </td>
+            <td>
+              <div>
+                <strong>Room ${booking.roomNumber || 'N/A'}</strong>
+              </div>
+            </td>
+            <td>
+              <strong>KES ${paymentAmount ? paymentAmount.toLocaleString() : 'N/A'}</strong>
+            </td>
+            <td>
+             
+              <br>
+              <span class="payment-badge payment-${paymentStatus.toLowerCase()}">
+                ${paymentStatus.replace('_', ' ')}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn btn-primary" onclick="viewBookingDetails(${booking.id})">
+                  📋 View Details
+                </button>
+                ${booking.status === 'PENDING' ? `
+                  <button class="action-btn btn-success" onclick="confirmBooking(${booking.id})">
+                    ✅ Approve
+                  </button>
+                  <button class="action-btn btn-danger" onclick="rejectBooking(${booking.id})">
+                    ❌ Reject
+                  </button>
+                ` : ''}
+                ${booking.status === 'CONFIRMED' ? `
+                  <button class="action-btn btn-warning" onclick="cancelBooking(${booking.id})">
+                    🚫 Cancel
+                  </button>
+                ` : ''}
+              </div>
             </td>
           `;
           tableBody.appendChild(row);
         });
       }
 
-      // Refresh bookings
-      function refreshBookings() {
-        document.getElementById("bookingsTableBody").innerHTML = `
-          <tr>
-            <td colspan="8">
-              <div class="loading">Loading bookings...</div>
-            </td>
-          </tr>
-        `;
-        fetchBookings();
-      }
-
-      // Show booking details
-      async function showBookingDetails(bookingId) {
+      // View booking details
+      async function viewBookingDetails(bookingId) {
         try {
-          const response = await axiosInstance.get(`/api/bookings/${bookingId}`);
-          const booking = response.data;
+          const booking = currentBookings.find(b => b.id === bookingId);
+          if (!booking) {
+            alert("Booking not found");
+            return;
+          }
+
           const property = currentProperties.find(p => p.id === booking.hostelId);
-          const studentName = await fetchStudentName(booking.studentId) || booking.studentName || "Unknown";
+          const studentName = booking.fetchedStudentName || "Unknown";
+          const paymentStatus = booking.paymentInfo ? booking.paymentInfo.status : "NO_PAYMENT";
+          const paymentAmount = booking.paymentInfo ? booking.paymentInfo.amount : 0;
+          const paymentDate = booking.paymentInfo ? new Date(booking.paymentInfo.createdAt).toLocaleDateString() : 'N/A';
 
-          const images = booking.imagesBase64 && booking.imagesBase64.length > 0
-            ? booking.imagesBase64
-            : (property && property.imagesBase64 && property.imagesBase64.length > 0
-                ? property.imagesBase64
-                : ['iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwAB/AL+i4AAAAABJRU5ErkJggg==']);
-
-          const bookingDetailsContent = document.getElementById("bookingDetailsContent");
-          bookingDetailsContent.innerHTML = `
+          const modal = document.getElementById("bookingDetailsModal");
+          const content = document.getElementById("bookingDetailsContent");
+          
+          content.innerHTML = `
             <div class="detail-row">
-              <div class="detail-label">Booking ID</div>
-              <div class="detail-value">${booking.id}</div>
+              <div class="detail-label">Booking ID:</div>
+              <div class="detail-value">#${booking.id}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Student Name</div>
+              <div class="detail-label">Student Name:</div>
               <div class="detail-value">${studentName}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Student Email</div>
-              <div class="detail-value">${booking.studentEmail || "N/A"}</div>
+              <div class="detail-label">Student ID:</div>
+              <div class="detail-value">${booking.studentId}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Property</div>
-              <div class="detail-value">${property ? property.name : "Unknown"}</div>
+              <div class="detail-label">Property:</div>
+              <div class="detail-value">${property ? property.name : 'Unknown Property'}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Room Type</div>
-              <div class="detail-value">${booking.roomType || "N/A"}</div>
+              <div class="detail-label">Property Address:</div>
+              <div class="detail-value">${property ? property.address : 'N/A'}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Check-in Date</div>
-              <div class="detail-value">${new Date(booking.checkInDate).toLocaleDateString()}</div>
+              <div class="detail-label">Room Number:</div>
+              <div class="detail-value">${booking.roomNumber || 'N/A'}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Duration</div>
-              <div class="detail-value">${booking.duration || "N/A"} months</div>
+              <div class="detail-label">Room Type:</div>
+              <div class="detail-value">${booking.roomType || 'N/A'}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Amount</div>
-              <div class="detail-value">KSH ${booking.amount ? booking.amount.toLocaleString() : "0"}</div>
+              <div class="detail-label">Total Amount:</div>
+              <div class="detail-value">KES ${paymentAmount ? paymentAmount.toLocaleString() : 'N/A'}</div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Status</div>
+              <div class="detail-label">Booking Status:</div>
               <div class="detail-value">
-                <span class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</span>
+                <span class="status-badge status-${booking.status ? booking.status.toLowerCase() : 'pending'}">
+                  ${booking.status || 'PENDING'}
+                </span>
               </div>
             </div>
             <div class="detail-row">
-              <div class="detail-label">Images</div>
+              <div class="detail-label">Payment Status:</div>
               <div class="detail-value">
-                <div class="image-gallery">
-                  ${images.map((img, index) => `
-                    <img src="${base64ToDataUrl(img)}" alt="Booking image ${index + 1}">
-                  `).join('')}
-                </div>
+                <span class="payment-badge payment-${paymentStatus.toLowerCase()}">
+                  ${paymentStatus.replace('_', ' ')}
+                </span>
               </div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Payment Amount:</div>
+              <div class="detail-value">KES ${paymentAmount.toLocaleString()}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Payment Date:</div>
+              <div class="detail-value">${paymentDate}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Check-in Date:</div>
+              <div class="detail-value">${booking.checkInDate ? new Date(booking.checkInDate).toLocaleDateString() : 'N/A'}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Check-out Date:</div>
+              <div class="detail-value">${booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString() : 'N/A'}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Booking Date:</div>
+              <div class="detail-value">${booking.createdAt ? new Date(booking.createdAt).toLocaleDateString() : 'N/A'}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Special Requests:</div>
+              <div class="detail-value">${booking.specialRequests || 'None'}</div>
             </div>
           `;
 
-          document.getElementById("bookingDetailsModal").style.display = "block";
+          modal.style.display = "block";
         } catch (err) {
-          console.error("Error fetching booking details:", err);
-          alert("Error fetching booking details. Please try again.");
+          console.error("Error viewing booking details:", err);
+          alert("Error loading booking details. Please try again.");
         }
       }
 
-      // Confirm action (Confirm, Cancel, Delete)
-      function confirmAction(bookingId, action) {
-        const confirmationContent = document.getElementById("confirmationContent");
-        confirmationContent.innerHTML = `
-          <p>Are you sure you want to ${action.toLowerCase()} this booking?</p>
-          <div class="action-buttons" style="margin-top: 1.5rem;">
-            <button class="btn btn-primary" id="confirmBtn" onclick="executeAction(${bookingId}, '${action}')">Confirm</button>
-            <button class="btn btn-secondary" onclick="closeConfirmationModal()">Cancel</button>
-          </div>
-        `;
-        document.getElementById("confirmationModal").style.display = "block";
-      }
-
-      // Execute action
-      async function executeAction(bookingId, action) {
-        try {
-          if (action === "DELETE") {
-            await axiosInstance.delete(`/api/bookings/${bookingId}`);
-          } else {
-            await axiosInstance.patch(`/api/bookings/${bookingId}`, { status: action });
-          }
-          closeConfirmationModal();
-          refreshBookings();
-          alert(`Booking ${action.toLowerCase()} successfully.`);
-        } catch (err) {
-          console.error(`Error performing ${action}:`, err);
-          alert(`Error performing ${action.toLowerCase()}. Please try again.`);
-        }
-      }
-
-      // Close modals
+      // Close booking details modal
       function closeBookingDetailsModal() {
         document.getElementById("bookingDetailsModal").style.display = "none";
       }
 
+      // Confirm booking
+      async function confirmBooking(bookingId) {
+        showConfirmationModal(
+          "Confirm Booking",
+          "Are you sure you want to approve this booking?",
+          async () => {
+            try {
+              await axiosInstance.put(`/api/bookings/${bookingId}/status`, {
+                status: "CONFIRMED"
+              });
+              alert("Booking confirmed successfully!");
+              await fetchBookings(); // Refresh the table
+              closeConfirmationModal();
+            } catch (err) {
+              console.error("Error confirming booking:", err);
+              alert("Error confirming booking. Please try again.");
+            }
+          }
+        );
+      }
+
+      // Reject booking
+      async function rejectBooking(bookingId) {
+        showConfirmationModal(
+          "Reject Booking",
+          "Are you sure you want to reject this booking? This action cannot be undone.",
+          async () => {
+            try {
+              await axiosInstance.put(`/api/bookings/${bookingId}/status`, {
+                status: "CANCELLED"
+              });
+              alert("Booking rejected successfully!");
+              await fetchBookings(); // Refresh the table
+              closeConfirmationModal();
+            } catch (err) {
+              console.error("Error rejecting booking:", err);
+              alert("Error rejecting booking. Please try again.");
+            }
+          }
+        );
+      }
+
+      // Cancel booking
+      async function cancelBooking(bookingId) {
+        showConfirmationModal(
+          "Cancel Booking",
+          "Are you sure you want to cancel this confirmed booking?",
+          async () => {
+            try {
+              await axiosInstance.put(`/api/bookings/${bookingId}/status`, {
+                status: "CANCELLED"
+              });
+              alert("Booking cancelled successfully!");
+              await fetchBookings(); // Refresh the table
+              closeConfirmationModal();
+            } catch (err) {
+              console.error("Error cancelling booking:", err);
+              alert("Error cancelling booking. Please try again.");
+            }
+          }
+        );
+      }
+
+      // Show confirmation modal
+      function showConfirmationModal(title, message, onConfirm) {
+        const modal = document.getElementById("confirmationModal");
+        const content = document.getElementById("confirmationContent");
+        
+        content.innerHTML = `
+          <h3>${title}</h3>
+          <p>${message}</p>
+          <div class="action-buttons" style="margin-top: 1.5rem;">
+            <button class="btn btn-primary" id="confirmBtn">Confirm</button>
+            <button class="btn btn-secondary" onclick="closeConfirmationModal()">Cancel</button>
+          </div>
+        `;
+
+        document.getElementById("confirmBtn").onclick = onConfirm;
+        modal.style.display = "block";
+      }
+
+      // Close confirmation modal
       function closeConfirmationModal() {
         document.getElementById("confirmationModal").style.display = "none";
       }
 
-      // Handle clicks outside modals
+      // Refresh bookings
+      async function refreshBookings() {
+        await fetchBookings();
+      }
+
+      // Close modals when clicking outside
       window.onclick = function(event) {
         const bookingModal = document.getElementById("bookingDetailsModal");
-        const confirmationModal = document.getElementById("confirmationModal");
+        const confirmModal = document.getElementById("confirmationModal");
+        
         if (event.target === bookingModal) {
           closeBookingDetailsModal();
         }
-        if (event.target === confirmationModal) {
+        if (event.target === confirmModal) {
           closeConfirmationModal();
         }
       }
 
       // Initialize page
-      document.addEventListener("DOMContentLoaded", () => {
-        fetchBookings();
+      document.addEventListener("DOMContentLoaded", async function() {
+        try {
+          await fetchBookings();
+        } catch (err) {
+          console.error("Error initializing page:", err);
+          alert("Error loading page. Please refresh and try again.");
+        }
       });
     </script>
   </body>

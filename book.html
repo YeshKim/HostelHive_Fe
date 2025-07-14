@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hostel Hive - Book Your Stay</title>
     <style>
-      /* Same styles as provided */
       * {
         margin: 0;
         padding: 0;
@@ -413,6 +412,80 @@
         font-size: 0.8rem;
         line-height: 1.4;
       }
+      #paymentStatus {
+        font-size: 16px;
+        margin-top: 10px;
+      }
+      #paymentStatus:contains("successful") {
+        color: #10b981;
+      }
+      #paymentStatus:contains("failed") {
+        color: #ef4444;
+      }
+      #paymentStatus:contains("timed out") {
+        color: #f59e0b;
+      }
+      #checkAgainBtn {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+      }
+      #checkAgainBtn:hover {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        transform: translateY(-1px);
+      }
+      #checkAgainBtn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .modal-content {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      .modal-content h2 {
+        color: #8b5cf6;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .modal-content p {
+        color: #333;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .modal-content .btn {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .modal-content .btn:hover {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        transform: translateY(-2px);
+      }
       @media (max-width: 968px) {
         .main-content {
           grid-template-columns: 1fr;
@@ -512,33 +585,23 @@
             </h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="firstName"
-                  >First Name <span class="required">*</span></label
-                >
+                <label for="firstName">First Name <span class="required">*</span></label>
                 <input type="text" id="firstName" name="firstName" required />
               </div>
               <div class="form-group">
-                <label for="lastName"
-                  >Last Name <span class="required">*</span></label
-                >
+                <label for="lastName">Last Name <span class="required">*</span></label>
                 <input type="text" id="lastName" name="lastName" required />
               </div>
               <div class="form-group">
-                <label for="email"
-                  >Email Address <span class="required">*</span></label
-                >
+                <label for="email">Email Address <span class="required">*</span></label>
                 <input type="email" id="email" name="email" required />
               </div>
               <div class="form-group">
-                <label for="phone"
-                  >Phone Number <span class="required">*</span></label
-                >
+                <label for="phone">Phone Number <span class="required">*</span></label>
                 <input type="tel" id="phone" name="phone" required />
               </div>
               <div class="form-group">
-                <label for="idNumber"
-                  >ID/Passport Number <span class="required">*</span></label
-                >
+                <label for="idNumber">ID/Passport Number <span class="required">*</span></label>
                 <input type="text" id="idNumber" name="idNumber" required />
               </div>
               <div class="form-group">
@@ -565,15 +628,11 @@
             </h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="checkIn"
-                  >Check-in Date <span class="required">*</span></label
-                >
+                <label for="checkIn">Check-in Date <span class="required">*</span></label>
                 <input type="date" id="checkIn" name="checkIn" required />
               </div>
               <div class="form-group">
-                <label for="duration"
-                  >Duration <span class="required">*</span></label
-                >
+                <label for="duration">Duration <span class="required">*</span></label>
                 <select id="duration" name="duration" required>
                   <option value="">Select duration</option>
                   <option value="1">1 Month</option>
@@ -593,26 +652,12 @@
             </h3>
             <div class="form-grid">
               <div class="form-group">
-                <label for="emergencyName"
-                  >Contact Name <span class="required">*</span></label
-                >
-                <input
-                  type="text"
-                  id="emergencyName"
-                  name="emergencyName"
-                  required
-                />
+                <label for="emergencyName">Contact Name <span class="required">*</span></label>
+                <input type="text" id="emergencyName" name="emergencyName" required />
               </div>
               <div class="form-group">
-                <label for="emergencyPhone"
-                  >Contact Phone <span class="required">*</span></label
-                >
-                <input
-                  type="tel"
-                  id="emergencyPhone"
-                  name="emergencyPhone"
-                  required
-                />
+                <label for="emergencyPhone">Contact Phone <span class="required">*</span></label>
+                <input type="tel" id="emergencyPhone" name="emergencyPhone" required />
               </div>
               <div class="form-group">
                 <label for="relationship">Relationship</label>
@@ -636,13 +681,7 @@
             </h3>
             <div class="payment-methods">
               <div class="payment-method selected">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="mpesa"
-                  id="mpesa"
-                  checked
-                />
+                <input type="radio" name="paymentMethod" value="mpesa" id="mpesa" checked />
                 <div class="payment-icon">📱</div>
                 <h4>M-Pesa</h4>
                 <p>Pay via mobile money</p>
@@ -669,12 +708,7 @@
           <!-- Terms and Conditions -->
           <div class="form-group">
             <div class="terms-checkbox">
-              <input
-                type="checkbox"
-                id="termsAccepted"
-                name="termsAccepted"
-                required
-              />
+              <input type="checkbox" id="termsAccepted" name="termsAccepted" required />
               <label for="termsAccepted">
                 I agree to the
                 <a href="#terms" target="_blank">Terms and Conditions</a> and
@@ -712,21 +746,15 @@
             </div>
             <div class="detail-row">
               <span class="detail-label">Room Type</span>
-              <span class="detail-value" id="selectedRoomType"
-                >Single Room</span
-              >
+              <span class="detail-value" id="selectedRoomType">Single Room</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Check-in</span>
-              <span class="detail-value" id="selectedCheckIn"
-                >Not selected</span
-              >
+              <span class="detail-value" id="selectedCheckIn">Not selected</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Duration</span>
-              <span class="detail-value" id="selectedDuration"
-                >Not selected</span
-              >
+              <span class="detail-value" id="selectedDuration">Not selected</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Payment Method</span>
@@ -763,712 +791,885 @@
       </div>
     </div>
 
-  <script>function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-  return null;
-}
+    <script>
+      let paymentProcessed = false; // Flag to prevent duplicate pop-ups
+      let isSubmitting = false; // Flag to prevent multiple form submissions
 
-function handleLogout() {
-  document.cookie = "jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  window.location.reload();
-}
-
-function updateAuthButtons() {
-  const authButtons = document.getElementById("authButtons");
-  const jwtToken = getCookie("jwtToken");
-  if (jwtToken) {
-    authButtons.innerHTML = `<button class="btn btn-outline" onclick="handleLogout()">Log Out</button>`;
-  } else {
-    authButtons.innerHTML = `
-      <a href="login.html" class="btn btn-outline">Sign In</a>
-      <a href="register-student.html" class="btn btn-solid">Register</a>
-    `;
-  }
-}
-
-function getHostelId() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("id");
-}
-
-async function getStudentId() {
-  const jwtToken = getCookie("jwtToken");
-  if (!jwtToken) {
-    throw new Error("Please log in to complete the booking.");
-  }
-  try {
-    const response = await fetch("http://localhost:8099/users/me", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch student ID: ${response.statusText}`);
-    }
-    const user = await response.json();
-    if (!user.id) {
-      throw new Error("Student ID not found in user data");
-    }
-    return user.id;
-  } catch (error) {
-    console.error("Error fetching student ID:", error);
-    throw error;
-  }
-}
-
-async function getRoomId(hostelId, roomType) {
-  if (!hostelId) {
-    throw new Error("Hostel ID is missing");
-  }
-  const jwtToken = getCookie("jwtToken");
-  const headers = { "Content-Type": "application/json" };
-  if (jwtToken) {
-    headers["Authorization"] = `Bearer ${jwtToken}`;
-  }
-  try {
-    const response = await fetch(
-      `http://localhost:8099/api/rooms/by-hostel/${hostelId}?isAvailable=true`,
-      {
-        method: "GET",
-        headers: headers,
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
       }
-    );
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error("Unauthorized: Please log in to fetch room details.");
-      } else if (response.status === 404) {
-        throw new Error(`No available rooms found for hostel ID ${hostelId}.`);
+
+      function handleLogout() {
+        document.cookie = "jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.reload();
       }
-      throw new Error(`Failed to fetch rooms: ${response.statusText}`);
-    }
-    const rooms = await response.json();
-    if (!Array.isArray(rooms) || rooms.length === 0) {
-      throw new Error("No available rooms found for this hostel");
-    }
-    const matchingRoom = rooms.find(
-      (room) =>
-        room.roomType.toLowerCase() === roomType.toLowerCase() &&
-        room.isAvailable
-    );
-    if (!matchingRoom) {
-      throw new Error(`No available ${roomType} rooms found for this hostel`);
-    }
-    return matchingRoom.id;
-  } catch (error) {
-    console.error("Error fetching room ID:", error);
-    throw error;
-  }
-}
 
-function calculateEndDate(checkIn, duration) {
-  const startDate = new Date(checkIn);
-  const endDate = new Date(startDate);
-  endDate.setMonth(startDate.getMonth() + parseInt(duration));
-  return endDate.toISOString().split("T")[0];
-}
+      function updateAuthButtons() {
+        const authButtons = document.getElementById("authButtons");
+        const jwtToken = getCookie("jwtToken");
+        if (jwtToken) {
+          authButtons.innerHTML = `<button class="btn btn-outline" onclick="handleLogout()">Log Out</button>`;
+        } else {
+          authButtons.innerHTML = `
+            <a href="login.html" class="btn btn-outline">Sign In</a>
+            <a href="register-student.html" class="btn btn-solid">Register</a>
+          `;
+        }
+      }
 
-document.addEventListener("DOMContentLoaded", async function () {
-  updateAuthButtons();
-  const hostelId = getHostelId();
-  const minBudget = parseFloat(sessionStorage.getItem("minBudget")) || 5000;
-  const maxBudget = parseFloat(sessionStorage.getItem("maxBudget")) || 15000;
-
-  document.getElementById("priceRange").textContent = `KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
-  const today = new Date().toISOString().split("T")[0];
-  document.getElementById("checkIn").min = today;
-  document.getElementById("checkIn").value = "2025-08-01";
-  document.getElementById("duration").value = "3";
-
-  const moveInDate = sessionStorage.getItem("bookingMoveInDate");
-  const duration = sessionStorage.getItem("bookingDuration");
-  const roomType = sessionStorage.getItem("bookingRoomType");
-
-  if (moveInDate) {
-    document.getElementById("checkIn").value = moveInDate;
-    updateCheckIn();
-  }
-  if (duration) {
-    document.getElementById("duration").value = duration;
-    updateDuration();
-  }
-
-  if (hostelId) {
-    try {
-      const hostelResponse = await fetch(`http://localhost:8099/api/hostels/${hostelId}`, {
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getCookie("jwtToken") || ""}` }
-      });
-      if (!hostelResponse.ok) throw new Error("Failed to fetch hostel details");
-      const hostel = await hostelResponse.json();
-      console.log("Hostel data:", hostel);
-
-      const roomsResponse = await fetch(`http://localhost:8099/api/rooms/by-hostel/${hostelId}?isAvailable=true`, {
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getCookie("jwtToken") || ""}` }
-      });
-      if (!roomsResponse.ok) throw new Error("Failed to fetch available rooms");
-      const rooms = await roomsResponse.json();
-      console.log("Rooms data:", rooms);
-
-      document.title = `${hostel.name} - Book Your Stay | Hostel Hive`;
-      document.getElementById("formHeaderTitle").textContent = `Book ${hostel.name}`;
-      document.getElementById("summaryHostelName").textContent = hostel.name;
-      document.getElementById("hostelName").textContent = hostel.name;
-      document.getElementById("hostelLocation").textContent = hostel.location || "Unknown Location";
-      document.getElementById("hostelDetailsLink").href = `hostel-details.html?id=${hostelId}`;
-      document.getElementById("hostelDetailsLink").textContent = hostel.name;
-
-      const roomOptions = document.getElementById("roomOptions");
-      const singleRoom = rooms.find(room => room.roomType.toLowerCase() === "single" && room.isAvailable);
-      const sharedRoom = rooms.find(room => room.roomType.toLowerCase() === "shared" && room.isAvailable);
-      let roomOptionsHTML = "";
-      let defaultRoomType = null;
-
-      if (singleRoom) {
-        roomOptionsHTML += `
-          <div class="room-option${roomType === "single" ? " selected" : ""}">
-            <input type="radio" name="roomType" value="single" id="singleRoom"${roomType === "single" || (!roomType && !sharedRoom) ? " checked" : ""}>
-            <div class="room-info">
-              <h4>Single Room</h4>
-              <p>Private room with shared bathroom</p>
-              <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-              <div class="room-price" id="singleRoomPrice">KSH ${singleRoom.price.toLocaleString()}/month</div>
-            </div>
+      function showSuccessPopup(bookingId, amount, phone, transactionId) {
+        if (paymentProcessed) return; // Prevent duplicate pop-ups
+        paymentProcessed = true;
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.innerHTML = `
+          <div class="modal-content">
+            <h2>Booking Confirmed!</h2>
+            <p>
+              Booking and payment completed successfully! You will be contacted for further details.<br><br>
+              Booking ID: ${bookingId}<br>
+              Amount: KSH ${amount.toLocaleString()}<br>
+              Phone: ${phone}<br>
+              Transaction ID: ${transactionId || "N/A"}
+            </p>
+            <button class="btn" id="modalOkBtn">OK</button>
           </div>
         `;
-        if (!defaultRoomType) defaultRoomType = "single";
-      }
-      if (sharedRoom) {
-        roomOptionsHTML += `
-          <div class="room-option${roomType === "shared" ? " selected" : ""}">
-            <input type="radio" name="roomType" value="shared" id="sharedRoom"${roomType === "shared" || (!roomType && !singleRoom) ? " checked" : ""}>
-            <div class="room-info">
-              <h4>Shared Room</h4>
-              <p>Shared room with individual storage</p>
-              <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
-              <div class="room-price" id="sharedRoomPrice">KSH ${sharedRoom.price.toLocaleString()}/month</div>
-            </div>
-          </div>
-        `;
-        if (!defaultRoomType) defaultRoomType = "shared";
+        document.body.appendChild(modal);
+        document.getElementById("modalOkBtn").addEventListener("click", () => {
+          modal.remove();
+          window.location.href = "home-student.html";
+        });
       }
 
-      if (!roomOptionsHTML) {
-        roomOptions.innerHTML = `<p>No available rooms for this hostel.</p>`;
-        document.getElementById("submitBtn").disabled = true;
-      } else {
-        roomOptions.innerHTML = roomOptionsHTML;
-        if (!document.querySelector('input[name="roomType"]:checked')) {
-          const fallbackRoom = document.querySelector(`input[name="roomType"][value="${defaultRoomType}"]`);
-          if (fallbackRoom) {
-            fallbackRoom.checked = true;
-            updateRoomSelection();
+      function getHostelId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get("id");
+      }
+
+      async function getStudentId() {
+        const jwtToken = getCookie("jwtToken");
+        if (!jwtToken) {
+          throw new Error("Please log in to complete the booking.");
+        }
+        try {
+          const response = await fetch("http://localhost:8099/users/me", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to fetch student ID: ${response.statusText}`);
+          }
+          const user = await response.json();
+          if (!user.id) {
+            throw new Error("Student ID not found in user data");
+          }
+          return user.id;
+        } catch (error) {
+          console.error("Error fetching student ID:", error);
+          throw error;
+        }
+      }
+
+      async function getRoomId(hostelId, roomType) {
+        if (!hostelId) {
+          throw new Error("Hostel ID is missing");
+        }
+        const jwtToken = getCookie("jwtToken");
+        const headers = { "Content-Type": "application/json" };
+        if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+        try {
+          const response = await fetch(
+            `http://localhost:8099/api/rooms/by-hostel/${hostelId}?isAvailable=true`,
+            {
+              method: "GET",
+              headers: headers,
+            }
+          );
+          if (!response.ok) {
+            if (response.status === 401) {
+              throw new Error("Unauthorized: Please log in to fetch room details.");
+            } else if (response.status === 404) {
+              throw new Error(`No available rooms found for hostel ID ${hostelId}.`);
+            }
+            throw new Error(`Failed to fetch rooms: ${response.statusText}`);
+          }
+          const rooms = await response.json();
+          if (!Array.isArray(rooms) || rooms.length === 0) {
+            throw new Error("No available rooms found for this hostel");
+          }
+          const matchingRoom = rooms.find(
+            (room) =>
+              room.roomType.toLowerCase() === roomType.toLowerCase() &&
+              room.isAvailable
+          );
+          if (!matchingRoom) {
+            throw new Error(`No available ${roomType} rooms found for this hostel`);
+          }
+          return matchingRoom.id;
+        } catch (error) {
+          console.error("Error fetching room ID:", error);
+          throw error;
+        }
+      }
+
+      function calculateEndDate(checkIn, duration) {
+        const startDate = new Date(checkIn);
+        const endDate = new Date(startDate);
+        endDate.setMonth(startDate.getMonth() + parseInt(duration));
+        return endDate.toISOString().split("T")[0];
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        updateAuthButtons();
+        const hostelId = getHostelId();
+        const minBudget = parseFloat(sessionStorage.getItem("minBudget")) || 5000;
+        const maxBudget = parseFloat(sessionStorage.getItem("maxBudget")) || 15000;
+
+        document.getElementById("priceRange").textContent = `KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("checkIn").min = today;
+        document.getElementById("checkIn").value = "2025-08-01";
+        document.getElementById("duration").value = "3";
+
+        const moveInDate = sessionStorage.getItem("bookingMoveInDate");
+        const duration = sessionStorage.getItem("bookingDuration");
+        const roomType = sessionStorage.getItem("bookingRoomType");
+
+        if (moveInDate) {
+          document.getElementById("checkIn").value = moveInDate;
+          updateCheckIn();
+        }
+        if (duration) {
+          document.getElementById("duration").value = duration;
+          updateDuration();
+        }
+
+        if (hostelId) {
+          try {
+            const jwtToken = getCookie("jwtToken");
+            const headers = { "Content-Type": "application/json" };
+            if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+            const hostelResponse = await fetch(`http://localhost:8099/api/hostels/${hostelId}`, {
+              headers: headers
+            });
+            if (!hostelResponse.ok) throw new Error("Failed to fetch hostel details");
+            const hostel = await hostelResponse.json();
+            console.log("Hostel data:", hostel);
+
+            const roomsResponse = await fetch(`http://localhost:8099/api/rooms/by-hostel/${hostelId}?isAvailable=true`, {
+              headers: headers
+            });
+            if (!roomsResponse.ok) throw new Error("Failed to fetch available rooms");
+            const rooms = await roomsResponse.json();
+            console.log("Rooms data:", rooms);
+
+            document.title = `${hostel.name} - Book Your Stay | Hostel Hive`;
+            document.getElementById("formHeaderTitle").textContent = `Book ${hostel.name}`;
+            document.getElementById("summaryHostelName").textContent = hostel.name;
+            document.getElementById("hostelName").textContent = hostel.name;
+            document.getElementById("hostelLocation").textContent = hostel.location || "Unknown Location";
+            document.getElementById("hostelDetailsLink").href = `hostel-details.html?id=${hostelId}`;
+            document.getElementById("hostelDetailsLink").textContent = hostel.name;
+
+            const roomOptions = document.getElementById("roomOptions");
+            const singleRoom = rooms.find(room => room.roomType.toLowerCase() === "single" && room.isAvailable);
+            const sharedRoom = rooms.find(room => room.roomType.toLowerCase() === "shared" && room.isAvailable);
+            let roomOptionsHTML = "";
+            let defaultRoomType = null;
+
+            if (singleRoom) {
+              roomOptionsHTML += `
+                <div class="room-option${roomType === "single" ? " selected" : ""}">
+                  <input type="radio" name="roomType" value="single" id="singleRoom"${roomType === "single" || (!roomType && !sharedRoom) ? " checked" : ""}>
+                  <div class="room-info">
+                    <h4>Single Room</h4>
+                    <p>Private room with shared bathroom</p>
+                    <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+                    <div class="room-price" id="singleRoomPrice">KSH ${singleRoom.price.toLocaleString()}/month</div>
+                  </div>
+                </div>
+              `;
+              if (!defaultRoomType) defaultRoomType = "single";
+            }
+            if (sharedRoom) {
+              roomOptionsHTML += `
+                <div class="room-option${roomType === "shared" ? " selected" : ""}">
+                  <input type="radio" name="roomType" value="shared" id="sharedRoom"${roomType === "shared" || (!roomType && !singleRoom) ? " checked" : ""}>
+                  <div class="room-info">
+                    <h4>Shared Room</h4>
+                    <p>Shared room with individual storage</p>
+                    <p>Includes: Bed, Desk, Wardrobe, Wi-Fi</p>
+                    <div class="room-price" id="sharedRoomPrice">KSH ${sharedRoom.price.toLocaleString()}/month</div>
+                  </div>
+                </div>
+              `;
+              if (!defaultRoomType) defaultRoomType = "shared";
+            }
+
+            if (!roomOptionsHTML) {
+              roomOptions.innerHTML = `<p>No available rooms for this hostel.</p>`;
+              document.getElementById("submitBtn").disabled = true;
+            } else {
+              roomOptions.innerHTML = roomOptionsHTML;
+              if (!document.querySelector('input[name="roomType"]:checked')) {
+                const fallbackRoom = document.querySelector(`input[name="roomType"][value="${defaultRoomType}"]`);
+                if (fallbackRoom) {
+                  fallbackRoom.checked = true;
+                  updateRoomSelection();
+                }
+              } else {
+                updateRoomSelection();
+              }
+              updateBookingSummary(singleRoom?.price || sharedRoom?.price || 8500);
+              checkFormValidity();
+            }
+
+            if (moveInDate || duration || roomType) {
+              checkFormValidity();
+            }
+
+            initializeEventListeners();
+          } catch (error) {
+            console.error("Error fetching data:", error);
+            alert("Error fetching hostel or room details. Please try again later.");
+            document.getElementById("submitBtn").disabled = true;
           }
         } else {
-          updateRoomSelection();
+          alert("No hostel ID provided.");
+          document.getElementById("submitBtn").disabled = true;
         }
-        updateBookingSummary(singleRoom?.price || sharedRoom?.price || 8500);
+      });
+
+      function initializeEventListeners() {
+        document.querySelectorAll('input[name="roomType"]').forEach((radio) => {
+          radio.addEventListener("change", updateRoomSelection);
+        });
+        document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
+          radio.addEventListener("change", updatePaymentMethod);
+        });
+        document.getElementById("duration").addEventListener("change", updateDuration);
+        document.getElementById("checkIn").addEventListener("change", updateCheckIn);
+        document.getElementById("bookingForm").addEventListener("submit", handleFormSubmission);
+        document.querySelectorAll("input[required], select[required]").forEach((field) => {
+          field.addEventListener("blur", validateField);
+          field.addEventListener("input", checkFormValidity);
+        });
+        document.querySelectorAll("select[required], input[type='checkbox']").forEach((field) => {
+          field.addEventListener("change", checkFormValidity);
+        });
+      }
+
+      function updateRoomSelection() {
+        const selectedRoom = document.querySelector('input[name="roomType"]:checked');
+        if (!selectedRoom) return;
+        const roomOptions = document.querySelectorAll(".room-option");
+        roomOptions.forEach((option) => option.classList.remove("selected"));
+        selectedRoom.closest(".room-option").classList.add("selected");
+        const roomType = selectedRoom.value === "single" ? "Single Room" : "Shared Room";
+        const price = parseFloat(
+          document
+            .getElementById(`${selectedRoom.value}RoomPrice`)
+            .textContent.replace("KSH ", "")
+            .replace("/month", "")
+            .replace(",", "")
+        );
+        document.getElementById("selectedRoomType").textContent = roomType;
+        updateBookingSummary(price);
         checkFormValidity();
       }
 
-      if (moveInDate || duration || roomType) {
+      function updatePaymentMethod() {
+        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+        const paymentMethods = document.querySelectorAll(".payment-method");
+        paymentMethods.forEach((method) => method.classList.remove("selected"));
+        selectedPayment.closest(".payment-method").classList.add("selected");
+        const paymentText =
+          selectedPayment.value === "mpesa"
+            ? "M-Pesa"
+            : selectedPayment.value === "bank"
+            ? "Bank Transfer"
+            : "Credit/Debit Card";
+        document.getElementById("selectedPayment").textContent = paymentText;
         checkFormValidity();
       }
 
-      initializeEventListeners();
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      alert("Error fetching hostel or room details. Please try again later.");
-      document.getElementById("submitBtn").disabled = true;
-    }
-  } else {
-    alert("No hostel ID provided.");
-    document.getElementById("submitBtn").disabled = true;
-  }
-});
-
-function initializeEventListeners() {
-  document.querySelectorAll('input[name="roomType"]').forEach((radio) => {
-    radio.addEventListener("change", updateRoomSelection);
-  });
-  document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
-    radio.addEventListener("change", updatePaymentMethod);
-  });
-  document.getElementById("duration").addEventListener("change", updateDuration);
-  document.getElementById("checkIn").addEventListener("change", updateCheckIn);
-  document.getElementById("bookingForm").addEventListener("submit", handleFormSubmission);
-  document.querySelectorAll("input[required], select[required]").forEach((field) => {
-    field.addEventListener("blur", validateField);
-    field.addEventListener("input", checkFormValidity);
-  });
-  document.querySelectorAll("select[required], input[type='checkbox']").forEach((field) => {
-    field.addEventListener("change", checkFormValidity);
-  });
-}
-
-function updateRoomSelection() {
-  const selectedRoom = document.querySelector('input[name="roomType"]:checked');
-  if (!selectedRoom) return;
-  const roomOptions = document.querySelectorAll(".room-option");
-  roomOptions.forEach((option) => option.classList.remove("selected"));
-  selectedRoom.closest(".room-option").classList.add("selected");
-  const roomType = selectedRoom.value === "single" ? "Single Room" : "Shared Room";
-  const price = parseFloat(
-    document
-      .getElementById(`${selectedRoom.value}RoomPrice`)
-      .textContent.replace("KSH ", "")
-      .replace("/month", "")
-      .replace(",", "")
-  );
-  document.getElementById("selectedRoomType").textContent = roomType;
-  updateBookingSummary(price);
-  checkFormValidity();
-}
-
-function updatePaymentMethod() {
-  const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
-  const paymentMethods = document.querySelectorAll(".payment-method");
-  paymentMethods.forEach((method) => method.classList.remove("selected"));
-  selectedPayment.closest(".payment-method").classList.add("selected");
-  const paymentText =
-    selectedPayment.value === "mpesa"
-      ? "M-Pesa"
-      : selectedPayment.value === "bank"
-      ? "Bank Transfer"
-      : "Credit/Debit Card";
-  document.getElementById("selectedPayment").textContent = paymentText;
-  checkFormValidity();
-}
-
-function updateDuration() {
-  const duration = document.getElementById("duration").value;
-  const durationText = duration
-    ? `${duration} Month${duration > 1 ? "s" : ""}`
-    : "Not selected";
-  document.getElementById("selectedDuration").textContent = durationText;
-  checkFormValidity();
-}
-
-function updateCheckIn() {
-  const checkIn = document.getElementById("checkIn").value;
-  if (checkIn) {
-    const date = new Date(checkIn);
-    const formattedDate = date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    document.getElementById("selectedCheckIn").textContent = formattedDate;
-  } else {
-    document.getElementById("selectedCheckIn").textContent = "Not selected";
-  }
-  checkFormValidity();
-}
-
-function updateBookingSummary(monthlyRent) {
-  const securityDeposit = monthlyRent;
-  const registrationFee = 1;
-  const total = monthlyRent + securityDeposit + registrationFee;
-  document.getElementById("monthlyRent").textContent = `KSH ${monthlyRent.toLocaleString()}`;
-  document.getElementById("securityDeposit").textContent = `KSH ${securityDeposit.toLocaleString()}`;
-  document.getElementById("registrationFee").textContent = `KSH ${registrationFee.toLocaleString()}`;
-  document.getElementById("totalAmount").textContent = `KSH ${total.toLocaleString()}`;
-}
-
-function validateField(event) {
-  const field = event.target;
-  const formGroup = field.closest(".form-group");
-  formGroup.classList.remove("error");
-  const existingError = formGroup.querySelector(".error-message");
-  if (existingError) existingError.remove();
-  if (field.hasAttribute("required") && !field.value.trim()) {
-    showFieldError(formGroup, "This field is required");
-    return false;
-  }
-  if (field.type === "email" && field.value) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(field.value)) {
-      showFieldError(formGroup, "Please enter a valid email address");
-      return false;
-    }
-  }
-  if (field.type === "tel" && field.value) {
-    const phoneRegex = /^\+?\d{10,12}$/;
-    if (!phoneRegex.test(field.value)) {
-      showFieldError(formGroup, "Please enter a valid phone number (10-12 digits)");
-      return false;
-    }
-  }
-  return true;
-}
-
-function showFieldError(element, message) {
-  element.classList.add("error");
-  const errorElement = document.createElement("div");
-  errorElement.className = "error-message";
-  errorElement.textContent = message;
-  element.appendChild(errorElement);
-}
-
-function checkFormValidity() {
-  const requiredFields = document.querySelectorAll("input[required], select[required]");
-  const termsCheckbox = document.getElementById("termsAccepted");
-  const selectedRoom = document.querySelector('input[name="roomType"]:checked');
-  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-  let isValid = true;
-
-  requiredFields.forEach((field) => {
-    if (!field.value.trim()) {
-      console.log(`Field ${field.id} is empty or invalid: "${field.value}"`);
-      isValid = false;
-    } else if (field.type === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(field.value)) {
-        console.log(`Field ${field.id} has invalid email: "${field.value}"`);
-        isValid = false;
+      function updateDuration() {
+        const duration = document.getElementById("duration").value;
+        const durationText = duration
+          ? `${duration} Month${duration > 1 ? "s" : ""}`
+          : "Not selected";
+        document.getElementById("selectedDuration").textContent = durationText;
+        checkFormValidity();
       }
-    } else if (field.type === "tel") {
-      const phoneRegex = /^\+?\d{10,12}$/;
-      if (!phoneRegex.test(field.value)) {
-        console.log(`Field ${field.id} has invalid phone: "${field.value}"`);
-        isValid = false;
+
+      function updateCheckIn() {
+        const checkIn = document.getElementById("checkIn").value;
+        if (checkIn) {
+          const date = new Date(checkIn);
+          const formattedDate = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          document.getElementById("selectedCheckIn").textContent = formattedDate;
+        } else {
+          document.getElementById("selectedCheckIn").textContent = "Not selected";
+        }
+        checkFormValidity();
       }
-    }
-  });
 
-  if (!termsCheckbox || !termsCheckbox.checked) {
-    console.log("Terms checkbox is not checked or missing");
-    isValid = false;
-  }
+      function updateBookingSummary(monthlyRent) {
+        const securityDeposit = monthlyRent;
+        const registrationFee = 1;
+        const total = monthlyRent + securityDeposit + registrationFee;
+        document.getElementById("monthlyRent").textContent = `KSH ${monthlyRent.toLocaleString()}`;
+        document.getElementById("securityDeposit").textContent = `KSH ${securityDeposit.toLocaleString()}`;
+        document.getElementById("registrationFee").textContent = `KSH ${registrationFee.toLocaleString()}`;
+        document.getElementById("totalAmount").textContent = `KSH ${total.toLocaleString()}`;
+      }
 
-  if (!selectedRoom) {
-    console.log("No room type selected");
-    isValid = false;
-  } else {
-    console.log("Selected room type:", selectedRoom.value);
-  }
+      function validateField(event) {
+        const field = event.target;
+        const formGroup = field.closest(".form-group");
+        formGroup.classList.remove("error");
+        const existingError = formGroup.querySelector(".error-message");
+        if (existingError) existingError.remove();
+        if (field.hasAttribute("required") && !field.value.trim()) {
+          showFieldError(formGroup, "This field is required");
+          return false;
+        }
+        if (field.type === "email" && field.value) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(field.value)) {
+            showFieldError(formGroup, "Please enter a valid email address");
+            return false;
+          }
+        }
+        if (field.type === "tel" && field.value) {
+          const phoneRegex = /^\+?\d{10,12}$/;
+          if (!phoneRegex.test(field.value)) {
+            showFieldError(formGroup, "Please enter a valid phone number (10-12 digits)");
+            return false;
+          }
+        }
+        return true;
+      }
 
-  if (!paymentMethod) {
-    console.log("No payment method selected");
-    isValid = false;
-  } else {
-    console.log("Selected payment method:", paymentMethod.value);
-  }
+      function showFieldError(element, message) {
+        element.classList.add("error");
+        const errorElement = document.createElement("div");
+        errorElement.className = "error-message";
+        errorElement.textContent = message;
+        element.appendChild(errorElement);
+      }
 
-  console.log("Form isValid:", isValid);
-  document.getElementById("submitBtn").disabled = !isValid;
-}
+      function checkFormValidity() {
+        const requiredFields = document.querySelectorAll("input[required], select[required]");
+        const termsCheckbox = document.getElementById("termsAccepted");
+        const selectedRoom = document.querySelector('input[name="roomType"]:checked');
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        let isValid = true;
 
-async function handleFormSubmission(event) {
-  event.preventDefault();
-  const form = event.target;
-  let isValid = true;
+        requiredFields.forEach((field) => {
+          if (!field.value.trim()) {
+            console.log(`Field ${field.id} is empty or invalid: "${field.value}"`);
+            isValid = false;
+          } else if (field.type === "email") {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(field.value)) {
+              console.log(`Field ${field.id} has invalid email: "${field.value}"`);
+              isValid = false;
+            }
+          } else if (field.type === "tel") {
+            const phoneRegex = /^\+?\d{10,12}$/;
+            if (!phoneRegex.test(field.value)) {
+              console.log(`Field ${field.id} has invalid phone: "${field.value}"`);
+              isValid = false;
+            }
+          }
+        });
 
-  form.querySelectorAll("input[required], select[required]").forEach((field) => {
-    if (!validateField({ target: field })) isValid = false;
-  });
-
-  const termsCheckbox = document.getElementById("termsAccepted");
-  const termsFormGroup = termsCheckbox.closest(".form-group");
-  const existingError = termsFormGroup.querySelector(".error-message");
-  if (existingError) existingError.remove();
-  if (!termsCheckbox.checked) {
-    showFieldError(termsFormGroup, "You must agree to the terms and conditions");
-    isValid = false;
-  }
-
-  const selectedRoom = document.querySelector('input[name="roomType"]:checked');
-  const roomOptionsContainer = document.getElementById("roomOptions");
-  if (!selectedRoom) {
-    showFieldError(roomOptionsContainer.closest(".form-section"), "Please select a room type");
-    isValid = false;
-  }
-
-  if (!isValid) return;
-
-  const submitBtn = document.getElementById("submitBtn");
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Processing...";
-
-  try {
-    const hostelId = getHostelId();
-    const checkIn = document.getElementById("checkIn").value;
-    const duration = document.getElementById("duration").value;
-    const roomType = selectedRoom.value;
-    const endDate = calculateEndDate(checkIn, duration);
-
-    let studentId, roomId;
-    try {
-      studentId = await getStudentId();
-    } catch (error) {
-      throw new Error("Failed to retrieve student ID: " + error.message);
-    }
-    try {
-      roomId = await getRoomId(hostelId, roomType);
-    } catch (error) {
-      throw new Error("Failed to retrieve room ID: " + error.message);
-    }
-
-    const bookingData = {
-      hostelId: hostelId,
-      studentId: studentId,
-      roomId: roomId,
-      startDate: checkIn,
-      endDate: endDate,
-      status: "pending",
-    };
-
-    const jwtToken = getCookie("jwtToken");
-    const headers = { "Content-Type": "application/json" };
-    if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
-
-    const response = await fetch("http://localhost:8099/api/bookings", {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(bookingData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to submit booking: ${errorText}`);
-    }
-
-    const bookingResult = await response.json();
-    console.log("Booking created successfully:", bookingResult);
-
-    const additionalData = {
-      firstName: document.getElementById("firstName").value,
-      lastName: document.getElementById("lastName").value,
-      email: document.getElementById("email").value,
-      phone: document.getElementById("phone").value,
-      idNumber: document.getElementById("idNumber").value,
-      university: document.getElementById("university").value,
-      roomType: roomType,
-      checkIn: checkIn,
-      duration: parseInt(duration),
-      emergencyName: document.getElementById("emergencyName").value,
-      emergencyPhone: document.getElementById("emergencyPhone").value,
-      relationship: document.getElementById("relationship").value,
-      paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
-      specialRequests: document.getElementById("specialRequests").value,
-      monthlyRent: parseFloat(
-        document.getElementById("monthlyRent").textContent.replace("KSH ", "").replace(",", "")
-      ),
-      securityDeposit: parseFloat(
-        document.getElementById("securityDeposit").textContent.replace("KSH ", "").replace(",", "")
-      ),
-      registrationFee: parseFloat(
-        document.getElementById("registrationFee").textContent.replace("KSH ", "").replace(",", "")
-      ),
-      totalAmount: parseFloat(
-        document.getElementById("totalAmount").textContent.replace("KSH ", "").replace(",", "")
-      ),
-    };
-
-    alert(
-      "Booking submitted successfully!\n\n" +
-      `Hostel ID: ${bookingResult.hostelId}\n` +
-      `Booking ID: ${bookingResult.id || bookingResult.bookingId}\n` +
-      `Name: ${additionalData.firstName} ${additionalData.lastName}\n` +
-      `Email: ${additionalData.email}\n` +
-      `Phone: ${additionalData.phone}\n` +
-      `Room Type: ${additionalData.roomType === "single" ? "Single Room" : "Shared Room"}\n` +
-      `Check-in: ${new Date(additionalData.checkIn).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n` +
-      `Duration: ${additionalData.duration} Month${additionalData.duration > 1 ? "s" : ""}\n` +
-      `Payment Method: ${
-        additionalData.paymentMethod === "mpesa"
-          ? "M-Pesa"
-          : additionalData.paymentMethod === "bank"
-          ? "Bank Transfer"
-          : "Credit/Debit Card"
-      }\n` +
-      `Total: KSH ${additionalData.totalAmount.toLocaleString()}\n\n` +
-      "Proceeding to payment..."
-    );
-
-    if (additionalData.paymentMethod === "mpesa") {
-      await initiatePayment(
-        bookingResult.id || bookingResult.bookingId,
-        additionalData.phone,
-        additionalData.totalAmount
-      );
-    } else {
-      showPaymentSuccess(bookingResult);
-    }
-  } catch (error) {
-    console.error("Error submitting booking:", error);
-    alert(error.message || "Error submitting booking. Please try again later.");
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Complete Booking & Pay";
-  }
-}
-
-async function queryPaymentStatus(checkoutRequestId) {
-  const jwtToken = getCookie("jwtToken");
-  const headers = { "Content-Type": "application/json" };
-  if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
-  try {
-    const response = await fetch("http://localhost:8099/api/payments/query-stk", {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({ CheckoutRequestID: checkoutRequestId }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to query payment status: ${response.statusText}`);
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error querying payment status:", error);
-    throw error;
-  }
-}
-
-async function initiatePayment(bookingId, phoneNumber, amount) {
-  const submitBtn = document.getElementById("submitBtn");
-  submitBtn.textContent = "Processing Payment...";
-  let formattedPhone = phoneNumber;
-  if (formattedPhone.startsWith("0")) {
-    formattedPhone = "254" + formattedPhone.substring(1);
-  } else if (formattedPhone.startsWith("+254")) {
-    formattedPhone = formattedPhone.substring(1);
-  } else if (!formattedPhone.startsWith("254")) {
-    formattedPhone = "254" + formattedPhone;
-  }
-  const paymentData = {
-    bookingId: bookingId,
-    phoneNumber: formattedPhone,
-    amount: parseFloat(amount),
-  };
-  const jwtToken = getCookie("jwtToken");
-  const headers = { "Content-Type": "application/json" };
-  if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
-  try {
-    const response = await fetch("http://localhost:8099/api/payments/initiate", {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(paymentData),
-    });
-    if (!response.ok) throw new Error("Failed to initiate payment");
-    const paymentResponse = await response.json();
-    console.log("Payment initiated successfully:", paymentResponse);
-
-    // Start polling for payment status
-    const checkoutRequestId = paymentResponse.CheckoutRequestID;
-    let attempts = 0;
-    const maxAttempts = 60; // 60 seconds timeout
-    const statusDisplay = document.createElement("div");
-    statusDisplay.id = "paymentStatus";
-    statusDisplay.style.marginTop = "10px";
-    document.getElementById("bookingForm").appendChild(statusDisplay);
-    statusDisplay.textContent = "Checking payment status...";
-
-    const intervalId = setInterval(async () => {
-      attempts++;
-      try {
-        const queryResponse = await queryPaymentStatus(checkoutRequestId);
-        console.log("Payment status query:", queryResponse);
-        const resultCode = queryResponse.ResultCode;
-
-        if (resultCode === "0") {
-          clearInterval(intervalId);
-          statusDisplay.textContent = "Payment successful!";
-          alert(
-            "Payment completed successfully!\n\n" +
-            `Booking ID: ${bookingId}\n` +
-            `Amount: KSH ${amount.toLocaleString()}\n` +
-            `Phone: ${formattedPhone}\n` +
-            `Transaction ID: ${queryResponse.MpesaReceiptNumber || checkoutRequestId}\n\n` +
-            "Your booking is confirmed!"
-          );
-          document.getElementById("bookingForm").reset();
-          updateRoomSelection();
-          updatePaymentMethod();
-          updateDuration();
-          updateCheckIn();
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Complete Booking & Pay";
-        } else if (resultCode !== undefined && resultCode !== "0") {
-          clearInterval(intervalId);
-          statusDisplay.textContent = "Payment failed.";
-          alert(
-            "Payment failed!\n\n" +
-            `Booking ID: ${bookingId}\n` +
-            `Amount: KSH ${amount.toLocaleString()}\n` +
-            `Phone: ${formattedPhone}\n` +
-            `Error: ${queryResponse.ResultDesc || "Unknown error"}\n\n` +
-            "Please try again or contact support."
-          );
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Complete Booking & Pay";
+        if (!termsCheckbox || !termsCheckbox.checked) {
+          console.log("Terms checkbox is not checked or missing");
+          isValid = false;
         }
 
-        if (attempts >= maxAttempts) {
-          clearInterval(intervalId);
-          statusDisplay.textContent = "Payment status check timed out.";
+        if (!selectedRoom) {
+          console.log("No room type selected");
+          isValid = false;
+        } else {
+          console.log("Selected room type:", selectedRoom.value);
+        }
+
+        if (!paymentMethod) {
+          console.log("No payment method selected");
+          isValid = false;
+        } else {
+          console.log("Selected payment method:", paymentMethod.value);
+        }
+
+        console.log("Form isValid:", isValid);
+        document.getElementById("submitBtn").disabled = !isValid;
+      }
+
+      async function handleFormSubmission(event) {
+        event.preventDefault();
+        if (isSubmitting) return; // Prevent multiple submissions
+        isSubmitting = true;
+        const form = event.target;
+        let isValid = true;
+
+        form.querySelectorAll("input[required], select[required]").forEach((field) => {
+          if (!validateField({ target: field })) isValid = false;
+        });
+
+        const termsCheckbox = document.getElementById("termsAccepted");
+        const termsFormGroup = termsCheckbox.closest(".form-group");
+        const existingError = termsFormGroup.querySelector(".error-message");
+        if (existingError) existingError.remove();
+        if (!termsCheckbox.checked) {
+          showFieldError(termsFormGroup, "You must agree to the terms and conditions");
+          isValid = false;
+        }
+
+        const selectedRoom = document.querySelector('input[name="roomType"]:checked');
+        const roomOptionsContainer = document.getElementById("roomOptions");
+        if (!selectedRoom) {
+          showFieldError(roomOptionsContainer.closest(".form-section"), "Please select a room type");
+          isValid = false;
+        }
+
+        if (!isValid) {
+          isSubmitting = false;
+          return;
+        }
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Processing...";
+
+        try {
+          const hostelId = getHostelId();
+          const checkIn = document.getElementById("checkIn").value;
+          const duration = document.getElementById("duration").value;
+          const roomType = selectedRoom.value;
+          const endDate = calculateEndDate(checkIn, duration);
+
+          let studentId, roomId;
+          try {
+            studentId = await getStudentId();
+          } catch (error) {
+            throw new Error("Failed to retrieve student ID: " + error.message);
+          }
+          try {
+            roomId = await getRoomId(hostelId, roomType);
+          } catch (error) {
+            throw new Error("Failed to retrieve room ID: " + error.message);
+          }
+
+          const bookingData = {
+            hostelId: hostelId,
+            studentId: studentId,
+            roomId: roomId,
+            startDate: checkIn,
+            endDate: endDate,
+            status: "pending",
+          };
+
+          const jwtToken = getCookie("jwtToken");
+          const headers = { "Content-Type": "application/json" };
+          if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+
+          const response = await fetch("http://localhost:8099/api/bookings", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(bookingData),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to submit booking: ${errorText}`);
+          }
+
+          const bookingResult = await response.json();
+          console.log("Booking created successfully:", bookingResult);
+
+          const additionalData = {
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            idNumber: document.getElementById("idNumber").value,
+            university: document.getElementById("university").value,
+            roomType: roomType,
+            checkIn: checkIn,
+            duration: parseInt(duration),
+            emergencyName: document.getElementById("emergencyName").value,
+            emergencyPhone: document.getElementById("emergencyPhone").value,
+            relationship: document.getElementById("relationship").value,
+            paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+            specialRequests: document.getElementById("specialRequests").value,
+            monthlyRent: parseFloat(
+              document.getElementById("monthlyRent").textContent.replace("KSH ", "").replace(",", "")
+            ),
+            securityDeposit: parseFloat(
+              document.getElementById("securityDeposit").textContent.replace("KSH ", "").replace(",", "")
+            ),
+            registrationFee: parseFloat(
+              document.getElementById("registrationFee").textContent.replace("KSH ", "").replace(",", "")
+            ),
+            totalAmount: parseFloat(
+              document.getElementById("totalAmount").textContent.replace("KSH ", "").replace(",", "")
+            ),
+          };
+
           alert(
-            "Payment status check timed out.\n\n" +
-            `Booking ID: ${bookingId}\n` +
+            "Booking submitted successfully!\n\n" +
+            `Hostel ID: ${bookingResult.hostelId}\n` +
+            `Booking ID: ${bookingResult.id || bookingResult.bookingId}\n` +
+            `Name: ${additionalData.firstName} ${additionalData.lastName}\n` +
+            `Email: ${additionalData.email}\n` +
+            `Phone: ${additionalData.phone}\n` +
+            `Room Type: ${additionalData.roomType === "single" ? "Single Room" : "Shared Room"}\n` +
+            `Check-in: ${new Date(additionalData.checkIn).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n` +
+            `Duration: ${additionalData.duration} Month${additionalData.duration > 1 ? "s" : ""}\n` +
+            `Payment Method: ${
+              additionalData.paymentMethod === "mpesa"
+                ? "M-Pesa"
+                : additionalData.paymentMethod === "bank"
+                ? "Bank Transfer"
+                : "Credit/Debit Card"
+            }\n` +
+            `Total: KSH ${additionalData.totalAmount.toLocaleString()}\n\n` +
+            "Proceeding to payment..."
+          );
+
+          if (additionalData.paymentMethod === "mpesa") {
+            await initiatePayment(
+              bookingResult.id || bookingResult.bookingId,
+              additionalData.phone,
+              additionalData.totalAmount
+            );
+          } else {
+            showPaymentSuccess(bookingResult);
+          }
+        } catch (error) {
+          console.error("Error submitting booking:", error);
+          alert(error.message || "Error submitting booking. Please try again later.");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Complete Booking & Pay";
+          isSubmitting = false;
+        }
+      }
+
+      async function queryPaymentStatus(checkoutRequestId) {
+        const jwtToken = getCookie("jwtToken");
+        const headers = { "Content-Type": "application/json" };
+        if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+        try {
+          const response = await fetch("http://localhost:8099/api/payments/query-stk", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({ CheckoutRequestID: checkoutRequestId }),
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to query payment status: ${response.statusText}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.error("Error querying payment status:", error);
+          throw error;
+        }
+      }
+
+      async function initiatePayment(bookingId, phoneNumber, amount) {
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.textContent = "Processing Payment...";
+        let formattedPhone = phoneNumber;
+        if (formattedPhone.startsWith("0")) {
+          formattedPhone = "254" + formattedPhone.substring(1);
+        } else if (formattedPhone.startsWith("+254")) {
+          formattedPhone = formattedPhone.substring(1);
+        } else if (!formattedPhone.startsWith("254")) {
+          formattedPhone = "254" + formattedPhone;
+        }
+        const paymentData = {
+          bookingId: bookingId,
+          phoneNumber: formattedPhone,
+          amount: parseFloat(amount),
+        };
+        const jwtToken = getCookie("jwtToken");
+        const headers = { "Content-Type": "application/json" };
+        if (jwtToken) headers["Authorization"] = `Bearer ${jwtToken}`;
+        try {
+          const response = await fetch("http://localhost:8099/api/payments/initiate", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(paymentData),
+          });
+          if (!response.ok) throw new Error("Failed to initiate payment: " + (await response.text()));
+          const paymentResponse = await response.json();
+          console.log("Payment initiated successfully:", paymentResponse);
+
+          // Start polling for payment status
+          const checkoutRequestId = paymentResponse.CheckoutRequestID;
+          let attempts = 0;
+          const maxAttempts = 60; // 60 seconds timeout
+          const statusDisplay = document.createElement("div");
+          statusDisplay.id = "paymentStatus";
+          statusDisplay.style.marginTop = "10px";
+          document.getElementById("bookingForm").appendChild(statusDisplay);
+          statusDisplay.textContent = "Checking payment status...";
+
+          const intervalId = setInterval(async () => {
+            if (paymentProcessed) {
+              clearInterval(intervalId);
+              return;
+            }
+            attempts++;
+            try {
+              const queryResponse = await queryPaymentStatus(checkoutRequestId);
+              console.log("Payment status query:", queryResponse);
+              const resultCode = queryResponse.ResultCode;
+
+              if (resultCode === "0") {
+                clearInterval(intervalId);
+                statusDisplay.textContent = "Payment successful!";
+                document.getElementById("bookingForm").reset();
+                updateRoomSelection();
+                updatePaymentMethod();
+                updateDuration();
+                updateCheckIn();
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Complete Booking & Pay";
+                showSuccessPopup(
+                  bookingId,
+                  amount,
+                  formattedPhone,
+                  queryResponse.MpesaReceiptNumber || checkoutRequestId
+                );
+              } else if (resultCode !== undefined && resultCode !== "0") {
+                clearInterval(intervalId);
+                statusDisplay.textContent = "Payment failed.";
+                alert(
+                  "Payment failed!\n\n" +
+                  `Booking ID: ${bookingId}\n` +
+                  `Amount: KSH ${amount.toLocaleString()}\n` +
+                  `Phone: ${formattedPhone}\n` +
+                  `Error: ${queryResponse.ResultDesc || "Unknown error"}\n\n` +
+                  "Please try again or contact support."
+                );
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Complete Booking & Pay";
+                isSubmitting = false;
+              }
+
+              if (attempts >= maxAttempts) {
+                clearInterval(intervalId);
+                statusDisplay.textContent = "Payment status check timed out.";
+                const existingCheckAgainBtn = document.getElementById("checkAgainBtn");
+                if (!existingCheckAgainBtn) {
+                  const checkAgainBtn = document.createElement("button");
+                  checkAgainBtn.id = "checkAgainBtn";
+                  checkAgainBtn.textContent = "Check Again";
+                  checkAgainBtn.style.marginLeft = "10px";
+                  checkAgainBtn.style.padding = "5px 10px";
+                  checkAgainBtn.style.cursor = "pointer";
+                  statusDisplay.appendChild(checkAgainBtn);
+
+                  checkAgainBtn.addEventListener("click", async () => {
+                    if (paymentProcessed) return;
+                    checkAgainBtn.disabled = true;
+                    checkAgainBtn.textContent = "Checking...";
+                    try {
+                      const queryResponse = await queryPaymentStatus(checkoutRequestId);
+                      console.log("Check again payment status query:", queryResponse);
+                      const resultCode = queryResponse.ResultCode;
+
+                      if (resultCode === "0") {
+                        statusDisplay.textContent = "Payment successful!";
+                        document.getElementById("bookingForm").reset();
+                        updateRoomSelection();
+                        updatePaymentMethod();
+                        updateDuration();
+                        updateCheckIn();
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = "Complete Booking & Pay";
+                        checkAgainBtn.remove();
+                        showSuccessPopup(
+                          bookingId,
+                          amount,
+                          formattedPhone,
+                          queryResponse.MpesaReceiptNumber || checkoutRequestId
+                        );
+                      } else if (resultCode !== undefined && resultCode !== "0") {
+                        statusDisplay.textContent = "Payment failed.";
+                        alert(
+                          "Payment failed!\n\n" +
+                          `Booking ID: ${bookingId}\n` +
+                          `Amount: KSH ${amount.toLocaleString()}\n` +
+                          `Phone: ${formattedPhone}\n` +
+                          `Error: ${queryResponse.ResultDesc || "Unknown error"}\n\n` +
+                          "Please try again or contact support."
+                        );
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = "Complete Booking & Pay";
+                        checkAgainBtn.disabled = false;
+                        checkAgainBtn.textContent = "Check Again";
+                        isSubmitting = false;
+                      }
+                    } catch (error) {
+                      console.error("Error during check again:", error);
+                      statusDisplay.textContent = "Error checking payment status.";
+                      alert(
+                        "Error checking payment status.\n\n" +
+                        `Booking ID: ${bookingId}\n` +
+                        `Amount: KSH ${amount.toLocaleString()}\n` +
+                        `Phone: ${formattedPhone}\n\n` +
+                        "Please try again or contact support."
+                      );
+                      checkAgainBtn.disabled = false;
+                      checkAgainBtn.textContent = "Check Again";
+                      isSubmitting = false;
+                    }
+                  });
+                }
+
+                alert(
+                  "Payment status check timed out.\n\n" +
+                  `Booking ID: ${bookingId}\n` +
+                  `Amount: KSH ${amount.toLocaleString()}\n` +
+                  `Phone: ${formattedPhone}\n\n` +
+                  "Click 'Check Again' to retry or contact support."
+                );
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Complete Booking & Pay";
+                isSubmitting = false;
+              }
+            } catch (error) {
+              console.error("Error during payment status check:", error);
+              if (attempts >= maxAttempts) {
+                clearInterval(intervalId);
+                statusDisplay.textContent = "Payment status check timed out.";
+                const existingCheckAgainBtn = document.getElementById("checkAgainBtn");
+                if (!existingCheckAgainBtn) {
+                  const checkAgainBtn = document.createElement("button");
+                  checkAgainBtn.id = "checkAgainBtn";
+                  checkAgainBtn.textContent = "Check Again";
+                  checkAgainBtn.style.marginLeft = "10px";
+                  checkAgainBtn.style.padding = "5px 10px";
+                  checkAgainBtn.style.cursor = "pointer";
+                  statusDisplay.appendChild(checkAgainBtn);
+
+                  checkAgainBtn.addEventListener("click", async () => {
+                    if (paymentProcessed) return;
+                    checkAgainBtn.disabled = true;
+                    checkAgainBtn.textContent = "Checking...";
+                    try {
+                      const queryResponse = await queryPaymentStatus(checkoutRequestId);
+                      console.log("Check again payment status query:", queryResponse);
+                      const resultCode = queryResponse.ResultCode;
+
+                      if (resultCode === "0") {
+                        statusDisplay.textContent = "Payment successful!";
+                        document.getElementById("bookingForm").reset();
+                        updateRoomSelection();
+                        updatePaymentMethod();
+                        updateDuration();
+                        updateCheckIn();
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = "Complete Booking & Pay";
+                        checkAgainBtn.remove();
+                        showSuccessPopup(
+                          bookingId,
+                          amount,
+                          formattedPhone,
+                          queryResponse.MpesaReceiptNumber || checkoutRequestId
+                        );
+                      } else if (resultCode !== undefined && resultCode !== "0") {
+                        statusDisplay.textContent = "Payment failed.";
+                        alert(
+                          "Payment failed!\n\n" +
+                          `Booking ID: ${bookingId}\n` +
+                          `Amount: KSH ${amount.toLocaleString()}\n` +
+                          `Phone: ${formattedPhone}\n` +
+                          `Error: ${queryResponse.ResultDesc || "Unknown error"}\n\n` +
+                          "Please try again or contact support."
+                        );
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = "Complete Booking & Pay";
+                        checkAgainBtn.disabled = false;
+                        checkAgainBtn.textContent = "Check Again";
+                        isSubmitting = false;
+                      }
+                    } catch (error) {
+                      console.error("Error during check again:", error);
+                      statusDisplay.textContent = "Error checking payment status.";
+                      alert(
+                        "Error checking payment status.\n\n" +
+                        `Booking ID: ${bookingId}\n` +
+                        `Amount: KSH ${amount.toLocaleString()}\n` +
+                        `Phone: ${formattedPhone}\n\n` +
+                        "Please try again or contact support."
+                      );
+                      checkAgainBtn.disabled = false;
+                      checkAgainBtn.textContent = "Check Again";
+                      isSubmitting = false;
+                    }
+                  });
+                }
+
+                alert(
+                  "Error checking payment status after timeout.\n\n" +
+                  `Booking ID: ${bookingId}\n` +
+                  `Amount: KSH ${amount.toLocaleString()}\n` +
+                  `Phone: ${formattedPhone}\n\n` +
+                  "Click 'Check Again' to retry or contact support."
+                );
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Complete Booking & Pay";
+                isSubmitting = false;
+              }
+            }
+          }, 1000); // Poll every second
+
+          alert(
+            "Payment initiated successfully!\n\n" +
+            "Please check your phone for the M-Pesa payment prompt.\n" +
             `Amount: KSH ${amount.toLocaleString()}\n` +
             `Phone: ${formattedPhone}\n\n` +
-            "Please check your payment status manually or contact support."
+            "Waiting for payment confirmation..."
           );
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Complete Booking & Pay";
-        }
-      } catch (error) {
-        console.error("Error during payment status check:", error);
-        if (attempts >= maxAttempts) {
-          clearInterval(intervalId);
-          statusDisplay.textContent = "Error checking payment status.";
+        } catch (error) {
+          console.error("Error initiating payment:", error);
           alert(
-            "Error checking payment status.\n\n" +
-            `Booking ID: ${bookingId}\n` +
-            `Amount: KSH ${amount.toLocaleString()}\n` +
-            `Phone: ${formattedPhone}\n\n` +
-            "Please try again or contact support."
+            "Error initiating payment. Please try again later.\n\n" +
+            "Your booking has been saved, but payment could not be processed."
           );
           submitBtn.disabled = false;
           submitBtn.textContent = "Complete Booking & Pay";
+          isSubmitting = false;
         }
       }
-    }, 1000); // Poll every second
 
-    alert(
-      "Payment initiated successfully!\n\n" +
-      "Please check your phone for the M-Pesa payment prompt.\n" +
-      `Amount: KSH ${amount.toLocaleString()}\n` +
-      `Phone: ${formattedPhone}\n\n` +
-      "Waiting for payment confirmation..."
-    );
-  } catch (error) {
-    console.error("Error initiating payment:", error);
-    alert(
-      "Error initiating payment. Please try again later.\n\n" +
-      "Your booking has been saved, but payment could not be processed."
-    );
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Complete Booking & Pay";
-  }
-}
-
-function showPaymentSuccess(bookingData) {
-  const submitBtn = document.getElementById("submitBtn");
-  alert(
-    "Booking completed successfully!\n\n" +
-    `Hostel ID: ${bookingData.hostelId}\n` +
-    `Booking ID: ${bookingData.id || bookingData.bookingId}\n` +
-    "You will receive further payment instructions via email or phone."
-  );
-  document.getElementById("bookingForm").reset();
-  updateRoomSelection();
-  updatePaymentMethod();
-  updateDuration();
-  updateCheckIn();
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Complete Booking & Pay";
-}
-</script>
+      function showPaymentSuccess(bookingData) {
+        const submitBtn = document.getElementById("submitBtn");
+        document.getElementById("bookingForm").reset();
+        updateRoomSelection();
+        updatePaymentMethod();
+        updateDuration();
+        updateCheckIn();
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Complete Booking & Pay";
+        showSuccessPopup(bookingData.id || bookingData.bookingId, 0, "", "N/A");
+      }
+    </script>
   </body>
 </html>
