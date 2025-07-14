@@ -213,11 +213,15 @@
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 1rem;
-            transition: transform 0.3s;
+            transition: opacity 0.3s ease, transform 0.3s;
         }
 
         .main-image:hover {
             transform: scale(1.02);
+        }
+
+        .main-image.loading {
+            opacity: 0.5;
         }
 
         .thumbnail-grid {
@@ -759,10 +763,7 @@
         <nav>
             <div class="logo">Hostel Hive</div>
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#housing">Find Housing</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+               
             </ul>
             <a href="hostels-student.html" class="back-btn">← Back to Results</a>
         </nav>
@@ -774,20 +775,20 @@
         <div class="hostel-header">
             <div class="hostel-title">
                 <div>
-                    <h1>UoN Student Lodge</h1>
-                    <div class="location">📍 500m from University of Nairobi, Nairobi</div>
+                    <h1 id="hostelName">UoN Student Lodge</h1>
+                    <div class="location" id="hostelLocation">📍 500m from University of Nairobi, Nairobi</div>
                     <div class="rating">
-                        <span class="stars">★★★★☆</span>
-                        <span class="rating-text">4.2 (127 reviews)</span>
+                        <span class="stars" id="ratingStars">★★★★☆</span>
+                        <span class="rating-text" id="ratingText">4.2 (127 reviews)</span>
                     </div>
                 </div>
                 <div class="price-section">
                     <div class="price-tag">
-                        <span class="amount">KSH 8,500</span>
+                        <span class="amount" id="priceAmount">KSH 8,500</span>
                         <span class="period">per month</span>
                     </div>
-                    <div class="availability-status">Available Now</div>
-                    <div class="price-range-display">Price Range: KSH 5,000 - KSH 15,000</div>
+                    <div class="availability-status" id="availabilityStatus">Available Now</div>
+                    <div class="price-range-display" id="priceRangeDisplay">Price Range: KSH 5,000 - KSH 15,000</div>
                 </div>
             </div>
         </div>
@@ -800,16 +801,16 @@
                 <div class="image-gallery">
                     <h2>Photos</h2>
                     <div class="gallery-container">
-                        <img src="" alt="Main hostel view" class="main-image" id="mainImage">
+                        <img src="https://via.placeholder.com/800x400?text=Loading" alt="Main hostel view" class="main-image" id="mainImage">
                         <div class="thumbnail-grid" id="thumbnailGrid"></div>
-                        <button class="view-all-btn" onclick="openImageModal()">View All Photos</button>
+                        <button class="view-all-btn" id="viewAllBtn" onclick="openImageModal()">View All Photos</button>
                     </div>
                 </div>
 
                 <!-- Description -->
                 <div class="description-section">
                     <h2>About This Hostel</h2>
-                    <p class="description-text">
+                    <p class="description-text" id="descriptionText">
                         UoN Student Lodge is a premier student accommodation facility located just 500 meters from the University of Nairobi main campus. Our modern hostel combines comfort, convenience, and affordability to provide the perfect living environment for students.
                     </p>
                     <div class="key-features" id="keyFeatures">
@@ -938,7 +939,7 @@
                             </div>
                         </div>
                         
-                        <button class="book-btn" onclick="bookRoom()">Book Now</button>
+                        <button class="book-btn" id="bookBtn">Book Now</button>
                     </div>
                 </div>
 
@@ -971,6 +972,8 @@
                 </div>
             </div>
         </div>
+
+    
 
         <!-- Reviews Section -->
         <div class="reviews-section">
@@ -1057,6 +1060,20 @@
     </footer>
 
     <script>
+    // Base URL and API endpoints
+    const baseUrl = "http://172.23.51.39:8099";
+    const hostelDetailsUrl = (hostelId) => `${baseUrl}/api/hostels/${hostelId}`;
+    const userMeUrl = `${baseUrl}/users/me`;
+    const initiateBookingUrl = `${baseUrl}/booking/initiateBooking`;
+
+    // Helper function to get a cookie by name
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
+
     // Get hostel ID from URL
     function getHostelId() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1065,241 +1082,323 @@
 
     // Convert base64 string to data URL with MIME type detection
     function base64ToDataUrl(base64String) {
-        // Basic MIME type detection based on base64 prefix or content
-        let mimeType = 'image/jpeg'; // Default to JPEG
-        if (base64String.startsWith('/9j/')) {
+    console.log("🔄 Processing base64 string:", base64String?.substring(0, 20) + "...");
+    if (!base64String || typeof base64String !== 'string') {
+        console.warn("❌ Invalid or missing base64 string");
+        return '/images/no-image.jpg';
+    }
+
+    let cleanBase64 = base64String;
+    let mimeType = 'image/jpeg'; // Default MIME type
+
+    // Check if the string is a full data URL
+    if (base64String.startsWith('data:image/')) {
+        console.log("🔄 Detected data URL, extracting base64");
+        const match = base64String.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+        if (!match) {
+            console.error("❌ Invalid data URL format");
+            return '/images/no-image.jpg';
+        }
+        mimeType = `image/${match[1]}`;
+        cleanBase64 = match[2];
+    } else {
+        // Determine MIME type for raw base64
+        if (cleanBase64.startsWith('/9j/')) {
             mimeType = 'image/jpeg';
-        } else if (base64String.startsWith('iVBORw0KGgo')) {
+        } else if (cleanBase64.startsWith('iVBORw0KGgo')) {
             mimeType = 'image/png';
-        } // Add more checks for other formats if needed
-        return `data:${mimeType};base64,${base64String}`;
+        } else if (cleanBase64.startsWith('R0lGODlh')) {
+            mimeType = 'image/gif';
+        } else if (cleanBase64.startsWith('UklGR')) {
+            mimeType = 'image/webp';
+        } else {
+            console.warn('⚠️ Unknown image format, defaulting to JPEG');
+        }
+    }
+
+    try {
+        // Validate base64 string
+        atob(cleanBase64);
+        console.log("✅ Base64 string valid, MIME type:", mimeType);
+        return `data:${mimeType};base64,${cleanBase64}`;
+    } catch (e) {
+        console.error('❌ Invalid base64 string:', e.message);
+        return '/images/no-image.jpg';
+    }
+}
+
+    // Fetch logged-in user's ID
+    async function getUserId() {
+        try {
+            const token = getCookie("token");
+            if (!token) throw new Error("No auth token found in cookies");
+            console.log("🔄 Fetching user ID from:", userMeUrl);
+            const response = await fetch(userMeUrl, {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch user info: ${response.statusText}`);
+            }
+            const userData = await response.json();
+            const userId = userData.id || userData.userId;
+            if (!userId) throw new Error("No valid user ID found in response");
+            console.log("✅ User ID fetched:", userId);
+            return userId;
+        } catch (error) {
+            console.error("❌ Error fetching user ID:", error);
+            alert("Please log in to view hostel details or book a room.");
+            return null;
+        }
     }
 
     // Fetch and display hostel details
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         const hostelId = getHostelId();
         const minBudget = parseFloat(sessionStorage.getItem('minBudget')) || 5000;
         const maxBudget = parseFloat(sessionStorage.getItem('maxBudget')) || 15000;
 
         // Update price range display
-        const priceRangeDisplay = document.querySelector('.price-range-display');
+        const priceRangeDisplay = document.getElementById('priceRangeDisplay');
         if (priceRangeDisplay) {
             priceRangeDisplay.textContent = 
                 `Price Range: KSH ${minBudget.toLocaleString()} - KSH ${maxBudget.toLocaleString()}`;
         }
 
-        if (hostelId) {
-            fetch(`http://localhost:8099/api/hostels/${hostelId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to fetch hostel details');
-                    return response.json();
-                })
-                .then(hostel => {
-                    // Update title
-                    document.title = `${hostel.name} - Hostel Details | Hostel Hive`;
-
-                    // Update hostel header
-                    const hostelTitle = document.querySelector('.hostel-title h1');
-                    if (hostelTitle) {
-                        hostelTitle.textContent = hostel.name || 'Hostel Name';
-                    }
-
-                    const locationElement = document.querySelector('.location');
-                    if (locationElement) {
-                        locationElement.innerHTML = `📍 ${hostel.location || 'Unknown Location'}`;
-                    }
-
-                    const priceAmount = document.querySelector('.price-tag .amount');
-                    if (priceAmount) {
-                        priceAmount.textContent = 
-                            `KSH ${hostel.pricePerMonth ? hostel.pricePerMonth.toLocaleString() : 'N/A'}`;
-                    }
-
-                    const availabilityStatus = document.querySelector('.availability-status');
-                    if (availabilityStatus) {
-                        availabilityStatus.textContent = hostel.availableRooms > 0 
-                            ? (hostel.availableRooms <= 3 ? `${hostel.availableRooms} Rooms Left` : 'Available Now')
-                            : 'Fully Booked';
-                        availabilityStatus.className = `availability-status ${hostel.availableRooms > 0 ? (hostel.availableRooms <= 3 ? 'limited' : '') : 'full'}`;
-                    }
-
-                    // Update rating (fallback to static values if not provided)
-                    const rating = hostel.rating || 4.2;
-                    const reviewsCount = hostel.reviewsCount || 127;
-                    
-                    const ratingStars = document.querySelector('.rating .stars');
-                    if (ratingStars) {
-                        ratingStars.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
-                    }
-
-                    const ratingText = document.querySelector('.rating .rating-text');
-                    if (ratingText) {
-                        ratingText.textContent = `${rating} (${reviewsCount} reviews)`;
-                    }
-
-                    // Update booking form
-                    const roomTypeSelect = document.getElementById('roomType');
-                    if (roomTypeSelect) {
-                        const monthlyRent = hostel.pricePerMonth || 8500;
-                        const sharedRoomPrice = hostel.roomType === 'Shared Room' ? (hostel.pricePerMonth * 0.75) : 6000;
-                        roomTypeSelect.innerHTML = `
-                            <option value="single">Single Room - KSH ${monthlyRent.toLocaleString()}</option>
-                            ${hostel.roomType === 'Shared Room' ? 
-                                `<option value="shared">Shared Room - KSH ${sharedRoomPrice.toLocaleString()}</option>` : ''}
-                        `;
-
-                        // Update booking summary
-                        updateBookingSummary(monthlyRent);
-                    }
-
-                    // Update description
-                    const descriptionSection = document.querySelector('.description-section');
-                    if (descriptionSection) {
-                        const descriptionText = descriptionSection.querySelector('.description-text');
-                        if (descriptionText) {
-                            descriptionText.textContent = 
-                                hostel.description || 'This modern hostel offers a comfortable and convenient living environment for students, located near major universities with excellent amenities and security.';
-                        }
-                    }
-
-                    // Update key features
-                    const keyFeatures = document.getElementById('keyFeatures');
-                    if (keyFeatures) {
-                        keyFeatures.innerHTML = `
-                            <div class="feature-item">
-                                <div class="feature-icon">🛏️</div>
-                                <div class="feature-text">
-                                    <h4>${hostel.roomType || 'Single Rooms'}</h4>
-                                    <p>${hostel.roomType === 'Shared Room' ? 'Comfortable shared rooms with individual storage' : 'Private single rooms with study desk and wardrobe'}</p>
-                                </div>
-                            </div>
-                            <div class="feature-item">
-                                <div class="feature-icon">🔒</div>
-                                <div class="feature-text">
-                                    <h4>Security</h4>
-                                    <p>${hostel.security || 'Round-the-clock security with CCTV surveillance'}</p>
-                                </div>
-                            </div>
-                            <div class="feature-item">
-                                <div class="feature-icon">💻</div>
-                                <div class="feature-text">
-                                    <h4>Wi-Fi</h4>
-                                    <p>${hostel.amenities && hostel.amenities.some(a => 
-                                        (typeof a === 'object' ? a.name : a).toLowerCase().includes('wi-fi') || 
-                                        (typeof a === 'object' ? a.name : a).toLowerCase().includes('wifi')
-                                    ) ? 'Free unlimited Wi-Fi throughout the facility' : 'Internet access available'}</p>
-                                </div>
-                            </div>
-                            <div class="feature-item">
-                                <div class="feature-icon">🚿</div>
-                                <div class="feature-text">
-                                    <h4>Bathroom</h4>
-                                    <p>${hostel.bathroomType || 'Clean, modern bathrooms and common areas'}</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    // Update amenities with error handling
-                    const amenitiesGrid = document.getElementById('amenitiesGrid') || 
-                                         document.getElementById('amenities') || 
-                                         document.querySelector('.amenities-grid') ||
-                                         document.querySelector('.amenities-section') ||
-                                         document.querySelector('[id*="amenit"]');
-
-                    if (amenitiesGrid) {
-                        if (hostel.amenities && hostel.amenities.length > 0) {
-                            const amenityNames = hostel.amenities.map(amenity => 
-                                typeof amenity === 'object' ? (amenity.name || amenity.amenityName || '') : amenity
-                            ).filter(name => name);
-                            
-                            amenitiesGrid.innerHTML = `
-                                <div class="amenity-category">
-                                    <h3>Amenities</h3>
-                                    <ul class="amenity-list">
-                                        ${amenityNames.map(name => `<li>${name}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            `;
-                        } else {
-                            amenitiesGrid.innerHTML = `
-                                <div class="amenity-category">
-                                    <h3>Amenities</h3>
-                                    <ul class="amenity-list">
-                                        <li>Wi-Fi</li>
-                                        <li>Laundry Service</li>
-                                        <li>Shared Kitchen</li>
-                                        <li>24/7 Security</li>
-                                    </ul>
-                                </div>
-                            `;
-                        }
-                    } else {
-                        console.warn('Amenities container element not found. Check your HTML for the correct ID.');
-                    }
-
-                    // Update contact information
-                    const contactInfo = document.getElementById('contactInfo');
-                    if (contactInfo) {
-                        contactInfo.innerHTML = `
-                            <div class="contact-item">
-                                <div class="contact-icon">📞</div>
-                                <div class="contact-text">
-                                    <strong>Phone</strong>
-                                    ${hostel.contactPhone || '+254 712 345 678'}
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <div class="contact-icon">📧</div>
-                                <div class="contact-text">
-                                    <strong>Email</strong>
-                                    ${hostel.contactEmail || 'info@hostelhive.com'}
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <div class="contact-icon">📍</div>
-                                <div class="contact-text">
-                                    <strong>Address</strong>
-                                    ${hostel.address || hostel.location || '500m from University of Nairobi, Nairobi'}
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    // Update images with base64 strings from imagesBase64
-                    const imageBase64s = hostel.imagesBase64 && hostel.imagesBase64.length > 0 ? hostel.imagesBase64 : [
-                        // Fallback placeholder base64 (1x1 transparent PNG)
-                        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwAB/AL+i4AAAAABJRU5ErkJggg=='
-                    ];
-
-                    const mainImage = document.getElementById('mainImage');
-                    const thumbnailGrid = document.getElementById('thumbnailGrid');
-
-                    if (mainImage && thumbnailGrid) {
-                        // Set main image with base64
-                        mainImage.src = base64ToDataUrl(imageBase64s[0]);
-                        mainImage.alt = `${hostel.name || 'Hostel'} main view`;
-
-                        // Populate thumbnail grid with base64 images
-                        thumbnailGrid.innerHTML = imageBase64s.map((base64, index) => `
-                            <img src="${base64ToDataUrl(base64)}" alt="${hostel.name || 'Hostel'} image ${index + 1}" 
-                                 class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeImage(this)">
-                        `).join('');
-
-                        const viewAllBtn = document.querySelector('.view-all-btn');
-                        if (viewAllBtn) {
-                            viewAllBtn.textContent = `View All ${imageBase64s.length} Photos`;
-                        }
-                    } else {
-                        console.warn('Image gallery elements not found.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching hostel details:', error);
-                    alert('Error fetching hostel details. Please try again later.');
-                });
-        } else {
+        if (!hostelId) {
+            console.error("❌ No hostel ID provided in URL");
             alert('No hostel ID provided.');
+            return;
+        }
+
+        try {
+            console.log("🔄 Fetching hostel details from:", hostelDetailsUrl(hostelId));
+            const token = getCookie("token");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await fetch(hostelDetailsUrl(hostelId), {
+                method: "GET",
+                headers: headers
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const hostel = await response.json();
+            console.log("✅ Hostel data fetched:", hostel);
+
+            if (!hostel || !hostel.id) {
+                throw new Error('Invalid hostel data received');
+            }
+
+            // Update title
+            document.title = `${hostel.name || 'Hostel'} - Hostel Details | Hostel Hive`;
+
+            // Update hostel header
+            const hostelTitle = document.getElementById('hostelName');
+            if (hostelTitle) {
+                hostelTitle.textContent = hostel.name || 'Hostel Name';
+            }
+
+            const locationElement = document.getElementById('hostelLocation');
+            if (locationElement) {
+                locationElement.innerHTML = `📍 ${hostel.location || 'Unknown Location'}`;
+            }
+
+            const priceAmount = document.getElementById('priceAmount');
+            if (priceAmount) {
+                priceAmount.textContent = 
+                    `KSH ${hostel.pricePerMonth ? hostel.pricePerMonth.toLocaleString() : 'N/A'}`;
+            }
+
+            const availabilityStatus = document.getElementById('availabilityStatus');
+            if (availabilityStatus) {
+                availabilityStatus.textContent = hostel.availableRooms > 0 
+                    ? (hostel.availableRooms <= 3 ? `${hostel.availableRooms} Rooms Left` : 'Available Now')
+                    : 'Fully Booked';
+                availabilityStatus.className = `availability-status ${hostel.availableRooms > 0 ? (hostel.availableRooms <= 3 ? 'limited' : '') : 'full'}`;
+            }
+
+            // Update rating
+            const rating = hostel.rating || 4.2;
+            const reviewsCount = hostel.reviewsCount || 127;
+            const ratingStars = document.getElementById('ratingStars');
+            if (ratingStars) {
+                ratingStars.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+            }
+
+            const ratingText = document.getElementById('ratingText');
+            if (ratingText) {
+                ratingText.textContent = `${rating} (${reviewsCount} reviews)`;
+            }
+
+            // Update booking form
+            const roomTypeSelect = document.getElementById('roomType');
+            if (roomTypeSelect) {
+                const monthlyRent = hostel.pricePerMonth || 8500;
+                const sharedRoomPrice = hostel.roomType === 'Shared Room' ? (hostel.pricePerMonth * 0.75) : 6000;
+                roomTypeSelect.innerHTML = `
+                    <option value="single">Single Room - KSH ${monthlyRent.toLocaleString()}</option>
+                    ${hostel.roomType === 'Shared Room' || hostel.roomType === 'both' ? 
+                        `<option value="shared">Shared Room - KSH ${sharedRoomPrice.toLocaleString()}</option>` : ''}
+                `;
+                updateBookingSummary(monthlyRent);
+            }
+
+            // Update description
+            const descriptionText = document.getElementById('descriptionText');
+            if (descriptionText) {
+                descriptionText.textContent = 
+                    hostel.description || 'This modern hostel offers a comfortable and convenient living environment for students, located near major universities with excellent amenities and security.';
+            }
+
+            // Update key features
+            const keyFeatures = document.getElementById('keyFeatures');
+            if (keyFeatures) {
+                keyFeatures.innerHTML = `
+                    <div class="feature-item">
+                        <div class="feature-icon">🛏️</div>
+                        <div class="feature-text">
+                            <h4>${hostel.roomType || 'Single Rooms'}</h4>
+                            <p>${hostel.roomType === 'Shared Room' ? 'Comfortable shared rooms with individual storage' : 'Private single rooms with study desk and wardrobe'}</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-text">
+                            <h4>Security</h4>
+                            <p>${hostel.security || 'Round-the-clock security with CCTV surveillance'}</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💻</div>
+                        <div class="feature-text">
+                            <h4>Wi-Fi</h4>
+                            <p>${hostel.amenities && hostel.amenities.some(a => 
+                                (typeof a === 'object' ? a.name : a).toLowerCase().includes('wi-fi') || 
+                                (typeof a === 'object' ? a.name : a).toLowerCase().includes('wifi')
+                            ) ? 'Free unlimited Wi-Fi throughout the facility' : 'Internet access available'}</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🚿</div>
+                        <div class="feature-text">
+                            <h4>Bathroom</h4>
+                            <p>${hostel.bathroomType || 'Clean, modern bathrooms and common areas'}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Update amenities
+            const amenitiesGrid = document.getElementById('amenitiesGrid');
+            if (amenitiesGrid) {
+                if (hostel.amenities && Array.isArray(hostel.amenities) && hostel.amenities.length > 0) {
+                    const amenityNames = hostel.amenities.map(amenity => 
+                        typeof amenity === 'object' ? (amenity.name || amenity.amenityName || '') : amenity
+                    ).filter(name => name);
+                    
+                    amenitiesGrid.innerHTML = `
+                        <div class="amenity-category">
+                            <h3>Amenities</h3>
+                            <ul class="amenity-list">
+                                ${amenityNames.map(name => `<li>${name}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    amenitiesGrid.innerHTML = `
+                        <div class="amenity-category">
+                            <h3>Amenities</h3>
+                            <ul class="amenity-list">
+                                <li>Wi-Fi</li>
+                                <li>Laundry Service</li>
+                                <li>Shared Kitchen</li>
+                                <li>24/7 Security</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+
+            // Update contact information
+            const contactInfo = document.getElementById('contactInfo');
+            if (contactInfo) {
+                contactInfo.innerHTML = `
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-text">
+                            <strong>Phone</strong>
+                            ${hostel.contactPhone || '+254 712 345 678'}
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-text">
+                            <strong>Email</strong>
+                            ${hostel.contactEmail || 'info@hostelhive.com'}
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-text">
+                            <strong>Address</strong>
+                            ${hostel.address || hostel.location || '500m from University of Nairobi, Nairobi'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Update images
+            const imageBase64s = Array.isArray(hostel.imagesBase64) && hostel.imagesBase64.every(img => typeof img === 'string')
+                ? hostel.imagesBase64
+                : [null];
+            console.log("📸 Image array:", imageBase64s);
+            const mainImage = document.getElementById('mainImage');
+            const thumbnailGrid = document.getElementById('thumbnailGrid');
+            const placeholderImage = 'https://via.placeholder.com/800x400?text=No+Image+Available';
+
+            if (mainImage && thumbnailGrid) {
+                mainImage.classList.add('loading');
+                mainImage.src = imageBase64s[0] ? base64ToDataUrl(imageBase64s[0]) : placeholderImage;
+                mainImage.alt = `${hostel.name || 'Hostel'} main view`;
+                mainImage.onload = () => {
+                    console.log("✅ Main image loaded");
+                    mainImage.classList.remove('loading');
+                };
+                mainImage.onerror = () => {
+                    console.error("❌ Main image failed to load");
+                    mainImage.src = placeholderImage;
+                    mainImage.classList.remove('loading');
+                };
+
+                thumbnailGrid.innerHTML = imageBase64s.map((base64, index) => `
+                    <img src="${base64 ? base64ToDataUrl(base64) : placeholderImage}" 
+                         alt="${hostel.name || 'Hostel'} image ${index + 1}" 
+                         class="thumbnail ${index === 0 ? 'active' : ''}" 
+                         onload="this.classList.remove('loading')" 
+                         onerror="this.src='${placeholderImage}'" 
+                         onclick="changeImage(this)">
+                `).join('');
+
+                const viewAllBtn = document.getElementById('viewAllBtn');
+                if (viewAllBtn) {
+                    viewAllBtn.textContent = `View All ${imageBase64s.length} Photos`;
+                }
+            } else {
+                console.warn('⚠️ Image gallery elements not found.');
+            }
+        } catch (error) {
+            console.error('❌ Error fetching hostel details:', error);
+            alert('Error fetching hostel details. Please try again later.');
+            const mainImage = document.getElementById('mainImage');
+            const thumbnailGrid = document.getElementById('thumbnailGrid');
+            if (mainImage && thumbnailGrid) {
+                mainImage.src = 'https://via.placeholder.com/800x400?text=Error+Loading+Image';
+                thumbnailGrid.innerHTML = `
+                    <img src="https://via.placeholder.com/120x80?text=Error" alt="Error image" class="thumbnail active">
+                `;
+            }
         }
     });
 
@@ -1309,8 +1408,19 @@
         const thumbnails = document.querySelectorAll('.thumbnail');
         
         if (mainImage) {
+            console.log("🔄 Changing main image to:", thumbnail.src);
+            mainImage.classList.add('loading');
             mainImage.src = thumbnail.src;
             mainImage.alt = thumbnail.alt;
+            mainImage.onload = () => {
+                console.log("✅ New main image loaded");
+                mainImage.classList.remove('loading');
+            };
+            mainImage.onerror = () => {
+                console.error("❌ New main image failed to load");
+                mainImage.src = 'https://via.placeholder.com/800x400?text=Error+Loading+Image';
+                mainImage.classList.remove('loading');
+            };
         }
         
         thumbnails.forEach(thumb => thumb.classList.remove('active'));
@@ -1323,6 +1433,7 @@
         const mainImage = document.getElementById('mainImage');
         
         if (modal && modalImage && mainImage) {
+            console.log("🔄 Opening image modal with:", mainImage.src);
             modalImage.src = mainImage.src;
             modal.style.display = 'block';
         }
@@ -1331,6 +1442,7 @@
     function closeImageModal() {
         const modal = document.getElementById('imageModal');
         if (modal) {
+            console.log("🔄 Closing image modal");
             modal.style.display = 'none';
         }
     }
@@ -1343,24 +1455,79 @@
     }
 
     // Booking Form Functionality
-    function bookRoom() {
+    async function bookRoom() {
         const moveInDate = document.getElementById('moveInDate');
         const duration = document.getElementById('duration');
         const roomType = document.getElementById('roomType');
         const hostelId = getHostelId();
+        const bookBtn = document.getElementById('bookBtn');
 
         if (!moveInDate || !moveInDate.value) {
+            console.error("❌ No move-in date provided");
             alert('Please select a move-in date.');
             return;
         }
 
-        // Store booking details in sessionStorage
-        sessionStorage.setItem('bookingMoveInDate', moveInDate.value);
-        sessionStorage.setItem('bookingDuration', duration ? duration.value : '1');
-        sessionStorage.setItem('bookingRoomType', roomType ? roomType.value : 'single');
+        const userId = await getUserId();
+        if (!userId) return;
 
-        // Redirect to book.html with hostel ID
-        window.location.href = `book.html?id=${hostelId}`;
+        const bookingPayload = {
+            userId: userId,
+            hostelId: parseInt(hostelId),
+            moveInDate: moveInDate.value,
+            duration: parseInt(duration ? duration.value : '1'),
+            roomType: roomType ? roomType.value : 'single',
+            paymentStatus: "PENDING"
+        };
+
+        console.log("=== BOOKING PAYLOAD ===");
+        console.log("Payload:", JSON.stringify(bookingPayload, null, 2));
+
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                throw new Error("No auth token found");
+            }
+
+            console.log("🔄 Initiating booking request to:", initiateBookingUrl);
+            bookBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...';
+            bookBtn.disabled = true;
+
+            const response = await fetch(initiateBookingUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(bookingPayload)
+            });
+
+            const bookingData = await response.json();
+            console.log("=== BOOKING RESPONSE ===");
+            console.log("Response status:", response.status);
+            console.log("Response data:", bookingData);
+
+            if (!response.ok) {
+                throw new Error(`Booking failed: ${bookingData.message || response.statusText}`);
+            }
+
+            console.log("✅ Booking initiated successfully, booking ID:", bookingData.bookingId);
+            alert("Booking request sent! Please complete the payment to confirm.");
+
+            // Store booking details for confirmation
+            sessionStorage.setItem('bookingMoveInDate', moveInDate.value);
+            sessionStorage.setItem('bookingDuration', duration ? duration.value : '1');
+            sessionStorage.setItem('bookingRoomType', roomType ? roomType.value : 'single');
+            sessionStorage.setItem('bookingId', bookingData.bookingId);
+
+            // Optionally redirect to a confirmation page
+            window.location.href = `book.html?id=${hostelId}&bookingId=${bookingData.bookingId}`;
+        } catch (error) {
+            console.error("❌ Error initiating booking:", error);
+            alert(`Failed to initiate booking: ${error.message}`);
+            bookBtn.innerHTML = "Book Now";
+            bookBtn.disabled = false;
+        }
     }
 
     function updateBookingSummary(monthlyRent) {
@@ -1390,13 +1557,21 @@
     // Event listener for room type changes
     document.addEventListener('DOMContentLoaded', function() {
         const roomTypeSelect = document.getElementById('roomType');
+        const bookBtn = document.getElementById('bookBtn');
         if (roomTypeSelect) {
             roomTypeSelect.addEventListener('change', function() {
                 const roomType = this.value;
                 const monthlyRent = roomType === 'single' ? 
                     parseFloat(this.options[0].text.split(' - KSH ')[1].replace(/,/g, '')) : 
                     parseFloat(this.options[1].text.split(' - KSH ')[1].replace(/,/g, ''));
+                console.log("🔄 Room type changed to:", roomType, "Monthly rent:", monthlyRent);
                 updateBookingSummary(monthlyRent);
+            });
+        }
+        if (bookBtn) {
+            bookBtn.addEventListener('click', async () => {
+                console.log("🔄 Book button clicked");
+                await bookRoom();
             });
         }
     });
